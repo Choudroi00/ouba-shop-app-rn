@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import {WinView as View,WinText as Text,WinImage as Image, WinTextInput as TextInput, WinTouchableOpacity as TouchableOpacity, WinFlatList as FlatList } from '../../components/rebase/index.d';
 
 const categories = [
   { id: '1', name: 'Category 1', image: require('./assets/category1.png') },

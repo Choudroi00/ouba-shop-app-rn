@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import {WinView as View, WinText as Text, WinImage as Image, WinTouchableOpacity as TouchableOpacity } from '../components/rebase/index.d';
 import { useSelector, useDispatch } from 'react-redux';
-import { setCurrentFrame } from './walktroughSlice';
+import { switchFrame } from '../services/store/slices/WalkthroughSlice';
+import { AppDispatch, RootState } from '../services/store/store';
 
-const walkthroughData = [
+
+export const walkthroughFrames = [
   {
     image: require('./assets/frame1.png'),
     title: 'Welcome to Our App',
@@ -22,18 +24,19 @@ const walkthroughData = [
 ];
 
 const WalkthroughScreen = () => {
-  const dispatch = useDispatch();
-  const currentFrame = useSelector((state) => state.walkthrough.currentFrame);
+  const dispatch = useDispatch<AppDispatch>();
+  const currentFrame = useSelector((state : RootState) => state.walkthrough.currentFrame);
+
 
   const handleNext = () => {
-    if (currentFrame < walkthroughData.length - 1) {
-      dispatch(setCurrentFrame(currentFrame + 1));
+    if (currentFrame < walkthroughFrames.length - 1) {
+      dispatch(switchFrame(currentFrame + 1));
     }
   };
 
   const handlePrevious = () => {
     if (currentFrame > 0) {
-      dispatch(setCurrentFrame(currentFrame - 1));
+      dispatch(switchFrame(currentFrame - 1));
     }
   };
 
@@ -41,17 +44,17 @@ const WalkthroughScreen = () => {
     <View className="flex-1">
       <View className="flex-1">
         <Image
-          source={walkthroughData[currentFrame].image}
+          source={walkthroughFrames[currentFrame].image}
           className="w-full h-full"
         />
       </View>
       <View className="flex-1 p-4 justify-between">
         <View>
-          <Text className="text-2xl font-bold mb-2">{walkthroughData[currentFrame].title}</Text>
-          <Text className="text-base mb-4">{walkthroughData[currentFrame].description}</Text>
+          <Text className="text-2xl font-bold mb-2">{walkthroughFrames[currentFrame].title}</Text>
+          <Text className="text-base mb-4">{walkthroughFrames[currentFrame].description}</Text>
         </View>
         <View className="flex-row justify-center mb-4">
-          {walkthroughData.map((_, index) => (
+          {walkthroughFrames.map((_, index) => (
             <View
               key={index}
               className={`w-2 h-2 rounded-full mx-1 ${
@@ -71,8 +74,8 @@ const WalkthroughScreen = () => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleNext}
-            disabled={currentFrame === walkthroughData.length - 1}
-            className={`flex-row items-center ${currentFrame === walkthroughData.length - 1 ? 'opacity-50' : ''}`}
+            disabled={currentFrame === walkthroughFrames.length - 1}
+            className={`flex-row items-center ${currentFrame === walkthroughFrames.length - 1 ? 'opacity-50' : ''}`}
           >
             <Text>Next</Text>
             <Image source={require('./assets/next.png')} className="w-6 h-6 ml-2" />
