@@ -21,6 +21,7 @@ const HomeFrame = () => {
     </View>
   );
 
+  
   const renderProduct = ({ item }) => (
     <View className="w-1/2 p-2">
       <Image source={item.image} className="w-full h-40 rounded-lg" />
