@@ -4,9 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateQuantity } from './cartSlice';
 
 const mockProducts = [
-  { id: '1', title: 'Product 1', price: 19.99, quantity: 2 },
-  { id: '2', title: 'Product 2', price: 29.99, quantity: 1 },
-  { id: '3', title: 'Product 3', price: 39.99, quantity: 3 },
+  { id: '1', title: 'Product 1', price: 19.99, quantity: 2, img: `https://picsum.photos/id/237/100/100` },
+  { id: '2', title: 'Product 2', price: 29.99, quantity: 1, img: `https://picsum.photos/id/237/100/100`},
+  { id: '3', title: 'Product 3', price: 39.99, quantity: 3, img: `https://picsum.photos/id/237/100/100`},
 ];
 
 const ShoppingCart = () => {
@@ -16,7 +16,7 @@ const ShoppingCart = () => {
   const renderItem = ({ item }) => (
     <View className="m-2 p-4 bg-white rounded-lg shadow-md flex-row">
       <Image
-        source={{ uri: `https://picsum.photos/id/237/100/100` }}
+        source={{ uri: item.img }}
         className="w-24 h-24 rounded-lg"
       />
       <View className="flex-1 ml-4">
