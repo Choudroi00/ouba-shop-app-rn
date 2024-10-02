@@ -7,17 +7,17 @@ import { AppDispatch, RootState } from '../services/store/store';
 
 export const walkthroughFrames = [
   {
-    image: url('https://picsum.photos/id/237/300'),
+    image: {uri:'https://picsum.photos/id/237/300'},
     title: 'Welcome to Our App',
     description: 'Discover amazing features that will make your life easier.',
   },
   {
-    image: url('https://picsum.photos/id/237/300'),
+    image: {uri:'https://picsum.photos/id/237/300'},
     title: 'Explore and Learn',
     description: 'Navigate through our intuitive interface and find what you need.',
   },
   {
-    image: url('https://picsum.photos/id/237/300'),
+    image: {uri:'https://picsum.photos/id/237/300'},
     title: 'Get Started Now',
     description: 'Join our community and start your journey today!',
   },
