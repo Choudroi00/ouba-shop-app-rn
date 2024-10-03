@@ -1,15 +1,18 @@
-import { ViewProps } from "react-native"
-import WindView from "../components/rebase/WindView"
+import { Text, View, ViewProps } from "react-native"
 
 
 
 
-const AppContent : React.FC<ViewProps> = (props) => {
+
+const AppLayout : React.FC<ViewProps> = (props) => {
     return(
-        <WindView>
+        <View   >
+            <Text  >
+                Welcome to Flame!
+            </Text>
             {props.children}
-        </WindView>
+        </View>
     )
 }
 
-export default AppContent;
+export default AppLayout;

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity } from 'react-native';
+import tw from 'twrnc';  // Import tw from twrnc
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -11,17 +12,17 @@ const LoginScreen = () => {
   };
 
   return (
-    <View className="flex-1">
-      <View className="flex-1">
+    <View style={tw`flex-1`}>
+      <View style={tw`flex-1`}>
         <Image
-          source={require('./assets/login-image.png')}
-          className="w-full h-full"
+          source={{ uri: 'https://picsum.photos/id/237/300' }}
+          style={tw`w-full h-full`}
         />
       </View>
-      <View className="flex-1 p-4 justify-center">
-        <Text className="text-2xl font-bold mb-6 text-center">Welcome Back</Text>
+      <View style={tw`flex-1 p-4 justify-center`}>
+        <Text style={tw`text-2xl font-bold mb-6 text-center`}>Welcome Back</Text>
         <TextInput
-          className="bg-gray-100 rounded-lg p-3 mb-4"
+          style={tw`bg-gray-100 rounded-lg p-3 mb-4`}
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
@@ -29,17 +30,17 @@ const LoginScreen = () => {
           autoCapitalize="none"
         />
         <TextInput
-          className="bg-gray-100 rounded-lg p-3 mb-6"
+          style={tw`bg-gray-100 rounded-lg p-3 mb-6`}
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
         />
         <TouchableOpacity
-          className="bg-blue-500 rounded-lg p-4 items-center"
+          style={tw`bg-blue-500 rounded-lg p-4 items-center`}
           onPress={handleLogin}
         >
-          <Text className="text-white font-bold text-lg">Login</Text>
+          <Text style={tw`text-white font-bold text-lg`}>Login</Text>
         </TouchableOpacity>
       </View>
     </View>

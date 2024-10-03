@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import {WinView as View, WinText as Text, WinImage as Image, WinTouchableOpacity as TouchableOpacity } from '../components/rebase/index.d';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { switchFrame } from '../services/store/slices/WalkthroughSlice';
 import { AppDispatch, RootState } from '../services/store/store';
-
+import { View, Image, Text, TouchableOpacity } from 'react-native';
+import tw from 'twrnc';  // Import tw from twrnc
 
 export const walkthroughFrames = [
   {
-    image: {uri:'https://picsum.photos/id/237/300'},
+    image: { uri: 'https://picsum.photos/id/237/300' },
     title: 'Welcome to Our App',
     description: 'Discover amazing features that will make your life easier.',
   },
   {
-    image: {uri:'https://picsum.photos/id/237/300'},
+    image: { uri: 'https://picsum.photos/id/237/300' },
     title: 'Explore and Learn',
     description: 'Navigate through our intuitive interface and find what you need.',
   },
   {
-    image: {uri:'https://picsum.photos/id/237/300'},
+    image: { uri: 'https://picsum.photos/id/237/300' },
     title: 'Get Started Now',
     description: 'Join our community and start your journey today!',
   },
@@ -25,8 +25,7 @@ export const walkthroughFrames = [
 
 const WalkthroughScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const currentFrame = useSelector((state : RootState) => state.walkthrough.currentFrame);
-
+  const currentFrame = useSelector((state: RootState) => state.walkthrough.currentFrame);
 
   const handleNext = () => {
     if (currentFrame < walkthroughFrames.length - 1) {
@@ -41,44 +40,44 @@ const WalkthroughScreen = () => {
   };
 
   return (
-    <View className="flex-1">
-      <View className="flex-1">
+    <View style={tw`flex-1`}>
+      <View style={tw`flex-1`}>
         <Image
           source={walkthroughFrames[currentFrame].image}
-          className="w-full h-full"
+          style={tw`w-full h-full`}
         />
       </View>
-      <View className="flex-1 p-4 justify-between">
+      <View style={tw`flex-1 p-4 justify-between`}>
         <View>
-          <Text className="text-2xl font-bold mb-2">{walkthroughFrames[currentFrame].title}</Text>
-          <Text className="text-base mb-4">{walkthroughFrames[currentFrame].description}</Text>
+          <Text style={tw`text-2xl font-bold mb-2`}>{walkthroughFrames[currentFrame].title}</Text>
+          <Text style={tw`text-base mb-4`}>{walkthroughFrames[currentFrame].description}</Text>
         </View>
-        <View className="flex-row justify-center mb-4">
+        <View style={tw`flex-row justify-center mb-4`}>
           {walkthroughFrames.map((_, index) => (
             <View
               key={index}
-              className={`w-2 h-2 rounded-full mx-1 ${
+              style={tw`w-2 h-2 rounded-full mx-1 ${
                 index === currentFrame ? 'bg-blue-500' : 'bg-gray-300'
               }`}
             />
           ))}
         </View>
-        <View className="flex-row justify-between">
+        <View style={tw`flex-row justify-between`}>
           <TouchableOpacity
             onPress={handlePrevious}
             disabled={currentFrame === 0}
-            className={`flex-row items-center ${currentFrame === 0 ? 'opacity-50' : ''}`}
+            style={tw`flex-row items-center ${currentFrame === 0 ? 'opacity-50' : ''}`}
           >
-            <Image source={require('./assets/previous.png')} className="w-6 h-6 mr-2" />
+            <Image source={{ uri: 'https://picsum.photos/id/237/300' }} style={tw`w-6 h-6 mr-2`} />
             <Text>Previous</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleNext}
             disabled={currentFrame === walkthroughFrames.length - 1}
-            className={`flex-row items-center ${currentFrame === walkthroughFrames.length - 1 ? 'opacity-50' : ''}`}
+            style={tw`flex-row items-center ${currentFrame === walkthroughFrames.length - 1 ? 'opacity-50' : ''}`}
           >
             <Text>Next</Text>
-            <Image source={require('./assets/next.png')} className="w-6 h-6 ml-2" />
+            <Image source={{ uri: 'https://picsum.photos/id/237/300' }} style={tw`w-6 h-6 ml-2`} />
           </TouchableOpacity>
         </View>
       </View>
