@@ -5,5 +5,5 @@ import { WalkthroughState } from "../slices/WalkthroughSlice";
 import { walkthroughFrames } from "../../../screens/WalkthroughScreen";
 
 export const switchFrameReducer = (state : WalkthroughState, action : PayloadAction<number>) => {
-    state.currentFrame = state.currentFrame === 0 ? 0 : Math.min(action.payload,walkthroughFrames.length - 1)  ;
+    state.currentFrame = (state.currentFrame + action.payload) < 0 ? 0 : Math.min(action.payload,walkthroughFrames.length - 1)  ;
 }
