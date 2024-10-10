@@ -31,6 +31,8 @@ export interface XModalProps {
     onCancel?: () => void;
     onDismiss?: () => void;
 
+    dismissRequested?: () => boolean;
+
     noActions?: boolean;
 }
 
@@ -45,7 +47,8 @@ function XModal({
     onConfirm,
     onCancel,
     children, 
-    noActions
+    noActions,
+    dismissRequested
     
 }: XModalProps) {
     const animator = useSharedValue(visible ? 1 : 0);
@@ -91,9 +94,9 @@ function XModal({
         <Modal
             transparent
             visible={visible}
-            
+            onDismiss={onDismiss}
             animationType="none"
-            onRequestClose={localDismiss}>
+            onRequestClose={dismissRequested}>
             <TouchableWithoutFeedback onPress={localDismiss} >
                 <View style={[styles.overlay, {opacity: localVis ? 1 : 0}]}>
                     <View style={tw`flex-3 justify-center items-center w-full`} >

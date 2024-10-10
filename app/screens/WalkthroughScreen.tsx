@@ -24,12 +24,16 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import {walkthroughFrames} from '../constants/fakedata';
+import { useNavigation } from '@react-navigation/native';
+import { RootStackNavigationProp } from '../../App';
 
 const WalkthroughScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const currentFrame = useSelector(
     (state: RootState) => state.walkthrough.currentFrame,
   );
+
+  const navigator = useNavigation<RootStackNavigationProp>()
 
   // ----------- //
 
@@ -42,6 +46,10 @@ const WalkthroughScreen = () => {
 
   const handleNext = () => {
     console.log('Hello from handleNext');
+    if((currentFrame) === walkthroughFrames.length - 1) {
+      navigator.navigate('Auth');
+      return;
+    }
     triggerAnime();
     dispatch(switchFrame(currentFrame + 1));
   };

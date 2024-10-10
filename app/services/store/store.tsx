@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { walkthroughReducer } from "./slices/WalkthroughSlice";
+import { userReducer } from "./slices/UserSlice";
 
 
 
 
 const store = configureStore({
     reducer:{
-        walkthrough: walkthroughReducer
+        walkthrough: walkthroughReducer,
+        user: userReducer
     }
 })
 

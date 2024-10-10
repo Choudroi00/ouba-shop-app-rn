@@ -1,13 +1,29 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, TouchableNativeFeedback, Pressable, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from 'react-native';
 import tw from 'twrnc';  // Import tw from twrnc
 import { accentColor, primaryColor, screenHeight } from '../constants';
 import useKeyboard from '../hook/useKeyboard';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import XModal from '../components/common/XModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateUser, userLogin, UserState } from '../services/store/slices/UserSlice';
+import { AppDispatch, RootState } from '../services/store/store';
+import { storeData, useTypedSelector } from '../utils/helpers';
+import XSnackbar from '../components/common/XSnakeBar';
+
+
 
 const LoginScreen = () => {
+
+  const dispatch = useDispatch<AppDispatch>(); 
+  const { isAuthenticated, authStatus, token } = useTypedSelector((state) => {
+    return state.user;
+  });
+
+  
+
   const [modelVisible, setModelVisible] = useState(false);
+  const [snBar,setSnbar ] = useState(false);
 
   const isKeyboardVisible = useKeyboard()
 
@@ -45,15 +61,37 @@ const LoginScreen = () => {
 
 
 
+  
+  useEffect(()=>{
+    if(authStatus === 'true'){
 
-  const handleLogin = () => {
-    // Handle login logic here
+      setModelVisible(false);
+      storeData('isAuthenticated', 'true');
+      storeData('user', JSON.stringify({email: email, password: password, token : token}));
+
+      setSnbar(true);
+
+    }else if(authStatus === 'error'){
+      setModelVisible(false);
+      storeData('isAuthenticated', 'false');
+      setSnbar(true);
+    }
+
+  }, [authStatus]);
+  const handleLogin = async () => {
+    dispatch(userLogin({email : email, password: password}));
+
     console.log('Login attempted with:', { email, password });
+
     setModelVisible(!modelVisible);
   };
 
   const onOutsidePress = () => {
     setModelVisible(false);
+  }
+
+  const onSnDismiss = ()=>{
+    setSnbar(false);
   }
 
   /**
@@ -69,7 +107,10 @@ const LoginScreen = () => {
       
     
     <View style={tw`bg-[${primaryColor}] flex-1`}>
-      <XModal visible={modelVisible}  onCancel={onOutsidePress} noActions onConfirm={onOutsidePress} bodyText='plaise wait until we log you in ....' onDismiss={onOutsidePress} title='Logging in ' >
+      {
+        snBar && <XSnackbar buttonText='Okay' onDismiss={onSnDismiss} type={authStatus === 'error' ? 'error' : 'success'} message={`login ${authStatus === 'error' ? 'error, plaise try again' : 'successful, a secs and you get in'}`} /> 
+      }
+      <XModal visible={modelVisible} dismissRequested={()=> false}  onCancel={onOutsidePress} noActions onConfirm={onOutsidePress} bodyText='plaise wait until we log you in ....' onDismiss={onOutsidePress} title='Logging in ' >
         <ActivityIndicator size="large" style={tw`pb-10`} color="#0000ff" />
 
       </XModal>
@@ -109,6 +150,7 @@ const LoginScreen = () => {
           </Pressable>
 
           <Pressable
+            disabled={isAuthenticated}
             android_ripple={{color: accentColor,radius: 60}}
             style={tw`bg-[${primaryColor}] flex-1 rounded-full px-3 py-3 items-center `}
             onPress={handleLogin}>
