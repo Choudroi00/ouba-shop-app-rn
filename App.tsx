@@ -18,6 +18,7 @@ import WalkthroughScreen from './app/screens/WalkthroughScreen';
 
 import { setCustomText, setCustomTextInput } from 'react-native-global-props';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import LoginScreen from './app/screens/AuthScreen';
 
 
 const qclient = new QueryClient();
@@ -52,7 +53,7 @@ function App(): React.JSX.Element {
         <QueryClientProvider client={query}>
           <NavigationContainer>
             <Stack.Navigator screenOptions={{headerShown:false}}  >
-              <Stack.Screen name="Home" component={WalkthroughScreen} />
+              <Stack.Screen name="Home" component={LoginScreen} />
             </Stack.Navigator>
           </NavigationContainer>
           

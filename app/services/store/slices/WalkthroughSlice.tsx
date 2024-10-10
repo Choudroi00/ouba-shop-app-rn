@@ -16,7 +16,11 @@ const walkthroughSlice = createSlice({
     initialState,
     reducers:{
         switchFrame: reducers.switchFrameReducer,  
-    }
+    }, 
+    extraReducers: (builder) => {
+        builder
+            // Add any additional reducers here
+    },
 })
 
 
