@@ -9,8 +9,8 @@ export interface XBarIconProps {
 }
 export default function XBarIcon({children}: XBarIconProps) : React.ReactNode {
   return (
-    <View style={tw`rounded-lg bg-slate-300 p-4 mx-4 my-2`} >
-
+    <View style={tw`rounded-xl bg-slate-200 p-3 aspect-1`} >
+      {children}
     </View>
   )
 }

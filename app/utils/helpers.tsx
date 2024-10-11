@@ -21,8 +21,8 @@ export const mesureContainer = (containerStyle : StyleProp<any>,content : React.
 
 export const storeData = async (key: string, value: string) => {
   try {
-    const jsonValue = JSON.stringify(value);
-    await AsyncStorage.setItem(key, jsonValue);
+    
+    await AsyncStorage.setItem(key, value);
     return true;
   } catch (error) {
     console.error('Error storing data in AsyncStorage:', error);
@@ -40,6 +40,19 @@ export const getData = async (key: string) => {
    return null;
  }
 };
+
+export const hexToRgba = (hex: string, alpha = 1)=> {
+  // Remove the leading `#` if present
+  hex = hex.replace(/^#/, '');
+
+  // Parse the R, G, B components from the hex string
+  let r = parseInt(hex.slice(0, 2), 16);
+  let g = parseInt(hex.slice(2, 4), 16);
+  let b = parseInt(hex.slice(4, 6), 16);
+
+  // Return the rgba string with the alpha value
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 
 export const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector;

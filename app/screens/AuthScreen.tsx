@@ -8,7 +8,7 @@ import XModal from '../components/common/XModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUser, userLogin, UserState } from '../services/store/slices/UserSlice';
 import { AppDispatch, RootState } from '../services/store/store';
-import { storeData, useTypedSelector } from '../utils/helpers';
+import { storeData, useTypedNavigator, useTypedSelector } from '../utils/helpers';
 import XSnackbar from '../components/common/XSnakeBar';
 
 
@@ -19,6 +19,8 @@ const LoginScreen = () => {
   const { isAuthenticated, authStatus, token } = useTypedSelector((state) => {
     return state.user;
   });
+
+  const navigator = useTypedNavigator()
 
   
 
@@ -70,6 +72,10 @@ const LoginScreen = () => {
       storeData('user', JSON.stringify({email: email, password: password, token : token}));
 
       setSnbar(true);
+
+      setTimeout(() => {
+        navigator.navigate('MainScreen');
+      }, 3500);
 
     }else if(authStatus === 'error'){
       setModelVisible(false);

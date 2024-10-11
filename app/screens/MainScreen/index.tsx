@@ -1,25 +1,55 @@
-import React from 'react'
-import { View } from 'react-native'
+import React, { useState } from 'react'
+import { SafeAreaView, View } from 'react-native'
 import tw from 'twrnc'
 import XAppBar from '../../components/common/XAppBar'
 import XBarIcon from '../../components/common/XBarIcon'
 
 import Icon from 'react-native-vector-icons/AntDesign'
+import {default as IconX}  from 'react-native-vector-icons/Ionicons';
+import XBottomNavigator from '../../components/common/XBottomNavigator'
+import HomeFrame from './HomeFrame'
 
-
-
-
+const tabs = [
+  { key: 'home', label: 'Home', icon: {name:"home-outline" , color:"black"} },
+  { key: 'categories', label: 'Kinds', icon: {name:"menu" , color:"black"} },
+  { key: 'search', label: 'Search', icon: {name:"search-outline" , color:"black"} },
+  { key: 'cart', label: 'Cart', icon: {name:"cart-outline" , color:"black"} },
+  { key: 'profile', label: 'Profile', icon: {name:"person-outline" , color:"black"} },
+];
 
 export default function MainSreen() {
-
+  const [activeTab, setActiveTab] = useState('home');
+  const [tabStates, setTabStates] = useState({
+    home: <HomeFrame />,
+    categories: <View style={tw`flex-1 bg-black`}></View>,
+    search: <View style={tw`flex-1 bg-black`}></View>,
+    cart: <View style={tw`flex-1 bg-black`}></View>,
+    profile: <View style={tw`flex-1 bg-black`}></View>
+  });
 
   return (
-    <View style={tw`flex flex-1 bg-white`}>
+    <SafeAreaView style={tw`flex flex-1 bg-white`}>
         <XAppBar title='Fame Market' >
+            <XBarIcon position='left' >
+              <Icon name='swap' size={20} color='black' />
+            </XBarIcon>
             <XBarIcon position='right'>
-                <Icon name='ios-menu' size={24} color='black' />
+                <Icon name='find' size={20} color='black' />
+            </XBarIcon>
+            <XBarIcon position='right'>
+                <Icon name='shoppingcart' size={20} color='black' />
             </XBarIcon>
         </XAppBar>
-    </View>
+
+        <View style={tw`flex-1 mt-[65px]`}>
+          {
+
+            tabStates[activeTab as keyof typeof tabStates]
+          }
+        </View>
+
+        <XBottomNavigator tabs={tabs} activeTab={activeTab} onTabPress={(tab)=> setActiveTab(tab)} />
+    </SafeAreaView>
   )
 }
+

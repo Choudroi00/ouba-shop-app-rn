@@ -20,12 +20,16 @@ import { setCustomText, setCustomTextInput } from 'react-native-global-props';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import LoginScreen from './app/screens/AuthScreen';
 import { Animated, Easing } from 'react-native';
+import MainSreen from './app/screens/MainScreen';
+import AppEntry from './app/screens';
 
 
 const qclient = new QueryClient();
 type RootStackParamList = {
   Walkthrough: undefined;
-  Auth: undefined; // or { someParam: string } if it expects params
+  Auth: undefined;
+  MainScreen: undefined 
+  AppEntry: undefined
 };
 
 export type RootStackNavigationProp = NavigationProp<RootStackParamList>;
@@ -60,14 +64,11 @@ function App(): React.JSX.Element {
       <Provider store={store} >
         <QueryClientProvider client={query}>
           <NavigationContainer>
-            <Stack.Navigator
-              
-             screenOptions={{headerShown:false, 
-              animation: 'simple_push',
-              animationDuration: 60
-             }}  >
+            <Stack.Navigator screenOptions={{headerShown:false, animation: 'simple_push',animationDuration: 60}}  >
+              <Stack.Screen name='AppEntry' component={AppEntry} />
               <Stack.Screen name="Walkthrough" component={WalkthroughScreen} />
               <Stack.Screen name="Auth" component={LoginScreen} />
+              <Stack.Screen name="MainScreen" component={MainSreen} /> 
             </Stack.Navigator>
           </NavigationContainer>
           

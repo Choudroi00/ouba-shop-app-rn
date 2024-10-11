@@ -1,18 +1,30 @@
 import { Text, View, ViewProps } from "react-native"
+import { getData, useTypedNavigator } from "../utils/helpers";
+import { useEffect } from "react";
 
 
 
 
 
-const AppLayout : React.FC<ViewProps> = (props) => {
+const AppEntry = () => {
+    const navigator = useTypedNavigator()
+    useEffect(()=>{
+        const checker = async () => {
+            const isAuthenticated = await getData('isAuthenticated')
+            if (isAuthenticated) {
+                navigator.navigate('MainScreen')
+            } else {
+                navigator.navigate('Auth')
+            }
+        }
+        checker()
+    })
+
     return(
-        <View   >
-            <Text  >
-                Welcome to Flame!
-            </Text>
-            {props.children}
+        <View>
+
         </View>
-    )
+    );
 }
 
-export default AppLayout;
+export default AppEntry;
