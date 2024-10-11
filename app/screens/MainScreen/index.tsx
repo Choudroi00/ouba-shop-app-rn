@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { SafeAreaView, View } from 'react-native'
+import { SafeAreaView, ScrollView, View } from 'react-native'
 import tw from 'twrnc'
 import XAppBar from '../../components/common/XAppBar'
 import XBarIcon from '../../components/common/XBarIcon'
@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/AntDesign'
 import {default as IconX}  from 'react-native-vector-icons/Ionicons';
 import XBottomNavigator from '../../components/common/XBottomNavigator'
 import HomeFrame from './HomeFrame'
+
 
 const tabs = [
   { key: 'home', label: 'Home', icon: {name:"home-outline" , color:"black"} },
@@ -28,7 +29,7 @@ export default function MainSreen() {
   });
 
   return (
-    <SafeAreaView style={tw`flex flex-1 bg-white`}>
+    <SafeAreaView  style={tw`flex flex-1 bg-white`}>
         <XAppBar title='Fame Market' >
             <XBarIcon position='left' >
               <Icon name='swap' size={20} color='black' />
@@ -41,12 +42,15 @@ export default function MainSreen() {
             </XBarIcon>
         </XAppBar>
 
-        <View style={tw`flex-1 mt-[65px]`}>
+        <ScrollView
+            contentContainerStyle={tw`flex-1`}
+            showsVerticalScrollIndicator={false}
+            style={tw`flex-1 mt-[65px]`}>
           {
 
             tabStates[activeTab as keyof typeof tabStates]
           }
-        </View>
+        </ScrollView>
 
         <XBottomNavigator tabs={tabs} activeTab={activeTab} onTabPress={(tab)=> setActiveTab(tab)} />
     </SafeAreaView>

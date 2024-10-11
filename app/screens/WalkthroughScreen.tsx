@@ -15,7 +15,7 @@ import {primaryColor} from '../constants';
 import tailwind from 'twrnc';
 import NavDot from '../components/walkthrough/NavDot';
 import {TapGestureHandler} from 'react-native-gesture-handler';
-import {mesureContainer} from '../utils/helpers';
+import {mesureContainer, storeData} from '../utils/helpers';
 import Animated, {
   interpolate,
   interpolateColor,
@@ -87,6 +87,12 @@ const WalkthroughScreen = () => {
     }
   })
 
+  const logAsGuest = async () => {
+    await storeData('isGuest', 'true');
+    navigator.navigate('MainScreen');
+
+  }
+
   // ...
 
   return (
@@ -123,7 +129,7 @@ const WalkthroughScreen = () => {
           <TouchableWithoutFeedback 
           disabled={currentFrame === walkthroughFrames.length - 1 || currentFrame === 0} 
 
-          onPress={()=> currentFrame === 0 ? handlePrevious() : handleNext()}>
+          onPress={()=> currentFrame === 1 ? logAsGuest() : handleNext()}>
             <Animated.View
               style={[tw`flex-row items-center rounded-full bg-[${primaryColor}] px-6 py-3 `, oAnimeStyle]}>
               <Text style={tw`text-white text-[15px] font-medium`}>

@@ -11,10 +11,11 @@ const AppEntry = () => {
     useEffect(()=>{
         const checker = async () => {
             const isAuthenticated = await getData('isAuthenticated')
-            if (isAuthenticated) {
+            const isGuest = await getData('isGuest')
+            if (isAuthenticated || isGuest) {
                 navigator.navigate('MainScreen')
             } else {
-                navigator.navigate('Auth')
+                navigator.navigate('Walkthrough')
             }
         }
         checker()
