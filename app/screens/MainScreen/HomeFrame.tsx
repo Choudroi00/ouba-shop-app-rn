@@ -12,9 +12,11 @@ import {
 import tw from 'twrnc'; // Import tw from twrnc
 import {accentColor, primaryColor} from '../../constants';
 import MainTitle from '../../components/mainscreen/MainTitle';
-import {hexToRgba} from '../../utils/helpers';
+import {hexToRgba, useTypedNavigator, useTypedSelector} from '../../utils/helpers';
 import Icon from 'react-native-vector-icons/AntDesign';
 import HeaderAction from '../../components/mainscreen/HeaderAction';
+import { useDispatch, useSelector } from 'react-redux';
+import { switchTab } from '../../services/store/slices/MainScreenStateSlice';
 
 const categories = [
     {
@@ -225,6 +227,17 @@ const products = [
 ];
 
 const HomeFrame = () => {
+
+  const navigator = useTypedNavigator()
+
+  const {activeTab} = useTypedSelector((state)=> state.mainscreen )
+
+  const dispatch = useDispatch()
+
+  const toSearchTab = ()=> {
+    dispatch(switchTab('search'))
+  }
+
     const renderCategory = ({item}) => (
         <View style={tw`w-[250px] p-2`}>
             <Image source={item.image} style={tw`w-full h-37 rounded-lg`} />
@@ -277,10 +290,13 @@ const HomeFrame = () => {
             </View>
 
             <View style={tw`px-4 py-2`}>
+              <Pressable onPress={toSearchTab} >
+
                 <Text
                     
                     style={tw`bg-gray-100 text-slate-700 font-normal text-[16px] rounded-full px-6 py-4`}
                 >Search products</Text>
+              </Pressable>
             </View>
 
             <View style={tw`flex-row justify-between p-4 px-6`}>

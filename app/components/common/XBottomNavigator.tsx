@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, TouchableOpacity, Text, TouchableWithoutFeedback, Pressable, LayoutChangeEvent } from 'react-native';
 
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
@@ -50,6 +50,18 @@ const XBottomNavigator: React.FC<XBottomNavigatorProps> = ({ tabs, activeTab, on
   const animatedIndicatorStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: withSpring(indicatorPosition.value) }],
   }));
+
+  useEffect(() => {
+
+    const index = tabs.findIndex((tab) => tab.key === activeTab);
+    
+    indicatorPosition.value = 30 +  (index * (tabWidth + 4)) ;
+
+    return () => {
+      
+    }
+  }, [activeTab])
+  
 
   const handleTabPress = (key: string, index: number) => {
     indicatorPosition.value = 30 +  (index * (tabWidth + 4)) ;

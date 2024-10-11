@@ -19,7 +19,7 @@ const AppEntry = () => {
                 
             } else {
                 navigator.navigate('Walkthrough')
-                navigator.topToUp()
+                
             }
         }
         checker()

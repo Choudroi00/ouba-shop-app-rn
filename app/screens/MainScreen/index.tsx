@@ -8,10 +8,12 @@ import Icon from 'react-native-vector-icons/AntDesign'
 import {default as IconX}  from 'react-native-vector-icons/Ionicons';
 import XBottomNavigator from '../../components/common/XBottomNavigator'
 import HomeFrame from './HomeFrame'
-import { useTypedNavigator } from '../../utils/helpers'
+import { useTypedNavigator, useTypedSelector } from '../../utils/helpers'
+import { useDispatch } from 'react-redux'
+import { switchTab } from '../../services/store/slices/MainScreenStateSlice'
 
 
-const tabs = [
+export const tabs = [
   { key: 'home', label: 'Home', icon: {name:"home-outline" , color:"black"} },
   { key: 'categories', label: 'Kinds', icon: {name:"menu" , color:"black"} },
   { key: 'search', label: 'Search', icon: {name:"search-outline" , color:"black"} },
@@ -20,7 +22,16 @@ const tabs = [
 ];
 
 export default function MainSreen() {
-  const [activeTab, setActiveTab] = useState('home');
+
+  const {activeTab } = useTypedSelector(state => state.mainscreen);
+
+  const dispatch = useDispatch()
+
+  const changeTab = (tabKey: string) => {
+    dispatch(switchTab(tabKey))
+  } 
+
+  //const [activeTab, setActiveTab] = useState('home');
   const [tabStates, setTabStates] = useState({
     home: <HomeFrame />,
     categories: <View style={tw`flex-1 bg-black`}></View>,
@@ -54,7 +65,7 @@ export default function MainSreen() {
         </XAppBar>
 
         <ScrollView
-            contentContainerStyle={tw`flex-1`}
+            contentContainerStyle={tw`flex-grow-1`}
             showsVerticalScrollIndicator={false}
             style={tw`flex-1 mt-[65px]`}>
           {
@@ -63,7 +74,7 @@ export default function MainSreen() {
           }
         </ScrollView>
 
-        <XBottomNavigator tabs={tabs} activeTab={activeTab} onTabPress={(tab)=> setActiveTab(tab)} />
+        <XBottomNavigator tabs={tabs} activeTab={activeTab} onTabPress={changeTab} />
     </SafeAreaView>
   )
 }
