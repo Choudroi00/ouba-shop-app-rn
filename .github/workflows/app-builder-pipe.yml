@@ -1,19 +1,13 @@
-name: React Native Build & Release
-
 on:
   push:
     branches:
-      - main 
-  workflow_dispatch: 
+      - main  # Trigger on push to the main branch
+  workflow_dispatch: # Allow manual triggers
 
 jobs:
   build-android:
     name: Build Android APK
     runs-on: ubuntu-latest
-
-    env:
-      ANDROID_HOME: /usr/local/lib/android/sdk
-      ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/26.1.10909125
 
     steps:
       - name: Checkout the code
@@ -22,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20' 
+          node-version: '20' # Ensure it matches your project
 
       - name: Install dependencies
         run: |
@@ -33,30 +27,6 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
-
-      - name: Cache Android SDK
-        id: cache-android-sdk
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.ANDROID_HOME }}
-          key: ${{ runner.os }}-android-sdk-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-android-sdk-
-
-      - name: Cache Android NDK
-        id: cache-android-ndk
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.ANDROID_NDK_HOME }}
-          key: ${{ runner.os }}-android-ndk-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-android-ndk-
-      - name: Install Android SDK & NDK
-        if: steps.cache-android-sdk.outputs.cache-hit != 'true' || steps.cache-android-ndk.outputs.cache-hit != 'true'
-        uses: android-actions/setup-android@v2
-        with:
-          sdk-version: '35.0.2'
-          ndk-version: '26.1.10909125'
 
       - name: Cache Gradle packages
         uses: actions/cache@v3
@@ -75,3 +45,4 @@ jobs:
         with:
           name: android-apk
           path: android/app/build/outputs/apk/release/app-release.apk
+
