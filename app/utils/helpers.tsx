@@ -5,8 +5,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { TypedUseSelectorHook, useSelector } from "react-redux";
 import { RootState } from "../services/store/store";
-import { useNavigation } from "@react-navigation/native";
-import { RootStackNavigationProp } from "../../App";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { RootStackNavigationProp, RootStackParamList } from "../../App";
 
 
 export const mesureContainer = (containerStyle : StyleProp<any>,content : React.JSX.Element, setter: (dims: number)=> void )=> {
@@ -56,4 +56,7 @@ export const hexToRgba = (hex: string, alpha = 1)=> {
 
 
 export const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector;
-export const useTypedNavigator = useNavigation<RootStackNavigationProp>
+export const useTypedNavigator = () => {
+  const navigation = useNavigation<RootStackNavigationProp>();
+  return navigation as NavigationProp<RootStackParamList>;
+};

@@ -1,6 +1,7 @@
 import { Text, View, ViewProps } from "react-native"
 import { getData, useTypedNavigator } from "../utils/helpers";
 import { useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 
 
@@ -14,8 +15,11 @@ const AppEntry = () => {
             const isGuest = await getData('isGuest')
             if (isAuthenticated || isGuest) {
                 navigator.navigate('MainScreen')
+                
+                
             } else {
                 navigator.navigate('Walkthrough')
+                navigator.topToUp()
             }
         }
         checker()

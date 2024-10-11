@@ -25,7 +25,7 @@ import AppEntry from './app/screens';
 
 
 const qclient = new QueryClient();
-type RootStackParamList = {
+export type RootStackParamList = {
   Walkthrough: undefined;
   Auth: undefined;
   MainScreen: undefined 

@@ -42,6 +42,16 @@ const WalkthroughScreen = () => {
   const fbuttonWidth = 4 * 6 + walkthroughFrames[0].btn1.length * 18;
   const sbuttonWidth = 4 * 12 + walkthroughFrames[1].btn1.length * 10;
 
+
+  useEffect(() => {
+    navigator.addListener('beforeRemove',(e) => {e.preventDefault();});
+  
+    return () => {
+      
+    }
+  }, [navigator])
+  
+
   // ----------- //
 
   const handleNext = () => {

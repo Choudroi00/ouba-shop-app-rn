@@ -61,7 +61,13 @@ const LoginScreen = () => {
   }
 
 
-
+  useEffect(() => {
+    navigator.addListener('beforeRemove',(e) => {e.preventDefault();});
+  
+    return () => {
+      
+    }
+  }, [navigator])
 
   
   useEffect(()=>{

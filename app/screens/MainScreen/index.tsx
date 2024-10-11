@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView, ScrollView, View } from 'react-native'
 import tw from 'twrnc'
 import XAppBar from '../../components/common/XAppBar'
@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/AntDesign'
 import {default as IconX}  from 'react-native-vector-icons/Ionicons';
 import XBottomNavigator from '../../components/common/XBottomNavigator'
 import HomeFrame from './HomeFrame'
+import { useTypedNavigator } from '../../utils/helpers'
 
 
 const tabs = [
@@ -27,6 +28,16 @@ export default function MainSreen() {
     cart: <View style={tw`flex-1 bg-black`}></View>,
     profile: <View style={tw`flex-1 bg-black`}></View>
   });
+
+  const navigator = useTypedNavigator()
+
+  useEffect(() => {
+    navigator.addListener('beforeRemove',(e) => {e.preventDefault();});
+  
+    return () => {
+      
+    }
+  }, [navigator])
 
   return (
     <SafeAreaView  style={tw`flex flex-1 bg-white`}>
