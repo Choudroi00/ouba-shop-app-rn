@@ -3,8 +3,8 @@ name: React Native Build & Release
 on:
   push:
     branches:
-      - main  # Trigger on push to the main branch
-  workflow_dispatch: # Allow manual triggers
+      - main 
+  workflow_dispatch: 
 
 jobs:
   build-android:
@@ -13,7 +13,7 @@ jobs:
 
     env:
       ANDROID_HOME: /usr/local/lib/android/sdk
-      ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk-bundle
+      ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/26.1.10909125
 
     steps:
       - name: Checkout the code
@@ -22,7 +22,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20' # Ensure it matches your project
+          node-version: '20' 
 
       - name: Install dependencies
         run: |
@@ -49,6 +49,12 @@ jobs:
           key: ${{ runner.os }}-android-ndk-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-android-ndk-
+              - name: Install Android SDK & NDK
+              if: steps.cache-android-sdk.outputs.cache-hit != 'true' || steps.cache-android-ndk.outputs.cache-hit != 'true'
+              uses: android-actions/setup-android@v2
+              with:
+                sdk-version: '35.0.2'
+                ndk-version: '26.1.10909125'
 
       - name: Cache Gradle packages
         uses: actions/cache@v3
