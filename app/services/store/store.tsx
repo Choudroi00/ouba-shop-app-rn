@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { walkthroughReducer } from "./slices/WalkthroughSlice";
 import { userReducer } from "./slices/UserSlice";
 import { mainScreenReducer } from "./slices/MainScreenStateSlice";
+import { productsReducer } from "./slices/ProductsSlice";
 
 
 
@@ -11,7 +12,8 @@ const store = configureStore({
     reducer:{
         walkthrough: walkthroughReducer,
         user: userReducer,
-        mainscreen: mainScreenReducer
+        mainscreen: mainScreenReducer,
+        products: productsReducer
     }
 })
 

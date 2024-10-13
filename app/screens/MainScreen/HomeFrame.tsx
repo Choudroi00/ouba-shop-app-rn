@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     View,
     Image,
@@ -17,6 +17,9 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import HeaderAction from '../../components/mainscreen/HeaderAction';
 import { useDispatch, useSelector } from 'react-redux';
 import { switchTab } from '../../services/store/slices/MainScreenStateSlice';
+import { fetchProducts } from '../../services/store/slices/ProductsSlice';
+import { Product } from '../../models/Product';
+import { AppDispatch } from '../../services/store/store';
 
 const categories = [
     {
@@ -232,7 +235,13 @@ const HomeFrame = () => {
 
   const {activeTab} = useTypedSelector((state)=> state.mainscreen )
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
+
+  const products = useTypedSelector((state)=> state.products.items )
+
+  useEffect(()=>{
+    dispatch(fetchProducts())
+  },[dispatch])
 
   const toSearchTab = ()=> {
     dispatch(switchTab('search'))
@@ -247,10 +256,10 @@ const HomeFrame = () => {
         </View>
     );
 
-    const renderProduct = ({item}) => (
+    const renderProduct = ({item}: {item: Product}) => (
         <View style={tw`w-1/2 p-2`}>
-            <Image source={item.image} style={tw`w-full h-55 rounded-2xl`} />
-            <Text style={tw`mt-2`}>{item.name}</Text>
+            <Image source={item.images[0].url} style={tw`w-full h-55 rounded-2xl`} />
+            <Text style={tw`mt-2`}>{item.title}</Text>
             <View style={tw`flex-row justify-between items-center mt-2`}>
                 <Text>{item.price}</Text>
                 <TouchableOpacity style={tw`bg-blue-500 rounded-full p-2`}>
