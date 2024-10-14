@@ -58,7 +58,7 @@ const HomeFrame = () => {
     const asr = async () => {
       await dispatch(fetchCategories())
       await dispatch(fetchProducts())
-      console.log(products?.[10].image_url);
+      console.log(categories);
     }
 
     asr()
@@ -81,7 +81,7 @@ const HomeFrame = () => {
     const renderProduct = ({item}: {item: Product}) => (
         <View style={tw`w-1/2 p-2`}>
             <Image source={{uri: item.image_url}} style={tw`w-full h-55 rounded-2xl`} />
-            <Text style={tw`mt-2`}>{item.title}</Text>
+            <Text style={tw`mt-2 text-black`}>{item.title}</Text>
             <View style={tw`flex-row justify-between items-center mt-2`}>
                 <Text style={tw`text-black`} >{item.price}</Text>
                 <TouchableOpacity style={tw`bg-blue-500 rounded-full p-2`}>
