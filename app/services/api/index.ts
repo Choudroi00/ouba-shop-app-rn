@@ -1,8 +1,10 @@
 import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const base_url = "https://flame-api.horizonsparkle.com/api"
 
-export const axiosClient = axios.create({
+const axiosClient = axios.create({
     baseURL: base_url,
     headers: {
         "Content-Type": "application/json",
@@ -11,4 +13,19 @@ export const axiosClient = axios.create({
     timeout: 5000,
     
 });
+
+axiosClient.interceptors.request.use(
+  async (config) => {
+      const token = await AsyncStorage.getItem('user');
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token.token}`;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+);
+
+export {axiosClient}
 
