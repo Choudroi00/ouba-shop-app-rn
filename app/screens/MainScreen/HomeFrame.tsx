@@ -69,9 +69,10 @@ const HomeFrame = () => {
     dispatch(switchTab('search'))
   }
 
+    const u = 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
     const renderCategory = ({item}) => (
         <View style={tw`w-[250px] p-2`}>
-            <Image source={{uri: item.photo}} style={tw`w-full h-37 rounded-lg`} />
+            <Image source={{uri: item.photo ?? u}} style={tw`w-full h-37 rounded-lg`} />
             <Text style={tw`mt-2 ml-3 font-semibold text-base text-black`}>
                 {item.name}
             </Text>
@@ -80,7 +81,7 @@ const HomeFrame = () => {
 
     const renderProduct = ({item}: {item: Product}) => (
         <View style={tw`w-1/2 p-2`}>
-            <Image source={{uri: item.image_url}} style={tw`w-full h-55 rounded-2xl`} />
+            <Image source={{uri: item.image_url ?? u}} style={tw`w-full h-55 rounded-2xl`} />
             <Text style={tw`mt-2 text-black`}>{item.title}</Text>
             <View style={tw`flex-row justify-between items-center mt-2`}>
                 <Text style={tw`text-black`} >{item.price}</Text>

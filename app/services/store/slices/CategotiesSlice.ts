@@ -7,7 +7,11 @@ import { axiosClient } from "../../api";
 export const fetchCategories = createAsyncThunk(
   "categories/fetchCategories",
   async () => {
-    const response = await axiosClient.get("/categories");
+    console.log(axiosClient.defaults);
+    
+    const response = await axiosClient.get("/cats");
+    
+    
     return response.data.data;
   }
 );
@@ -78,6 +82,7 @@ const categoriesSlice = createSlice({
       .addCase(fetchCategories.fulfilled, (state, action) => {
         state.items = action.payload;
         state.status = "succeeded";
+      }).addCase(fetchCategories.rejected, (state, action) => {console.log(action.error);
       })
       .addCase(addCategory.fulfilled, (state, action) => {
         state.items.push(action.payload);

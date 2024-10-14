@@ -4,6 +4,7 @@ import { User } from "../../../models/User";
 
 import {reducers } from '../reducers/UserReducers'
 import { getUser, login, register } from "../../repository/userRepository";
+import { storeData } from "../../../utils/helpers";
 
 export interface UserReducersInt  {
     login: () => void;
@@ -48,6 +49,8 @@ const userSlice = createSlice({
           })
           .addCase(userRegister.fulfilled, (state, action) => {
             state.authStatus = 'true';
+            
+            
             state = action.payload ?? state;
           })
           .addCase(userRegister.rejected, (state, action) => {
@@ -61,6 +64,8 @@ const userSlice = createSlice({
             state.authStatus = 'true';
             state.token = action.payload?.token?? '';
             console.log(state);
+
+            storeData('tok', action.payload?.token??'')
             
             state = action.payload ?? state;
           })
