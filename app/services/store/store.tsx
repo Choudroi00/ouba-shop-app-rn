@@ -3,6 +3,7 @@ import { walkthroughReducer } from "./slices/WalkthroughSlice";
 import { userReducer } from "./slices/UserSlice";
 import { mainScreenReducer } from "./slices/MainScreenStateSlice";
 import { productsReducer } from "./slices/ProductsSlice";
+import { categoriesReducer } from "./slices/CategotiesSlice";
 
 
 
@@ -13,7 +14,8 @@ const store = configureStore({
         walkthrough: walkthroughReducer,
         user: userReducer,
         mainscreen: mainScreenReducer,
-        products: productsReducer
+        products: productsReducer,
+        categories: categoriesReducer
     }
 })
 

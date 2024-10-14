@@ -8,6 +8,8 @@ export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async () => {
     const response = await axiosClient.get("/products");
+    //console.log(response.data);
+    
     return response.data.data;
   }
 );
@@ -70,6 +72,8 @@ const productsSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.items = action.payload;
+        console.log('hello');
+        
         state.status = "succeeded";
       })
       .addCase(addProduct.fulfilled, (state, action) => {
@@ -82,6 +86,11 @@ const productsSlice = createSlice({
         if (index !== -1 && state.items) {
           state.items[index] = action.payload;
         }
+      }).addCase(fetchProducts.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message
+        console.log(state.error);
+        
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         state.items = state.items?.filter((item : Product) => item.id !== action.payload);

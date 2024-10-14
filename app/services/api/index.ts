@@ -1,5 +1,6 @@
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getData } from "../../utils/helpers";
 
 
 const base_url = "https://flame-api.horizonsparkle.com/api"
@@ -16,7 +17,8 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use(
   async (config) => {
-      const token = await AsyncStorage.getItem('user');
+      const token = await getData('user');
+
       if (token) {
         config.headers['Authorization'] = `Bearer ${token.token}`;
       }

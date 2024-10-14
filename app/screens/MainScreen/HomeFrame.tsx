@@ -20,44 +20,9 @@ import { switchTab } from '../../services/store/slices/MainScreenStateSlice';
 import { fetchProducts } from '../../services/store/slices/ProductsSlice';
 import { Product } from '../../models/Product';
 import { AppDispatch } from '../../services/store/store';
+import { fetchCategories } from '../../services/store/slices/CategotiesSlice';
 
-const categories = [
-    {
-        id: '1',
-        name: 'Fruits',
-        image: {
-            uri: 'https://www.mooringspark.org/hubfs/bigstock-Fresh-Fruits-assorted-Fruits-C-365480089.jpg',
-        },
-    },
-    {
-        id: '2',
-        name: 'Vegetables',
-        image: {
-            uri: 'https://th.bing.com/th/id/R.c655f6ad4bf1a12f920298b6e087200b?rik=KNLe3mk2jiJUjA&riu=http%3a%2f%2fcontent.kens5.com%2fphoto%2f2017%2f10%2f22%2fvegetables_1508727313637_11456014_ver1.0.jpg&ehk=Fq8Eoa9aKzsUPDZ8DtBhyVemrHDc8oqvw4qs3PvJii8%3d&risl=&pid=ImgRaw&r=0',
-        },
-    },
-    {
-        id: '3',
-        name: 'Dairy',
-        image: {
-            uri: 'https://th.bing.com/th/id/OIP.nFPWyhSEli_J6c0nbArHzAHaEK?rs=1&pid=ImgDetMain',
-        },
-    },
-    {
-        id: '4',
-        name: 'Bakery',
-        image: {
-            uri: 'https://th.bing.com/th/id/R.a826c35a24a319893a4fe86d729078eb?rik=dOZTQ57wt9DB6w&pid=ImgRaw&r=0',
-        },
-    },
-    {
-        id: '5',
-        name: 'Meat',
-        image: {
-            uri: 'https://farmhouseguide.com/wp-content/uploads/2022/09/Fresh-Raw-Chuck-beef-steak-on-butcher-table-with-different-spices-Black-wooden-background-ee220914-1024x597.jpg',
-        },
-    },
-];
+
 
 const fetchProductImage = async (productName: string) => {
     const apiKey = 'hk3kIgaNVAnVbZxSkhAeZr6bckLha18aly9wYrIVGaAydA8IdQDIhxgQ';
@@ -84,8 +49,20 @@ const HomeFrame = () => {
 
   const products = useTypedSelector((state)=> state.products.items )
 
+  const categories = useTypedSelector((state)=> state.categories.items )
+
+
+
   useEffect(()=>{
-    dispatch(fetchProducts())
+
+    const asr = async () => {
+      await dispatch(fetchCategories())
+      await dispatch(fetchProducts())
+      console.log(products?.[10].image_url);
+    }
+
+    asr()
+    
   },[dispatch])
 
   const toSearchTab = ()=> {
@@ -94,7 +71,7 @@ const HomeFrame = () => {
 
     const renderCategory = ({item}) => (
         <View style={tw`w-[250px] p-2`}>
-            <Image source={item.image} style={tw`w-full h-37 rounded-lg`} />
+            <Image source={{uri: item.photo}} style={tw`w-full h-37 rounded-lg`} />
             <Text style={tw`mt-2 ml-3 font-semibold text-base text-black`}>
                 {item.name}
             </Text>
@@ -103,12 +80,12 @@ const HomeFrame = () => {
 
     const renderProduct = ({item}: {item: Product}) => (
         <View style={tw`w-1/2 p-2`}>
-            <Image source={{uri: item.images[0].url}} style={tw`w-full h-55 rounded-2xl`} />
+            <Image source={{uri: item.image_url}} style={tw`w-full h-55 rounded-2xl`} />
             <Text style={tw`mt-2`}>{item.title}</Text>
             <View style={tw`flex-row justify-between items-center mt-2`}>
-                <Text>{item.price}</Text>
+                <Text style={tw`text-black`} >{item.price}</Text>
                 <TouchableOpacity style={tw`bg-blue-500 rounded-full p-2`}>
-                    <Text style={tw`text-white`}>Add</Text>
+                    <Text style={tw`text-black`}>Add</Text>
                 </TouchableOpacity>
             </View>
         </View>
