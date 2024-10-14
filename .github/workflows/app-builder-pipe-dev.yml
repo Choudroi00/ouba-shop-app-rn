@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - dev  # Trigger on push to the main branch
+      - main  # Trigger on push to the main branch
   workflow_dispatch: # Allow manual triggers
 
 jobs:
@@ -44,5 +44,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: android-apk
-          path: android/app/build/outputs/apk/debug/app-release.apk
+          path: android/app/build/outputs/apk/release/app-release.apk
 
