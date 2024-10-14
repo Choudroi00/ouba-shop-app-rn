@@ -6,7 +6,8 @@ export interface Product {
     description: string;
     price: number | null;
     quantity: number | null;
-    images: {url:string}[];
+    images?: {url?:string}[];
+    
     published: boolean;
     created_by: number;
     updated_by: number;
