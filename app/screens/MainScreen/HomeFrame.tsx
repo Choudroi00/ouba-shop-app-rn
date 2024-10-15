@@ -104,10 +104,10 @@ const HomeFrame = () => {
             </View>
         </View>
         <View style={tw`w-1/2 p-2`}>
-            <Image source={{ uri: item[0].image_url ?? 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' }} style={tw`w-full h-55 rounded-2xl`} />
-            <Text style={tw`mt-2 text-black`}>{item[0].title}</Text>
+            <Image source={{ uri: item[1].image_url ?? 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' }} style={tw`w-full h-55 rounded-2xl`} />
+            <Text style={tw`mt-2 text-black`}>{item[1].title}</Text>
             <View style={tw`flex-row justify-between items-center mt-2`}>
-                <Text style={tw`text-black`}>{item[0].price}</Text>
+                <Text style={tw`text-black`}>{item[1].price}</Text>
                 <TouchableOpacity style={tw`bg-blue-500 rounded-full p-2`}>
                     <Text style={tw`text-black`}>Add</Text>
                 </TouchableOpacity>
