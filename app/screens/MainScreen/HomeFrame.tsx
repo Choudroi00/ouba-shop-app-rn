@@ -104,7 +104,14 @@ const HomeFrame = () => {
         </View>
     ), []);
     
-    const productsRenderData = new Array(Math.floor(products.length / 2)).fill(0).forEach((v)=>[products[2*v],products[2*v + 1]])
+    const [productsRenderData, setRData] = useState([])
+    
+    useEffect(()=>{
+      if(products.length > 0){
+        setRData(new Array(Math.floor(products.length / 2)).fill(0).forEach((v)=>[products[2*v],products[2*v + 1]]))
+        
+      }
+    },[products])
 
     const data = [
         { type: ITEM_TYPES.CATEGORY_HEADER },
