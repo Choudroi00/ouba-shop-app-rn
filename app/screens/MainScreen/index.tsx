@@ -64,15 +64,14 @@ export default function MainSreen() {
             </XBarIcon>
         </XAppBar>
 
-        <ScrollView
-            contentContainerStyle={tw`flex-grow-1`}
-            showsVerticalScrollIndicator={false}
+        <View
+            
             style={tw`flex-1 mt-[65px]`}>
           {
 
             tabStates[activeTab as keyof typeof tabStates]
           }
-        </ScrollView>
+        </View>
 
         <XBottomNavigator tabs={tabs} activeTab={activeTab} onTabPress={changeTab} />
     </SafeAreaView>
