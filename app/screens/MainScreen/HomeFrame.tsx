@@ -103,13 +103,15 @@ const HomeFrame = () => {
             </View>
         </View>
     ), []);
+    
+    const productsRenderData = new Array(Math.floor(products.length / 2)).fill(0).forEach((v)=>[products[2*v],products[2*v + 1]])
 
     const data = [
         { type: ITEM_TYPES.CATEGORY_HEADER },
         { type: ITEM_TYPES.CATEGORY_LIST },
         { type: ITEM_TYPES.SEARCH_BAR },
         { type: ITEM_TYPES.PRODUCT_HEADER },
-        ...products.map(product => ({ type: ITEM_TYPES.PRODUCT, ...product })),
+        ...productsRenderData.map(product => ({ type: ITEM_TYPES.PRODUCT, ...product })),
     ];
 
     return (
