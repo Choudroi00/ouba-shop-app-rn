@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/AntDesign'
 import {default as IconX}  from 'react-native-vector-icons/Ionicons';
 import XBottomNavigator from '../../components/common/XBottomNavigator'
 import HomeFrame from './HomeFrame'
+import SearchFrame from './SearchFrame.tsx'
 import { useTypedNavigator, useTypedSelector } from '../../utils/helpers'
 import { useDispatch } from 'react-redux'
 import { switchTab } from '../../services/store/slices/MainScreenStateSlice'
@@ -30,12 +31,20 @@ export default function MainSreen() {
   const changeTab = (tabKey: string) => {
     dispatch(switchTab(tabKey))
   } 
+  
+  useEffect(() => {
+        const fetchData = async () => {
+            await dispatch(fetchCategories());
+            await dispatch(fetchProducts());
+        };
+        fetchData();
+    }, [dispatch]);
 
   //const [activeTab, setActiveTab] = useState('home');
   const [tabStates, setTabStates] = useState({
     home: <HomeFrame />,
     categories: <View style={tw`flex-1 bg-black`}></View>,
-    search: <View style={tw`flex-1 bg-black`}></View>,
+    search: <SearchFrame />,
     cart: <View style={tw`flex-1 bg-black`}></View>,
     profile: <View style={tw`flex-1 bg-black`}></View>
   });

@@ -32,13 +32,7 @@ const HomeFrame = () => {
     const products = useTypedSelector((state) => state.products.items);
     const categories = useTypedSelector((state) => state.categories.items);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            await dispatch(fetchCategories());
-            await dispatch(fetchProducts());
-        };
-        fetchData();
-    }, [dispatch]);
+    
 
     const toSearchTab = useCallback(() => {
         dispatch(switchTab('search'));
@@ -121,6 +115,7 @@ const HomeFrame = () => {
     return (
         <FlatList
             style={tw`flex-1 bg-white`}
+            numColumns={2}
             data={data}
             renderItem={renderItem}
             keyExtractor={(item, index) => `${item.type}-${index}`}
