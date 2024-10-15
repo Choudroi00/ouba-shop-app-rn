@@ -15,9 +15,9 @@ import { switchTab } from '../../services/store/slices/MainScreenStateSlice'
 
 export const tabs = [
   { key: 'home', label: 'Home', icon: {name:"home-outline" , color:"black"} },
-  { key: 'categories', label: 'Kinds', icon: {name:"menu" , color:"black"} },
+  { key: 'categories', label: 'Categories', icon: {name:"grid-outline" , color:"black"} },
   { key: 'search', label: 'Search', icon: {name:"search-outline" , color:"black"} },
-  { key: 'cart', label: 'Cart', icon: {name:"cart-outline" , color:"black"} },
+  { key: 'orders', label: 'Orders', icon: {name:"albums-outline" , color:"black"} },
   { key: 'profile', label: 'Profile', icon: {name:"person-outline" , color:"black"} },
 ];
 
