@@ -4,6 +4,7 @@ import { userReducer } from "./slices/UserSlice";
 import { mainScreenReducer } from "./slices/MainScreenStateSlice";
 import { productsReducer } from "./slices/ProductsSlice";
 import { categoriesReducer } from "./slices/CategotiesSlice";
+import { cartReducer } from "./slices/CartSlice";
 
 
 
@@ -15,7 +16,8 @@ const store = configureStore({
         user: userReducer,
         mainscreen: mainScreenReducer,
         products: productsReducer,
-        categories: categoriesReducer
+        categories: categoriesReducer,
+        cart: cartReducer
     }
 })
 

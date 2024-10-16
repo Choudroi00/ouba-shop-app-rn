@@ -11,12 +11,18 @@ import { CategoriesTree } from '../../models/CategoriesTree';
 const CategoryItem = ({category} ) => {
   const item = category.item
   
+  console.log(item.photo);
   
   
   return (
-    <View style={[styles.categoryContainer, tw`p-6 rounded-3xl mx-2 relative`]}>
-      <Text style={tw`text-white text-xl absolute top-5 right-5`}>{item.label}</Text>
-      <Image source={{uri: category.photo ?? 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'}} />
+    <View style={[styles.categoryContainer, tw` flex-col px-2  relative`]}>
+      <View style={tw`rounded-full px-6 py-1 bg-indigo-600 bg-opacity-50 absolute top-5 right-7 z-1`} >
+        <Text style={tw`text-white text-xl`}>{item.label}</Text>
+      </View>
+      <Image style={tw`w-full rounded-3xl h-35`} source={{uri: `https://cvigtavmna.cloudimg.io/${
+                            category.photo?.replace(/^https?:\/\//, '') ??
+                            'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
+                        }?force_format=jpeg&optipress=3`}} />
       {item.children && item.children.length > 0 && (
         <FlatList
           data={item.children}
@@ -61,7 +67,7 @@ const styles = StyleSheet.create({
   },
   categoryContainer: {
     marginVertical: 4,
-    marginLeft: 10,
+    marginRight: 10,
     
   },
   categoryLabel: {

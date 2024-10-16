@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Image, Text, TouchableOpacity, InteractionManager } from 'react-native';
 import tw from 'twrnc'
 import { Product } from '../../models/Product';
-import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { FadeInDown, interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { useTypedSelector } from '../../utils/helpers';
 
 
@@ -38,7 +38,7 @@ export  const  ProductItem = React.memo( ({product}: ProductItemProps) => {
     })
 
     return (
-        <View style={tw`flex-1 p-3 bg-slate-100 rounded-xl `}>
+        <View  style={tw`flex-1 p-3 bg-slate-100 rounded-xl `}>
             <View style={tw`relative`}>
                 <Animated.View style={[batchContainerStyle,tw`absolute z-1 bg-indigo-500 bg-opacity-70 flex-row gap-1 items-center  top-2 left-2 rounded-full p-1 px-4`]}  >
                     <View style={tw`rounded-full mt-1 mb-1 w-1 h-1 mr-1 bg-white`} >

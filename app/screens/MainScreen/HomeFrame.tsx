@@ -53,8 +53,9 @@ const HomeFrame = () => {
         dispatch(switchTab('search'));
     }, [dispatch]);
 
-    const toTab = useCallback(() => {
-       dispatch(switchTab('categories'));
+    const toTab = useCallback((tab: string
+    ) => {
+       dispatch(switchTab(tab));
     }, [dispatch]);
 
     interface typeAndProd extends Array<Product>{
@@ -68,7 +69,7 @@ const HomeFrame = () => {
                     return (
                         <View style={tw`flex-row justify-between p-4 px-6`}>
                             <MainTitle text="Categories" />
-                            <HeaderAction text="view all" />
+                            <HeaderAction onPress={toTab} tab={'categories'} text="view all" />
                         </View>
                     );
                 case ITEM_TYPES.CATEGORY_LIST:
