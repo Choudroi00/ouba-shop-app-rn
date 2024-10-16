@@ -6,6 +6,7 @@ export interface Product {
     description: string;
     price: number | null;
     quantity: number | null;
+    batch_size: number | null;
     images?: {url?:string}[];
     image_url?: string | null;
     

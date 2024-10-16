@@ -12,6 +12,10 @@ import SearchFrame from './SearchFrame.tsx'
 import { useTypedNavigator, useTypedSelector } from '../../utils/helpers'
 import { useDispatch } from 'react-redux'
 import { switchTab } from '../../services/store/slices/MainScreenStateSlice'
+import { fetchCategories, fetchTree } from '../../services/store/slices/CategotiesSlice.ts'
+import { fetchProducts } from '../../services/store/slices/ProductsSlice.tsx'
+import { AppDispatch } from '../../services/store/store.tsx'
+import CategoriesFrame from './CategoriesFrame'
 
 
 export const tabs = [
@@ -26,7 +30,7 @@ export default function MainSreen() {
 
   const {activeTab } = useTypedSelector(state => state.mainscreen);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
 
   const changeTab = (tabKey: string) => {
     dispatch(switchTab(tabKey))
@@ -36,6 +40,7 @@ export default function MainSreen() {
         const fetchData = async () => {
             await dispatch(fetchCategories());
             await dispatch(fetchProducts());
+            await dispatch(fetchTree())
         };
         fetchData();
     }, [dispatch]);
@@ -43,7 +48,7 @@ export default function MainSreen() {
   //const [activeTab, setActiveTab] = useState('home');
   const [tabStates, setTabStates] = useState({
     home: <HomeFrame />,
-    categories: <View style={tw`flex-1 bg-black`}></View>,
+    categories: <CategoriesFrame />,
     search: <SearchFrame />,
     cart: <View style={tw`flex-1 bg-black`}></View>,
     profile: <View style={tw`flex-1 bg-black`}></View>

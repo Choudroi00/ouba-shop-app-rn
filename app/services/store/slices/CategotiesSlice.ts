@@ -2,6 +2,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { Category } from "../../../models/Category";
 import { axiosClient } from "../../api";
+import { CategoriesTree } from "../../../models/CategoriesTree";
 
 
 export const fetchCategories = createAsyncThunk(
@@ -59,9 +60,19 @@ export const deleteCategory = createAsyncThunk(
   }
 );
 
+export const fetchTree = createAsyncThunk(
+    'categories/fetchTree",'
+    ,async ()=>{
+    const response = await axiosClient.get("/categories/tree");
+    
+    
+    return response.data;
+})
+
 
 export interface CategoriesState {
     items: Category[];
+    tree: CategoriesTree[];
     status: "idle" | "loading" | "succeeded" | "failed";
     error: string | null;
 }
@@ -70,6 +81,7 @@ const initialState: CategoriesState = {
     items: [],
     status: "idle",
     error: null,
+    tree: [],
   
 }
 
@@ -97,7 +109,10 @@ const categoriesSlice = createSlice({
       })
       .addCase(deleteCategory.fulfilled, (state, action) => {
         state.items = state.items.filter((item) => item.id !== action.payload);
-      });
+      })
+      .addCase(fetchTree.fulfilled, (state, action) => {
+        state.tree = action.payload;
+      })
   },
 });
 
