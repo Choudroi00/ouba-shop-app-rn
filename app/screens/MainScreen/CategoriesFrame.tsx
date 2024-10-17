@@ -3,31 +3,41 @@ import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 import Animated, { FadeInUp, FadeOutDown } from 'react-native-reanimated';
 import tw from 'twrnc'; 
 import { Category } from '../../models/Category';
-import { useTypedSelector } from '../../utils/helpers';
+import { useTypedNavigator, useTypedSelector } from '../../utils/helpers';
 import { CategoriesTree } from '../../models/CategoriesTree';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 
 
-const CategoryItem = ({category} ) => {
-  const item = category.item
+const CategoryItem = ({category, switcher}: {category: {item: CategoriesTree}, switcher: (id: number)=> void}) => {
+  //const item = category.item
+
+  const {photo, id, label, children} = category.item;
   
-  console.log(item.photo);
+  
+  
+  
+  
   
   
   return (
     <View style={[styles.categoryContainer, tw` flex-col px-2 relative`]}>
-      <View style={tw`rounded-full  px-6 py-1 bg-indigo-600 bg-opacity-50 absolute top-5 right-7 z-1`} >
-        <Text style={tw`text-white text-xl`}>{item.label}</Text>
+      <View style={tw`rounded-full  px-6 py-1 bg-indigo-600 bg-opacity-80 absolute top-5 right-7 z-1`} >
+        <Text style={tw`text-white text-xl`}>{label}</Text>
       </View>
-      <Image style={tw`w-full border-2 border-slate-100 rounded-3xl h-35`} source={{uri: `https://cvigtavmna.cloudimg.io/${
-                            item.photo?.replace(/^https?:\/\//, '') ??
-                            'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
-                        }?force_format=jpeg&optipress=3`}} />
-      {item.children && item.children.length > 0 && (
+      <TouchableWithoutFeedback
+          onPress={()=> switcher(id)} >
+
+        <Image style={tw`w-full border-2 border-slate-100 rounded-3xl h-35`} source={{uri: `https://cvigtavmna.cloudimg.io/${
+                              photo?.replace(/^https?:\/\//, '') ??
+                              'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
+                          }?force_format=jpeg&optipress=3`}} />
+      </TouchableWithoutFeedback>
+      {children && children.length > 0 && (
         <FlatList
-          data={item.children}
+          data={children}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={(it ) => <CategoryItem category={it} />}
+          renderItem={(it ) => <CategoryItem switcher={switcher} category={it} />}
           style={styles.subCategoryList}
         />
       )}
@@ -41,16 +51,39 @@ const CategoryItem = ({category} ) => {
 const CategoriesFrame = () => {
 
   const tree = useTypedSelector((state) => state.categories.tree);
+  const navigation = useTypedNavigator()
 
-  console.log('len',tree.length);
+  //console.log('len',tree.length);
+  const tGetter = (it : CategoriesTree[], target: number) : string => {
+    for (let index = 0; index < it.length; index++) {
+      const element = it[index];
+
+      if (element.children && element.children.length > 0) {
+        const result = tGetter(element.children, target);
+        if(result) return result;
+      }
+      
+      if (element.id === target) {
+        return element.label;
+      }
+    }
+
+    return '';
+  }
+
+  const toCategoryProducts = (id: number) => {
+    navigation.navigate('ProductsScreen', {query: id.toString(), title: tGetter(tree, id)});
+  }
+  
   
 
   return (
     <View style={styles.container}>
       <FlatList
         data={tree}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={( item: CategoriesTree ) => <CategoryItem category={item} />}
+        contentContainerStyle={tw`pb-[100px] pt-[16px]`}
+        keyExtractor={(item, ind) => ind.toString()}
+        renderItem={( item ) => <CategoryItem switcher={toCategoryProducts} category={item} />}
       />
     </View>
   );
@@ -62,8 +95,10 @@ const CategoriesFrame = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    
+    paddingHorizontal: 8,
     backgroundColor: '#fff',
+    
   },
   categoryContainer: {
     marginVertical: 4,

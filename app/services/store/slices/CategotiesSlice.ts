@@ -64,6 +64,9 @@ export const fetchTree = createAsyncThunk(
     'categories/fetchTree",'
     ,async ()=>{
     const response = await axiosClient.get("/categories/tree");
+
+    //console.log(response.data);
+    
     
     
     return response.data;
@@ -111,6 +114,8 @@ const categoriesSlice = createSlice({
         state.items = state.items.filter((item) => item.id !== action.payload);
       })
       .addCase(fetchTree.fulfilled, (state, action) => {
+        //console.log(action.payload[0].photo);
+        
         state.tree = action.payload;
       })
   },

@@ -30,12 +30,12 @@ const bar = [
     },
 ];
 
-export default function ProductsScreen() {
+export default function PProductsScreen() {
     const navigator = useTypedNavigator();
 
     const {query, title} = useRoute().params;
 
-    const [products, setProducts] = React.useState<Product[]>([]);
+    //const [products, setProducts] = React.useState<Product[]>([]);
 
     const dispatch = useDispatch<AppDispatch>();
 
@@ -47,38 +47,13 @@ export default function ProductsScreen() {
         };
 
         fetcher();
+        console.log(byCategory);
+        
 
         return () => {};
     }, []);
 
-    const onAddToCart = (id: number) => {
-        dispatch(changeInCartStatus({id}));
-        dispatch(addToCart({productId: id, quantity: 1}));
-    };
+    return (<View></View>)
 
-    return (
-        <View style={tw`flex-1 pt-[60] bg-white`}>
-            <XAppBar title={(title as string).toUpperCase()}>
-                {bar.map(item => (
-                    <XBarIcon
-                        key={item.identifier}
-                        indentifier={item.identifier}
-                        position={item.position as 'right' | 'left'}
-                        onPress={() => {
-                            navigator.navigate('MainScreen');
-                        }}>
-                        <Icon name={item.icon} size={24} color="black" />
-                    </XBarIcon>
-                ))}
-            </XAppBar>
-
-            <FlatList
-                data={byCategory[-1].products}
-                keyExtractor={item => item.id.toString()}
-                renderItem={({item}) => (
-                    <ProductItem onAddToCart={onAddToCart} product={item} />
-                )}
-            />
-        </View>
-    );
+    
 }

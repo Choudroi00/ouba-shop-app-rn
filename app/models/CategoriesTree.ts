@@ -1,5 +1,6 @@
 export interface CategoriesTree {
     id: number;
-    item: {label: string;
-    children?: CategoriesTree[];}
+    photo: string;
+    label: string;
+    children?: CategoriesTree[];
 }

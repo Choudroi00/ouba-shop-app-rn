@@ -24,6 +24,7 @@ import MainSreen from './app/screens/MainScreen';
 import AppEntry from './app/screens';
 import CartScreen from './app/screens/CartScreen';
 import ProductsScreen from './app/screens/ProductsScreen';
+import PProductsScreen from './app/screens/ProductsScreen';
 
 
 
@@ -34,7 +35,10 @@ export type RootStackParamList = {
   MainScreen: undefined 
   AppEntry: undefined;
   CartScreen: undefined;
-  ProductsScreen: undefined;
+  ProductsScreen: {
+    query: string;
+    title: string;
+  };
 };
 
 export type RootStackNavigationProp = NavigationProp<RootStackParamList>;
@@ -75,7 +79,7 @@ function App(): React.JSX.Element {
               <Stack.Screen name="Auth" component={LoginScreen} />
               <Stack.Screen name="MainScreen" component={MainSreen} /> 
               <Stack.Screen name="CartScreen" component={CartScreen} />  
-              <Stack.Screen name="ProductsScreen" component={ProductsScreen} />
+              <Stack.Screen name="ProductsScreen" component={PProductsScreen} />
             </Stack.Navigator>
           </NavigationContainer>
           

@@ -53,7 +53,7 @@ const HomeFrame = () => {
                 const isInCart = cartItems.some((item)=> item.product_id === products[2 * index].id);
                 const isInCart2 = cartItems.some((item)=> item.product_id === products[2 * index + 1].id);
 
-                console.log(isInCart);
+                
                 
 
                 return [
