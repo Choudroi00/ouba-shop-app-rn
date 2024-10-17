@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, ScrollView, View} from 'react-native';
+import {BackHandler, SafeAreaView, ScrollView, View} from 'react-native';
 import tw from 'twrnc';
 import XAppBar from '../../components/common/XAppBar';
 import XBarIcon from '../../components/common/XBarIcon';
@@ -20,6 +20,7 @@ import {fetchProducts} from '../../services/store/slices/ProductsSlice.tsx';
 import {AppDispatch} from '../../services/store/store.tsx';
 import CategoriesFrame from './CategoriesFrame';
 import { fetchCart } from '../../services/store/slices/CartSlice.ts';
+import XModal from '../../components/common/XModal.tsx';
 
 export const tabs = [
     {key: 'home', label: 'Home', icon: {name: 'home-outline', color: 'black'}},
@@ -99,6 +100,8 @@ export default function MainSreen() {
 
     const navigator = useTypedNavigator();
 
+    const [mvis,setMVis] = useState(false)
+
     useEffect(() => {
         navigator.addListener('beforeRemove', e => {
             e.preventDefault();
@@ -133,6 +136,16 @@ export default function MainSreen() {
                 activeTab={activeTab}
                 onTabPress={changeTab}
             />
+            <XModal 
+            visible={mvis}
+            title='Close App?'
+            bodyText='You are about to close the app. Are you sure?'
+            onDismiss={()=>setMVis(false)}
+            onCancel={()=>setMVis(false)}
+            onConfirm={()=> {
+                BackHandler.exitApp();
+            }}
+            ></XModal>
         </SafeAreaView>
     );
 }

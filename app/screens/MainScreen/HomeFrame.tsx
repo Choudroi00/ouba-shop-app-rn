@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     FlatList,
     Pressable,
+    TouchableWithoutFeedback,
 } from 'react-native';
 import tw from 'twrnc';
 import {useDispatch} from 'react-redux';
@@ -17,14 +18,12 @@ import {useTypedNavigator, useTypedSelector} from '../../utils/helpers';
 import MainTitle from '../../components/mainscreen/MainTitle';
 import HeaderAction from '../../components/mainscreen/HeaderAction';
 import {Product} from '../../models/Product';
-import Animated, { SlideInLeft } from 'react-native-reanimated';
+import Animated, {SlideInLeft} from 'react-native-reanimated';
 import ProductItem from '../../components/mainscreen/ProductItem';
 
-import {changeInCartStatus} from '../../services/store/slices/ProductsSlice'
-import {addToCart} from '../../services/store/slices/CartSlice'
+import {changeInCartStatus} from '../../services/store/slices/ProductsSlice';
+import {addToCart} from '../../services/store/slices/CartSlice';
 import XSnackbar from '../../components/common/XSnakeBar';
-
-
 
 const ITEM_TYPES = {
     CATEGORY_HEADER: 'CATEGORY_HEADER',
@@ -40,7 +39,7 @@ const HomeFrame = () => {
     const products = useTypedSelector(state => state.products.items);
     const categories = useTypedSelector(state => state.categories.items);
     const cartItems = useTypedSelector(state => state.cart.cartItems);
-    const [snv,setSnv] = useState(false)
+    const [snv, setSnv] = useState(false);
 
     const [productsRenderData, setRData] = useState<Product[][]>([]);
 
@@ -49,23 +48,25 @@ const HomeFrame = () => {
             const newData = new Array(Math.floor(products.length / 2))
                 .fill(0)
                 .map((_, index) => {
-                    
-                const isInCart = cartItems.some((item)=> item.product_id === products[2 * index].id);
-                const isInCart2 = cartItems.some((item)=> item.product_id === products[2 * index + 1].id);
+                    const isInCart = cartItems.some(
+                        item => item.product_id === products[2 * index].id,
+                    );
+                    const isInCart2 = cartItems.some(
+                        item => item.product_id === products[2 * index + 1].id,
+                    );
 
-                
-                
-
-                return [
-                    {
-                    ...products[2 * index],
-                    isInCart: products[2 * index].isInCart ??  isInCart,
-                    },
-                   {
-                    ...products[2 * index + 1],
-                    isInCart: products[2 * index + 1].isInCart ??  isInCart2,
-                  }
-                ]});
+                    return [
+                        {
+                            ...products[2 * index],
+                            isInCart: products[2 * index].isInCart ?? isInCart,
+                        },
+                        {
+                            ...products[2 * index + 1],
+                            isInCart:
+                                products[2 * index + 1].isInCart ?? isInCart2,
+                        },
+                    ];
+                });
 
             setRData(newData);
         }
@@ -75,13 +76,15 @@ const HomeFrame = () => {
         dispatch(switchTab('search'));
     }, [dispatch]);
 
-    const toTab = useCallback((tab: string
-    ) => {
-       dispatch(switchTab(tab));
-    }, [dispatch]);
+    const toTab = useCallback(
+        (tab: string) => {
+            dispatch(switchTab(tab));
+        },
+        [dispatch],
+    );
 
-    interface typeAndProd extends Array<Product>{
-      type: typeof ITEM_TYPES.PRODUCT;
+    interface typeAndProd extends Array<Product> {
+        type: typeof ITEM_TYPES.PRODUCT;
     }
 
     const renderItem = useCallback(
@@ -91,7 +94,11 @@ const HomeFrame = () => {
                     return (
                         <View style={tw`flex-row justify-between p-4 px-6`}>
                             <MainTitle text="Categories" />
-                            <HeaderAction onPress={toTab} tab={'categories'} text="view all" />
+                            <HeaderAction
+                                onPress={toTab}
+                                tab={'categories'}
+                                text="view all"
+                            />
                         </View>
                     );
                 case ITEM_TYPES.CATEGORY_LIST:
@@ -100,7 +107,9 @@ const HomeFrame = () => {
                             horizontal
                             data={categories}
                             renderItem={renderCategory}
-                            keyExtractor={(category, index) => category?.id?.toString() ?? index.toString()}
+                            keyExtractor={(category, index) =>
+                                category?.id?.toString() ?? index.toString()
+                            }
                             showsHorizontalScrollIndicator={false}
                             style={tw`w-full`}
                         />
@@ -134,36 +143,44 @@ const HomeFrame = () => {
 
     const renderCategory = useCallback(
         ({item}) => (
-            <View style={tw`w-[250px] p-2`}>
-                <Image
-                    source={{
-                        uri:
-                            item.photo ??
-                            'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
-                    }}
-                    style={tw`w-full h-37 rounded-lg`}
-                />
-                <Text style={tw`mt-2 ml-3 font-semibold text-base text-black`}>
-                    {item.name}
-                </Text>
-            </View>
+            <TouchableWithoutFeedback
+                onPress={() => toTab('categories')}
+                style={tw``}>
+                <View style={tw` w-[250px] p-2`}>
+                    <Image
+                        source={{
+                            uri:
+                                item.photo ??
+                                'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
+                        }}
+                        style={tw`w-full h-37 rounded-lg`}
+                    />
+                    <Text
+                        style={tw`mt-2 ml-3 font-semibold text-base text-black`}>
+                        {item.name}
+                    </Text>
+                </View>
+            </TouchableWithoutFeedback>
         ),
         [],
     );
 
-    const onAddToCart = (id: number)=>{
-      dispatch(changeInCartStatus({id}))
-      dispatch(addToCart({productId:id,quantity: 1}))
-      setSnv(true)
-    }
+    const onAddToCart = (id: number) => {
+        dispatch(changeInCartStatus({id}));
+        dispatch(addToCart({productId: id, quantity: 1}));
+        setSnv(true);
+    };
 
     const renderProduct = useCallback(
         ({item}: {item: Product[]}) => (
             <View style={tw`w-full py-2 gap-x-4 px-3 flex-row`}>
-                <ProductItem onAddToCart={onAddToCart} product={item[0]} ></ProductItem>
+                <ProductItem
+                    onAddToCart={onAddToCart}
+                    product={item[0]}></ProductItem>
 
-                
-                <ProductItem onAddToCart={onAddToCart} product={item[1]}></ProductItem>
+                <ProductItem
+                    onAddToCart={onAddToCart}
+                    product={item[1]}></ProductItem>
             </View>
         ),
         [],
@@ -181,8 +198,14 @@ const HomeFrame = () => {
     ];
 
     return (
-        <View style={tw`flex-1`} >
-            {snv && <XSnackbar type='success' message='item added successfully to the cart!' onDismiss={()=>setSnv(false)} />}
+        <View style={tw`flex-1`}>
+            {snv && (
+                <XSnackbar
+                    type="success"
+                    message="item added successfully to the cart!"
+                    onDismiss={() => setSnv(false)}
+                />
+            )}
             <Animated.FlatList
                 style={tw`flex-1 bg-white`}
                 ListFooterComponent={<View style={tw`h-20`} />}
@@ -190,7 +213,7 @@ const HomeFrame = () => {
                 renderItem={renderItem}
                 keyExtractor={(item, index) => `${item.type}-${index}`}
                 showsVerticalScrollIndicator={false}
-                initialNumToRender={3} 
+                initialNumToRender={3}
                 windowSize={3}
                 removeClippedSubviews={true}
             />

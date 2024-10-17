@@ -73,6 +73,14 @@ export const removeFromCart = createAsyncThunk(
   }
 );
 
+export const placeOrderFromCart = createAsyncThunk(
+  'cart/placeOrder',
+  async () => {
+    const response = await axiosClient.post('/order/storeFromCart');
+    return response.data;
+  }
+)
+
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
@@ -113,7 +121,17 @@ const cartSlice = createSlice({
       .addCase(removeFromCart.fulfilled, (state, action) => {
         state.loading = false;
         state.cartItems = state.cartItems.filter(item => item.product_id !== action.payload);
-      });
+      })
+      .addCase(placeOrderFromCart.pending, (state) => {
+        state.loading = true;
+        
+      })
+      .addCase(placeOrderFromCart.fulfilled, (state) => {
+        state.loading = false;
+        state.cartItems = [];
+        state.total = 0;
+        state.products = [];
+      })
   },
 });
 

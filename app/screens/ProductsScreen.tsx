@@ -4,7 +4,7 @@ import {
     useNavigation,
     useRoute,
 } from '@react-navigation/native';
-import React, {useEffect, View, Flatlist, Text} from 'react';
+import React, {useEffect} from 'react';
 
 import tw from 'twrnc';
 import {Product} from '../models/Product';
@@ -18,24 +18,26 @@ import {useTypedNavigator, useTypedSelector} from '../utils/helpers';
 import Icon from 'react-native-vector-icons/AntDesign';
 import XBarIcon from '../components/common/XBarIcon';
 import XAppBar from '../components/common/XAppBar';
-import {ActivityIndicator, FlatList} from 'react-native';
+import {ActivityIndicator, FlatList, View} from 'react-native';
 import ProductItem from '../components/mainscreen/ProductItem';
 import {addToCart} from '../services/store/slices/CartSlice';
 
 const bar = [
     {
         identifier: 'all',
-        position: 'right',
-        icon: 'all-inclusive',
+        position: 'left',
+        icon: 'left',
     },
 ];
 
-export default function PProductsScreen() {
+export default function ProductsScreen() {
     const navigator = useTypedNavigator();
 
     const {query, title} = useRoute().params;
 
-    //const [products, setProducts] = React.useState<Product[]>([]);
+    const [products, setProducts] = React.useState<Product[]>([]);
+
+    const cartItems = useTypedSelector(state => state.cart.cartItems);
 
     const dispatch = useDispatch<AppDispatch>();
 
@@ -47,13 +49,48 @@ export default function PProductsScreen() {
         };
 
         fetcher();
-        console.log(byCategory);
+
+        console.log(byCategory.cid);
         
 
         return () => {};
     }, []);
 
-    return (<View></View>)
+    const onAddToCart = (id: number) => {
+        dispatch(changeInCartStatus({id}));
+        dispatch(addToCart({productId: id, quantity: 1}));
+    };
 
-    
+    return (
+        <View style={tw`flex-1 pt-[60] bg-white`}>
+            <XAppBar title={(title as string).toUpperCase()}>
+                {bar.map(item => (
+                    <XBarIcon
+                        key={item.identifier}
+                        indentifier={item.identifier}
+                        position={item.position as 'right' | 'left'}
+                        onPress={() => {
+                            navigator.navigate('MainScreen');
+                        }}>
+                        <Icon name={item.icon} size={24} color="black" />
+                    </XBarIcon>
+                ))}
+            </XAppBar>
+
+            <FlatList
+                data={byCategory.products.map((_)=>{
+                    return {..._, isInCart: cartItems.some(item => item.product_id === _.id)  };
+                })}
+                contentContainerStyle={tw`pt-10 gap-2`}
+                keyExtractor={item => item.id.toString()}
+                numColumns={2}
+                renderItem={({item}) => (
+                    <View style={tw`p-2 flex-1`}>
+                        <ProductItem onAddToCart={onAddToCart} product={item} />
+                    </View>
+                    
+                )}
+            />
+        </View>
+    );
 }

@@ -62,7 +62,7 @@ export interface ProductEngineState{
   forCategory: {
     cid: number
     products: Product[]
-  }[]
+  }
 }
 
 const initialState : ProductEngineState = {
@@ -116,7 +116,7 @@ const productsSlice = createSlice({
         state.items = state.items?.filter((item : Product) => item.id !== action.payload);
       })
       .addCase(fetchProductsByCategory.fulfilled, (state, action) => {
-        state.forCategory.push(action.payload)
+        state.forCategory = action.payload
       })
   },
 });
