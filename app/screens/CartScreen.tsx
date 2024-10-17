@@ -162,6 +162,7 @@ const CartScreen = () => {
                             }))}
                             keyExtractor={item => item.id.toString()}
                             renderItem={renderCartItem}
+                            contentContainerStyle={tw`py-2`}
                             showsVerticalScrollIndicator={false}
                         />
                         <View style={tw`bg-slate-50 p-6 rounded-t-2xl border-b-0 border-[4px] border-slate-200`}>

@@ -17,7 +17,8 @@ export const fetchProducts = createAsyncThunk(
 export const fetchProductsByCategory = createAsyncThunk(
     "products/fetchProductsByCategory",
   async (categoryId: number) => {
-
+    const response = await axiosClient.get(`/products/by/${categoryId}`);
+    return {products: response.data.data, cid: categoryId};
   }
 );
 
@@ -58,12 +59,17 @@ export interface ProductEngineState{
   items?: Product []
   status?: "idle" | "succeeded" | "failed" | "loading"
   error?: string | null
+  forCategory: {
+    cid: number
+    products: Product[]
+  }[]
 }
 
 const initialState : ProductEngineState = {
     items: [],
     status: "idle",
     error: null,
+    forCategory: []
   
 }
 
@@ -108,7 +114,10 @@ const productsSlice = createSlice({
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         state.items = state.items?.filter((item : Product) => item.id !== action.payload);
-      });
+      })
+      .addCase(fetchProductsByCategory.fulfilled, (state, action) => {
+        state.forCategory.push(action.payload)
+      })
   },
 });
 
