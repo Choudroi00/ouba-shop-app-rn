@@ -23,13 +23,36 @@ const initialState: CartState = {
 
 export const fetchCart = createAsyncThunk('cart/fetchCart', async () => {
   const response = await axiosClient.get('/cart');
-  return response.data;
+  const _ : {
+    cart_items: {
+      [id:number] : {
+        product_id: number,
+        quantity: number
+      },
+      
+    },
+    products: Product[],
+    total: number
+  } = response.data;
+
+  const dummy = { ..._,cart_items: Object.entries(_.cart_items).map(([key, value]) => {
+    return {
+      id: parseInt(key),
+      product_id: value.product_id,
+      quantity: value.quantity,
+    }
+    
+  })
+}
+  return dummy;
 });
 
 export const addToCart = createAsyncThunk(
   'cart/addToCart',
   async ({ productId, quantity }: { productId: number; quantity: number }) => {
     const response = await axiosClient.post('/cart', { product_id: productId, quantity });
+    
+    
     return response.data;
   }
 );
@@ -38,7 +61,7 @@ export const updateQuantity = createAsyncThunk(
   'cart/updateQuantity',
   async ({ productId, quantity }: { productId: number; quantity: number }) => {
     const response = await axiosClient.post(`/cart/updateQuantity/${productId}`, { quantity });
-    return response.data;
+    return {quantity, productId };
   }
 );
 
@@ -58,22 +81,32 @@ const cartSlice = createSlice({
     builder
       .addCase(fetchCart.pending, (state) => {
         state.loading = true;
+        
       })
       .addCase(fetchCart.fulfilled, (state, action) => {
         state.loading = false;
+        
         state.cartItems = action.payload.cart_items;
-        state.products = action.payload.products;
+        
+        
+        state.products = action.payload.products.map((product: Product) => ({...product, isInCart: true}));
         state.total = action.payload.total;
+        //console.log('hello')
       })
       .addCase(fetchCart.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch cart';
+        console.log('hella')
       })
       .addCase(addToCart.fulfilled, (state) => {
         state.loading = false;
+        
+      }).addCase(addToCart.rejected,(action)=>{
+        console.log(action.error, 'err')
       })
-      .addCase(updateQuantity.fulfilled, (state) => {
+      .addCase(updateQuantity.fulfilled, (state, action) => {
         state.loading = false;
+        state.cartItems = state.cartItems.map(item => item.product_id === action.payload.productId? {...item, quantity: action.payload.quantity} : item);
       })
       .addCase(removeFromCart.fulfilled, (state, action) => {
         state.loading = false;

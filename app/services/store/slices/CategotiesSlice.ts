@@ -8,7 +8,7 @@ import { CategoriesTree } from "../../../models/CategoriesTree";
 export const fetchCategories = createAsyncThunk(
   "categories/fetchCategories",
   async () => {
-    console.log(axiosClient.defaults);
+    //console.log(axiosClient.defaults);
     
     const response = await axiosClient.get("/cats");
     

@@ -14,6 +14,13 @@ export const fetchProducts = createAsyncThunk(
   }
 );
 
+export const fetchProductsByCategory = createAsyncThunk(
+    "products/fetchProductsByCategory",
+  async (categoryId: number) => {
+
+  }
+);
+
 export const fetchProduct = createAsyncThunk(
   "products/fetchProduct",
   async (id: number) => {
@@ -63,7 +70,14 @@ const initialState : ProductEngineState = {
 const productsSlice = createSlice({
   name: "products",
   initialState,
-  reducers: {},
+  reducers: {
+    changeInCartStatus: (state, payload )=>{
+        
+        state.items = state.items.map((_)=>_.id === payload.payload.id ? {..._,isInCart:true} : _)
+        console.log(state.items.find((_)=>_.id === payload.payload.id))
+
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchProduct.fulfilled, (state, action)=>{
@@ -99,5 +113,7 @@ const productsSlice = createSlice({
 });
 
 const reducer = productsSlice.reducer;
+
+export const {changeInCartStatus} = productsSlice.actions;
 
 export { reducer as productsReducer  };

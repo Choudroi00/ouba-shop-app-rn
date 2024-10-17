@@ -20,6 +20,12 @@ import {Product} from '../../models/Product';
 import Animated, { SlideInLeft } from 'react-native-reanimated';
 import ProductItem from '../../components/mainscreen/ProductItem';
 
+import {changeInCartStatus} from '../../services/store/slices/ProductsSlice'
+import {addToCart} from '../../services/store/slices/CartSlice'
+import XSnackbar from '../../components/common/XSnakeBar';
+
+
+
 const ITEM_TYPES = {
     CATEGORY_HEADER: 'CATEGORY_HEADER',
     CATEGORY_LIST: 'CATEGORY_LIST',
@@ -33,17 +39,33 @@ const HomeFrame = () => {
     const dispatch = useDispatch<AppDispatch>();
     const products = useTypedSelector(state => state.products.items);
     const categories = useTypedSelector(state => state.categories.items);
+    const cartItems = useTypedSelector(state => state.cart.cartItems);
+    const [snv,setSnv] = useState(false)
 
-    const [productsRenderData, setRData] = useState([]);
+    const [productsRenderData, setRData] = useState<Product[][]>([]);
 
     useEffect(() => {
-        if (products?.length > 0) {
+        if (products && products?.length > 0) {
             const newData = new Array(Math.floor(products.length / 2))
                 .fill(0)
-                .map((_, index) => [
-                    products[2 * index],
-                    products[2 * index + 1],
-                ]);
+                .map((_, index) => {
+                    
+                const isInCart = cartItems.some((item)=> item.product_id === products[2 * index].id);
+                const isInCart2 = cartItems.some((item)=> item.product_id === products[2 * index + 1].id);
+
+                console.log(isInCart);
+                
+
+                return [
+                    {
+                    ...products[2 * index],
+                    isInCart: products[2 * index].isInCart ??  isInCart,
+                    },
+                   {
+                    ...products[2 * index + 1],
+                    isInCart: products[2 * index + 1].isInCart ??  isInCart2,
+                  }
+                ]});
 
             setRData(newData);
         }
@@ -78,7 +100,7 @@ const HomeFrame = () => {
                             horizontal
                             data={categories}
                             renderItem={renderCategory}
-                            keyExtractor={category => category.id}
+                            keyExtractor={(category, index) => category?.id?.toString() ?? index.toString()}
                             showsHorizontalScrollIndicator={false}
                             style={tw`w-full`}
                         />
@@ -129,13 +151,19 @@ const HomeFrame = () => {
         [],
     );
 
+    const onAddToCart = (id: number)=>{
+      dispatch(changeInCartStatus({id}))
+      dispatch(addToCart({productId:id,quantity: 1}))
+      setSnv(true)
+    }
+
     const renderProduct = useCallback(
         ({item}: {item: Product[]}) => (
             <View style={tw`w-full py-2 gap-x-4 px-3 flex-row`}>
-                <ProductItem product={item[0]} ></ProductItem>
+                <ProductItem onAddToCart={onAddToCart} product={item[0]} ></ProductItem>
 
                 
-                <ProductItem product={item[1]}></ProductItem>
+                <ProductItem onAddToCart={onAddToCart} product={item[1]}></ProductItem>
             </View>
         ),
         [],
@@ -153,17 +181,20 @@ const HomeFrame = () => {
     ];
 
     return (
-        <Animated.FlatList
-            style={tw`flex-1 bg-white`}
-            ListFooterComponent={<View style={tw`h-20`} />}
-            data={data}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => `${item.type}-${index}`}
-            showsVerticalScrollIndicator={false}
-            initialNumToRender={3} 
-            windowSize={3}
-            removeClippedSubviews={true}
-        />
+        <View style={tw`flex-1`} >
+            {snv && <XSnackbar type='success' message='item added successfully to the cart!' onDismiss={()=>setSnv(false)} />}
+            <Animated.FlatList
+                style={tw`flex-1 bg-white`}
+                ListFooterComponent={<View style={tw`h-20`} />}
+                data={data}
+                renderItem={renderItem}
+                keyExtractor={(item, index) => `${item.type}-${index}`}
+                showsVerticalScrollIndicator={false}
+                initialNumToRender={3} 
+                windowSize={3}
+                removeClippedSubviews={true}
+            />
+        </View>
     );
 };
 

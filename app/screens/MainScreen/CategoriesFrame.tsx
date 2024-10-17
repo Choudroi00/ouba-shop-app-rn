@@ -15,12 +15,12 @@ const CategoryItem = ({category} ) => {
   
   
   return (
-    <View style={[styles.categoryContainer, tw` flex-col px-2  relative`]}>
-      <View style={tw`rounded-full px-6 py-1 bg-indigo-600 bg-opacity-50 absolute top-5 right-7 z-1`} >
+    <View style={[styles.categoryContainer, tw` flex-col px-2 relative`]}>
+      <View style={tw`rounded-full  px-6 py-1 bg-indigo-600 bg-opacity-50 absolute top-5 right-7 z-1`} >
         <Text style={tw`text-white text-xl`}>{item.label}</Text>
       </View>
-      <Image style={tw`w-full rounded-3xl h-35`} source={{uri: `https://cvigtavmna.cloudimg.io/${
-                            category.photo?.replace(/^https?:\/\//, '') ??
+      <Image style={tw`w-full border-2 border-slate-100 rounded-3xl h-35`} source={{uri: `https://cvigtavmna.cloudimg.io/${
+                            item.photo?.replace(/^https?:\/\//, '') ??
                             'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
                         }?force_format=jpeg&optipress=3`}} />
       {item.children && item.children.length > 0 && (

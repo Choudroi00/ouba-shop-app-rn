@@ -9,6 +9,9 @@ export interface Product {
     batch_size: number | null;
     images?: {url?:string}[];
     image_url?: string | null;
+    categories?: {id?: number}[];
+
+    isInCart?: boolean;
     
     published: boolean;
     created_by: number;

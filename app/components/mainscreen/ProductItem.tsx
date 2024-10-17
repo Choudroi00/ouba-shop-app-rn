@@ -4,14 +4,33 @@ import tw from 'twrnc'
 import { Product } from '../../models/Product';
 import Animated, { FadeInDown, interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { useTypedSelector } from '../../utils/helpers';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../services/store/store';
+import LottieView from 'lottie-react-native';
 
 
 interface ProductItemProps {
-    product: Product
+    product: Product,
+    onAddToCart: (id: number) => void,
 }
+export  const  ProductItem = React.memo( ({product, onAddToCart}: ProductItemProps) => {
+    const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
-export  const  ProductItem = React.memo( ({product}: ProductItemProps) => {
     const animator = useSharedValue(0)
+
+    const delayedAnimator = useSharedValue(product.isInCart ? 0.8 : 1) 
+
+    const dispatch = useDispatch<AppDispatch>()
+
+    const [isAdding, setIsAdding] = useState(false)
+
+    const fadeStyle = useAnimatedStyle(()=>{
+        return {
+            backgroundColor: `rgba(99, 102, 241, ${delayedAnimator.value})`,
+        }
+    })
+
+
 
     const products = useTypedSelector((state) => state.products.items);
 
@@ -36,6 +55,21 @@ export  const  ProductItem = React.memo( ({product}: ProductItemProps) => {
 
         return ()=>task.cancel()
     })
+
+    const handleAddToCart = () => {
+        
+        setIsAdding(true);
+        delayedAnimator.value = withTiming(0.8)
+        const starter = async ()=> {
+            setTimeout(() => {
+                setIsAdding(false);
+                onAddToCart(product.id);
+            }, 3000);
+        }
+        starter()
+        
+        
+    }
 
     return (
         <View  style={tw`flex-1 p-3 bg-slate-100 rounded-xl `}>
@@ -71,11 +105,15 @@ export  const  ProductItem = React.memo( ({product}: ProductItemProps) => {
                     {product.price}
                 </Text>
             </View>
-            <TouchableOpacity
-                style={tw`bg-indigo-500 rounded-full py-2 px-4 mt-3 items-center`}
+            <AnimatedTouchableOpacity
+                style={[tw`rounded-full flex-row justify-center py-2.5 pr-4  mt-3 items-center`, fadeStyle]}
+                disabled={product.isInCart || isAdding}
+                
+                onPress={handleAddToCart}
                 activeOpacity={0.8}>
-                <Text style={tw`text-white font-semibold`}>Add to Cart</Text>
-            </TouchableOpacity>
+                {isAdding ? (<LottieView source={{uri: 'https://res.cloudinary.com/dqtlhm4to/raw/upload/v1729130285/smwe1a0geou2pneq8a9a.json'}} duration={1} resizeMode='center'  autoPlay loop style={tw` w-[24px] mr-1 justify-center items-center h-[20px]`} />) : (<View  style={tw`w-[24px] mr-1 justify-center items-center h-[20px]`} />) }
+                <Text style={tw`text-white font-semibold`}>{product.isInCart ? 'Already in cart' : 'Add to Cart'}</Text>
+            </AnimatedTouchableOpacity>
         </View>
     );
 })
