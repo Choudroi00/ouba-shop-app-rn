@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, TextInput, Image, Pressable } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, TextInput, Image, Pressable, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { AppDispatch, RootState } from '../services/store/store';
 import {
@@ -116,7 +116,8 @@ const CartScreen = () => {
 
 
     return (
-        <View style={tw`flex-1  bg-white pt-[75]`}>
+        <View style={tw`flex-1  bg-white pt-[53]`}>
+            
             <XModal 
                 visible={mVis} 
                 onConfirm={handleRemoveItem} 
@@ -137,6 +138,7 @@ const CartScreen = () => {
                     </XBarIcon>
                 ))}
             </XAppBar>
+            <TouchableWithoutFeedback style={{position: 'relative'}} onPress={Keyboard.dismiss} accessible={false} >
             <View style={tw`flex-1 px-4 pt-4`}>
                 {cartItems.length === 0 ? (
                     <View style={tw`flex-1 items-center justify-center`}>
@@ -181,6 +183,7 @@ const CartScreen = () => {
                     </>
                 )}
             </View>
+            </TouchableWithoutFeedback>
         </View>
     );
 };
