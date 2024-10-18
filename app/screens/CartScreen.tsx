@@ -52,6 +52,8 @@ const CartScreen = () => {
         (state: RootState) => state.cart,
     );
 
+    const cartErr = useTypedSelector((state: RootState) => state.cart.error);
+
     useEffect(() => {
         dispatch(fetchCart());
     }, [dispatch]);
@@ -182,11 +184,13 @@ const CartScreen = () => {
 
     useEffect(()=>{
         if(modelVisible &&!cartloading){
-            setModelVisible(false);
-            setSnv(true);
             setTimeout(() => {
-                setSnv(false);
-            }, 2000);
+                setModelVisible(false);
+                setSnv(true);
+                setTimeout(() => {
+                    setSnv(false);
+                }, 2000);
+            }, 250);
         }
     }, [cartloading])
 
@@ -216,7 +220,7 @@ const CartScreen = () => {
                     color="#0000ff"
                 />
             </XModal>
-            {snv && <XSnackbar type='success' message='order placed successfully' />}
+            {snv && <XSnackbar type={cartErr ? 'error' : 'success'} message={cartErr ? 'check the quantity you ordred, seems like you exceeded the totale' : 'order placed successfully'} />}
             <XAppBar title="Your Cart" style={tw`bg-white shadow-sm`}>
                 {bars.map(bar => (
                     <XBarIcon

@@ -21,6 +21,7 @@ import {AppDispatch} from '../../services/store/store.tsx';
 import CategoriesFrame from './CategoriesFrame';
 import { fetchCart } from '../../services/store/slices/CartSlice.ts';
 import XModal from '../../components/common/XModal.tsx';
+import OrdersFrame from './OrdersFrame.tsx';
 
 export const tabs = [
     {key: 'home', label: 'Home', icon: {name: 'home-outline', color: 'black'}},
@@ -70,7 +71,7 @@ export default function MainSreen() {
         home: <HomeFrame />,
         categories: <CategoriesFrame />,
         search: <SearchFrame />,
-        cart: <View style={tw`flex-1 bg-black`}></View>,
+        orders: <OrdersFrame/>,
         profile: <View style={tw`flex-1 bg-black`}></View>,
     });
 

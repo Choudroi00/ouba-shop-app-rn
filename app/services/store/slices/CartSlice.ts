@@ -11,6 +11,7 @@ interface CartState{
     total: number;
     loading: boolean;
     error: string | null;
+    orders: Order[];
 }
 
 const initialState: CartState = {
@@ -19,6 +20,7 @@ const initialState: CartState = {
   total: 0,
   loading: false,
   error: null,
+  orders: []
 };
 
 export const fetchCart = createAsyncThunk('cart/fetchCart', async () => {
@@ -81,6 +83,42 @@ export const placeOrderFromCart = createAsyncThunk(
   }
 )
 
+export const fetchOrders = createAsyncThunk(
+  'cart/fetchOrders',
+  async () => {
+    const response = await axiosClient.get('/order/indexFor');
+    return response.data.data;
+  }
+);
+
+export interface OrderItem{
+  id: number;
+  unit_price: number;
+  batch_size: number;
+  quantity: number;
+
+  product: Product;
+
+  
+
+}
+
+export interface Order{
+  id: number;
+  total_price: number;
+
+  created_at: string;
+
+  order_items: OrderItem[];
+
+  order_details: {
+    id: number;
+    first_name: string;
+    last_name: string;
+    address: string;
+  }
+}
+
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
@@ -127,10 +165,36 @@ const cartSlice = createSlice({
         
       })
       .addCase(placeOrderFromCart.fulfilled, (state) => {
+        state.error = null
         state.loading = false;
         state.cartItems = [];
         state.total = 0;
         state.products = [];
+      })
+      .addCase(
+        placeOrderFromCart.rejected,
+        (state, action)=>{
+          state.loading = false;
+          state.error = action.error.message || 'Failed to place order';
+          console.log(state.error);
+          
+  
+      })
+      .addCase(fetchOrders.pending, (state) => {
+        state.loading = true;
+        
+      })
+
+      .addCase(fetchOrders.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action.payload
+        
+        
+      })
+      .addCase(fetchOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch orders';
+        console.log(action.error)
       })
   },
 });
