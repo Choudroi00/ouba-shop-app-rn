@@ -24,6 +24,7 @@ import ProductItem from '../../components/mainscreen/ProductItem';
 import {changeInCartStatus} from '../../services/store/slices/ProductsSlice';
 import {addToCart} from '../../services/store/slices/CartSlice';
 import XSnackbar from '../../components/common/XSnakeBar';
+import { Category } from '../../models/Category';
 
 const ITEM_TYPES = {
     CATEGORY_HEADER: 'CATEGORY_HEADER',
@@ -142,15 +143,15 @@ const HomeFrame = () => {
     );
 
     const renderCategory = useCallback(
-        ({item}) => (
+        ({item}: { item : Category}) => (
             <TouchableWithoutFeedback
-                onPress={() => toTab('categories')}
+                onPress={() => navigator.navigate('ProductsScreen', {title: item.name ?? '', query: item.id?.toString() ?? '-1'})}
                 style={tw``}>
                 <View style={tw` w-[250px] p-2`}>
                     <Image
                         source={{
                             uri:
-                                item.photo ??
+                                item.photo as string ??
                                 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
                         }}
                         style={tw`w-full h-37 rounded-lg`}
