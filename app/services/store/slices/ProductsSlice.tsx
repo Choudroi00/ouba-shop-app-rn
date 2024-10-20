@@ -88,7 +88,7 @@ const productsSlice = createSlice({
         state.status = "succeeded"
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
-        state.items = (action.payload as Product[]).filter((item : Product) => item.published === 1).filter((item : Product) => item.categories?.[0].id !== 49 );
+        state.items = (action.payload as Product[]).filter((item : Product) => item.published === 1);
         
         
         state.status = "succeeded";

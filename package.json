@@ -1,5 +1,5 @@
 {
-  "name": "Flame",
+  "name": "Fame",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -21,7 +21,7 @@
     "lottie-react-native": "^7.0.0",
     "nativewind": "^2.0.11",
     "react": "18.3.1",
-    "react-native": "0.75.1",
+    "react-native": "0.75.0",
     "react-native-change-icon": "^5.0.0",
     "react-native-gesture-handler": "^2.20.0",
     "react-native-global-props": "^1.1.5",

@@ -1,0 +1,8 @@
+services:
+  app:
+    image: rn-img 
+    container_name: fa.me-container 
+    
+    ports:
+      - "9800:8091"
+    
