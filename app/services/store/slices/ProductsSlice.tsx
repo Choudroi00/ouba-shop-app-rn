@@ -59,17 +59,17 @@ export interface ProductEngineState{
   items?: Product []
   status?: "idle" | "succeeded" | "failed" | "loading"
   error?: string | null
-  forCategory: {
+  forCategory?: {
     cid: number
     products: Product[]
-  }
+  } | null
 }
 
 const initialState : ProductEngineState = {
     items: [],
     status: "idle",
     error: null,
-    forCategory: []
+    forCategory: null
   
 }
 
@@ -78,10 +78,7 @@ const productsSlice = createSlice({
   initialState,
   reducers: {
     changeInCartStatus: (state, payload )=>{
-        
-        state.items = state.items.map((_)=>_.id === payload.payload.id ? {..._,isInCart:true} : _)
-        console.log(state.items.find((_)=>_.id === payload.payload.id))
-
+        state.items = state.items?.map((_)=>_.id === payload.payload.id ? {..._,isInCart:true} : _)
     }
   },
   extraReducers: (builder) => {
@@ -91,8 +88,8 @@ const productsSlice = createSlice({
         state.status = "succeeded"
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
-        state.items = action.payload;
-        console.log('hello');
+        state.items = (action.payload as Product[]).filter((item : Product) => item.published === 1).filter((item : Product) => item.categories?.[0].id !== 49 );
+        
         
         state.status = "succeeded";
       })

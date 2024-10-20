@@ -62,7 +62,7 @@ export default function ProductsScreen() {
     };
 
     return (
-        <View style={tw`flex-1 pt-[60] bg-white`}>
+        <View style={tw`w-full h-full pt-[60] bg-white`}>
             <XAppBar title={(title as string).toUpperCase()}>
                 {bar.map(item => (
                     <XBarIcon
@@ -81,7 +81,7 @@ export default function ProductsScreen() {
                 data={byCategory.products?.map((_)=>{
                     return {..._, isInCart: cartItems.some(item => item.product_id === _.id)  };
                 })}
-                contentContainerStyle={tw`pt-10 gap-2`}
+                contentContainerStyle={tw`pt-10 flex-1 gap-2`}
                 keyExtractor={item => item.id.toString()}
                 numColumns={2}
                 renderItem={({item}) => (

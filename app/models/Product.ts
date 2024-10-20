@@ -13,7 +13,7 @@ export interface Product {
 
     isInCart?: boolean;
     
-    published: boolean;
+    published: boolean | number;
     created_by: number;
     updated_by: number;
   }
