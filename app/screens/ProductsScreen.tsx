@@ -50,7 +50,7 @@ export default function ProductsScreen() {
 
         fetcher();
 
-        console.log(byCategory.cid);
+        console.log(byCategory?.cid);
         
 
         return () => {};
@@ -78,7 +78,7 @@ export default function ProductsScreen() {
             </XAppBar>
 
             <FlatList
-                data={byCategory.products?.map((_)=>{
+                data={byCategory?.products?.map((_)=>{
                     return {..._, isInCart: cartItems.some(item => item.product_id === _.id)  };
                 })}
                 contentContainerStyle={tw`pt-10 flex-1 gap-2`}
