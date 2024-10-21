@@ -49,14 +49,14 @@ export default function OrdersFrame() {
                                 </Text>
                                 <Text style={[styles.text, tw`flex-1 text-white`]}>{item.quantity}</Text>
                                 <Text style={[styles.text, tw`flex-1 text-white`]}>
-                                    {item.quantity * item.unit_price}
+                                    {parseFloat((item.quantity * item.unit_price * item.batch_size).toString())}
                                 </Text>
                             </View>
                         );
                     })}
                 </View>
                 <View style={styles.text}>
-                    <Text style={[styles.text, tw`text-left`]}>Total: {order.total_price}</Text>
+                    <Text style={[styles.text, tw`text-left`]}>Total: {parseFloat(order.total_price.toString())}</Text>
                     
                 </View>
             </View>

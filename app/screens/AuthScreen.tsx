@@ -136,11 +136,11 @@ const LoginScreen = () => {
         <Text style={tw`text-2xl font-bold text-black mb-6 text-center`}>Welcome Back</Text>
         <TextInput
           style={tw`bg-gray-100 rounded-full p-3.5 placeholder:text-slate-500 px-7 text-black mb-6`}
-          placeholder="Email"
+          placeholder="Email or phone"
           placeholderTextColor={`#475569`}
           value={email}
           onChangeText={setEmail}
-          keyboardType="email-address"
+          
           autoCapitalize="none"
         />
         <TextInput

@@ -16,7 +16,7 @@ export const walkthroughFrames = [
       description:
         'Navigate through our intuitive interface and find what you need.\nNavigate through our intuitive interface and find what you need.\nNavigate through our intuitive interface and find what you need.',
       btn1: 'Login',
-      btn2: 'Guest'
+      
     },
     {
       image: {uri: 'https://res.cloudinary.com/dqtlhm4to/image/upload/f_auto,q_auto/v1/ouba-shop-app/x1qmskjnvk4incootpes'},
