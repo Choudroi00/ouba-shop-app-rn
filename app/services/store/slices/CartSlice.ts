@@ -154,7 +154,7 @@ const cartSlice = createSlice({
         state.loading = false;
         state.cartItems = state.cartItems.map(item => item.product_id === action.payload.productId? {...item, quantity: action.payload.quantity} : item);
 
-        state.total = state.cartItems.reduce((total, item, index) => total + item.quantity * (state.products[index].price ?? 1), 0);
+        state.total = state.cartItems.reduce((total, item, index) => total + item.quantity * (state.products[index].price ?? 1) * (state.products[index].batch_size ?? 1), 0);
       })
       .addCase(removeFromCart.fulfilled, (state, action) => {
         state.loading = false;
