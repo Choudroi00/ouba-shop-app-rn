@@ -41,14 +41,14 @@ export default function OrdersFrame() {
                             <View
                                 style={tw`flex-row border-b py-2 border-slate-500`}>
                                 
-                                <Text style={[styles.text, tw`flex-2 text-left`]}>
+                                <Text style={[styles.text, tw`flex-2 text-white text-left`]}>
                                     {item.product.title}
                                 </Text>
-                                <Text style={[styles.text, tw`flex-1`]}>
+                                <Text style={[styles.text, tw`flex-1 text-white`]}>
                                     {item.batch_size}
                                 </Text>
-                                <Text style={[styles.text, tw`flex-1`]}>{item.quantity}</Text>
-                                <Text style={[styles.text, tw`flex-1`]}>
+                                <Text style={[styles.text, tw`flex-1 text-white`]}>{item.quantity}</Text>
+                                <Text style={[styles.text, tw`flex-1 text-white`]}>
                                     {item.quantity * item.unit_price}
                                 </Text>
                             </View>
@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
     },
     dateTime: {
         fontSize: 14,
+        color: 'white',
     },
     phone: {
         fontSize: 14,
