@@ -84,7 +84,7 @@ const productsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchProduct.fulfilled, (state, action)=>{
-        state.items?.push(action.payload)
+        state.items = [...state.items?.map((_: Product)=>_) ?? [] ,action.payload].filter((item : Product) => item.published === 1)
         state.status = "succeeded"
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {

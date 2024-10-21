@@ -13,24 +13,33 @@ import com.facebook.soloader.SoLoader
 
 class MainApplication : Application(), ReactApplication {
 
-  override val reactNativeHost: ReactNativeHost =
-      object : DefaultReactNativeHost(this) {
-        override fun getPackages(): List<ReactPackage> =
-            PackageList(this).packages.apply {
-              // Packages that cannot be autolinked yet can be added manually here, for example:
-              // add(MyReactNativePackage())
-            }
+  private val mReactHost = (object) : DefaultReactNativeHost(this) {
+    override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
 
-        override fun getJSMainModuleName(): String = "index"
-
-        override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
-
-        override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
-        override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
+    override fun getPackages(): List<ReactPackage> =
+      PackageList(this).packages.apply {
+        // Packages that cannot be autolinked yet can be added manually here, for example:
+        // add(MyReactNativePackage())
       }
 
+    override fun getJSMainModuleName(): String = "index"
+
+    override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
+
+    override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+    override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
+
+    override fun getJsBundleFileOverride(): String? {
+      val extraBundleUrl = "index.android.bundle"
+      val bundleUrl = "http://192.168.231.100:8999/$extraBundleUrl"
+      return bundleUrl
+    }
+  }
+
+  
+
   override val reactHost: ReactHost
-    get() = getDefaultReactHost(applicationContext, reactNativeHost)
+    get() = mReactHost
 
   override fun onCreate() {
     super.onCreate()
