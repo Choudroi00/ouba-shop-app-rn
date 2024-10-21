@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 16,
         textAlign: 'right',
+        color: 'white',
     },
     header: {
         flexDirection: 'row',
@@ -102,20 +103,24 @@ const styles = StyleSheet.create({
     },
     phone: {
         fontSize: 14,
+        color: 'white',
     },
     customerInfo: {
         marginBottom: 16,
+        color: 'white',
     },
     text: {
         fontSize: 16,
         marginBottom: 4,
         textAlign: 'right',
+        color: 'white',
     },
     subtitle: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 8,
         textAlign: 'right',
+        color: 'white',
     },
     table: {
         borderWidth: 1,
@@ -126,28 +131,34 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: '#f0f0f0',
         padding: 8,
+        color: 'white',
     },
     tableHeaderCell: {
         flex: 1,
         fontWeight: 'bold',
         textAlign: 'center',
+        color: 'white',
     },
     tableRow: {
         flexDirection: 'row',
         borderTopWidth: 1,
         borderColor: '#ddd',
         padding: 8,
+        color: 'white',
     },
     tableCell: {
         flex: 1,
         textAlign: 'center',
+        color: 'white',
     },
     boldText: {
         fontWeight: 'bold',
+        color: 'white',
     },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        color: 'white',
     },
     button: {
         backgroundColor: '#007AFF',
@@ -155,6 +166,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         flex: 1,
         marginHorizontal: 4,
+        color: 'white',
     },
     deleteButton: {
         backgroundColor: '#FF3B30',
