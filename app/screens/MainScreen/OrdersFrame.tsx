@@ -49,7 +49,7 @@ export default function OrdersFrame() {
                                 </Text>
                                 <Text style={[styles.text, tw`flex-1 text-white`]}>{item.quantity}</Text>
                                 <Text style={[styles.text, tw`flex-1 text-white`]}>
-                                    {parseFloat((item.quantity * item.unit_price * item.batch_size).toFixed(2).toString())}
+                                    {parseFloat((item.quantity * item.unit_price * item.batch_size)).toFixed(2)}
                                 </Text>
                             </View>
                         );
