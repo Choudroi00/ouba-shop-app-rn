@@ -113,7 +113,11 @@ const productsSlice = createSlice({
         state.items = state.items?.filter((item : Product) => item.id !== action.payload);
       })
       .addCase(fetchProductsByCategory.fulfilled, (state, action) => {
-        state.forCategory = action.payload
+        const {products, cid} = action.payload
+        state.forCategory = {
+          cid,
+          products: products.filter((_ : Product) => _.published === 1)
+        }
       })
   },
 });
