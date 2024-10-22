@@ -44,8 +44,8 @@ export default function OrdersFrame() {
                                     {item.product.price}
                                 </Text>
                                 
-                                <Text style={[styles.text, tw`flex-2 text-white text-left`]}>
-                                    {item.product.title?.slice(0,18) === item.product.title ? item.product.title : `${item.product.title?.slice(0,18)}...` }
+                                <Text style={[styles.text, tw`flex-1 text-white text-left`]}>
+                                    {item.product.title?.slice(0,10) === item.product.title ? item.product.title : `${item.product.title?.slice(0,10)}...` }
                                 </Text>
                                 <Text style={[styles.text, tw`flex-1 text-left text-white`]}>
                                     {item.batch_size}
