@@ -41,10 +41,10 @@ export default function OrdersFrame() {
                             <View
                                 style={tw`flex-row border-b py-2 border-slate-500`}>
                                 <Text style={[styles.text, tw`flex-1 text-left text-white`]}>
-                                    {item.product.price}
+                                    {item.unit_price}
                                 </Text>
                                 
-                                <Text style={[styles.text, tw`flex-1 text-white text-left`]}>
+                                <Text style={[styles.text, tw`flex-2 text-white text-left`]}>
                                     {item.product.title?.slice(0,10) === item.product.title ? item.product.title : `${item.product.title?.slice(0,10)}...` }
                                 </Text>
                                 <Text style={[styles.text, tw`flex-1 text-left text-white`]}>
