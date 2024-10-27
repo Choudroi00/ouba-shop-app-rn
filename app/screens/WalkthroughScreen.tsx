@@ -136,17 +136,7 @@ const WalkthroughScreen = () => {
             ))}
           </View>
 
-          <TouchableWithoutFeedback 
-          disabled={currentFrame === walkthroughFrames.length - 1 || currentFrame === 0} 
-
-          onPress={()=> currentFrame === 1 ? logAsGuest() : handleNext()}>
-            <Animated.View
-              style={[tw`flex-row items-center rounded-full bg-[${primaryColor}] px-6 py-3 `, oAnimeStyle]}>
-              <Text style={tw`text-white text-[15px] font-medium`}>
-                {walkthroughFrames[currentFrame]?.btn2}
-              </Text>
-            </Animated.View>
-          </TouchableWithoutFeedback>
+          
 
           <TouchableWithoutFeedback
             
