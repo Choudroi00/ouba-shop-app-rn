@@ -10,7 +10,11 @@ export interface User {
     password?: string;
     isAuthenticated?: boolean;
 
-    authStatus?: "false" | "true" | "error";
+    categories: number[];
+
+
+
+    authStatus?: 'false' | 'true' | 'error';
 
     token?: string;
     

@@ -39,6 +39,7 @@ const HomeFrame = () => {
     const dispatch = useDispatch<AppDispatch>();
     const products = useTypedSelector(state => state.products.items);
     const categories = useTypedSelector(state => state.categories.items);
+    const userCats = useTypedSelector(state => state.user.categories)
     const cartItems = useTypedSelector(state => state.cart.cartItems);
     const [snv, setSnv] = useState(false);
 
@@ -46,9 +47,9 @@ const HomeFrame = () => {
 
     useEffect(() => {
         if (products && products?.length > 0) {
-            const newData = new Array(Math.floor(products.length / 2))
+            const newData : Array<Array<Product & {isInCart: boolean}>> = new Array(Math.floor(products.length / 2))
                 .fill(0)
-                .map((_, index) => {
+                .map((_, index) : Array<Product & {isInCart: boolean}> => {
                     const isInCart = cartItems.some(
                         item => item.product_id === products[2 * index].id,
                     );
@@ -67,9 +68,15 @@ const HomeFrame = () => {
                                 products[2 * index + 1].isInCart ?? isInCart2,
                         },
                     ];
-                });
+                })
 
-            setRData(newData);
+
+            setRData(newData.filter((_)=> {
+                if (!userCats || userCats.length <= 0 ) return _;
+                return _.filter((__)=> {
+                    return __.categories ? (userCats.find((___)=> __.categories?.[0] && ___ === __.categories[0]) ? __ : undefined ) : __
+                })
+            }));
         }
     }, [products]);
 

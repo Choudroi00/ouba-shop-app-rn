@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 import Animated, { FadeInUp, FadeOutDown } from 'react-native-reanimated';
 import tw from 'twrnc'; 
@@ -50,7 +50,32 @@ const CategoryItem = ({category, switcher}: {category: {item: CategoriesTree}, s
 
 const CategoriesFrame = () => {
 
-  const tree = useTypedSelector((state) => state.categories.tree);
+  const userCats = useTypedSelector((state)=> state.user.categories)
+  const Gotentree = useTypedSelector((state) => state.categories.tree)
+  const [tree, setTree] = useState<CategoriesTree[]>([]);
+
+
+  useEffect(()=> {
+    const TreeFilterFn = (originTree: CategoriesTree[]) => {
+      const filtredTree : CategoriesTree[] = []
+      for(let i = 0; i < originTree.length; i++){
+        const item = originTree[i]
+
+        if(userCats.find((_)=> _ === item.id)){
+          filtredTree.push({
+            ...item,
+            children: item.children ? TreeFilterFn(item.children) : undefined
+          })
+        }
+      }
+
+      return filtredTree
+    }
+
+    setTree((userCats && userCats.length > 0) ? TreeFilterFn(Gotentree) : Gotentree)
+    
+  }, [userCats, Gotentree])
+
   const navigation = useTypedNavigator()
 
   //console.log('len',tree.length);
