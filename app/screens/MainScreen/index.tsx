@@ -16,12 +16,13 @@ import {
     fetchCategories,
     fetchTree,
 } from '../../services/store/slices/CategotiesSlice.ts';
-import {fetchProducts} from '../../services/store/slices/ProductsSlice.tsx';
+
 import {AppDispatch} from '../../services/store/store.tsx';
 import CategoriesFrame from './CategoriesFrame';
 import { fetchCart } from '../../services/store/slices/CartSlice.ts';
 import XModal from '../../components/common/XModal.tsx';
 import OrdersFrame from './OrdersFrame.tsx';
+import { fetchProducts } from '../../services/store/slices/ProductsSlice.ts';
 
 export const tabs = [
     {key: 'home', label: 'Home', icon: {name: 'home-outline', color: 'black'}},
