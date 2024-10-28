@@ -21,11 +21,18 @@ import XSnackbar from '../../components/common/XSnakeBar';
 const SearchFrame: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const cartItems = useTypedSelector(state => state.cart.cartItems);
+    const userCats = useTypedSelector(state => state.user.categories)
     const products = (useTypedSelector(state => state.products.items) || []).map((it)=>{
       return {
         ...it, 
         isInCart: cartItems.some(item => item.product_id === it.id),
       }
+    }).filter((it)=> {
+        
+        if (!userCats || userCats.length <= 0 ) return it;
+
+        return it.categories? (userCats.find((___)=> it.categories?.[0] && ___ === it.categories[0])? it : undefined ) : it
+
     });
 
     const filteredProducts = useMemo(() => {
