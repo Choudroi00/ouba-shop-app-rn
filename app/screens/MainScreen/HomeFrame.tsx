@@ -44,8 +44,12 @@ const HomeFrame = () => {
     const [snv, setSnv] = useState(false);
 
     const [productsRenderData, setRData] = useState<Product[][]>([]);
+    const [catRenderData, setCatRData] = useState<Category[]>([]);
 
     useEffect(() => {
+        setCatRData(categories.filter((_)=> {
+            return userCats.find((__)=> __ === _.id )
+        }))
         if (products && products?.length > 0) {
             const newData : Array<Array<Product & {isInCart: boolean}>> = new Array(Math.floor(products.length / 2))
                 .fill(0)
