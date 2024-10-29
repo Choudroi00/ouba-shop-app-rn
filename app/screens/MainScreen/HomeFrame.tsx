@@ -53,6 +53,13 @@ const HomeFrame = () => {
         {type: ITEM_TYPES.PRODUCT_HEADER},
 
     ]);
+    
+    useEffect(()=>{
+      const rd = categories.filter((_)=> {
+          return userCats.find((__)=> __ === _.id ) 
+      })
+      setCatRData(rd)
+    })
 
     useEffect(() => {
       const rd = categories.filter((_)=> {
