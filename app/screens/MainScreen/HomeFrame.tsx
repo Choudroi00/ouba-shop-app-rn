@@ -47,9 +47,10 @@ const HomeFrame = () => {
     const [catRenderData, setCatRData] = useState<Category[]>([]);
 
     useEffect(() => {
-        setCatRData(categories.filter((_)=> {
+      const rd = categories.filter((_)=> {
             return userCats.find((__)=> __ === _.id )
-        }))
+        })
+        setCatRData(rd)
         if (products && products?.length > 0) {
             const filtredProducts = products.filter((_) => {
                 return userCats.find((__)=> __ === _.categories?.[0] )
