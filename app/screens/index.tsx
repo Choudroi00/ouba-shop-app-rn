@@ -9,11 +9,13 @@ import { useNavigation } from "@react-navigation/native";
 
 const AppEntry = () => {
     const navigator = useTypedNavigator()
+    
     useEffect(()=>{
         const checker = async () => {
             const isAuthenticated = await getData('isAuthenticated')
             const isGuest = await getData('isGuest')
             if (isAuthenticated || isGuest) {
+
                 navigator.navigate('MainScreen')
                 
                 

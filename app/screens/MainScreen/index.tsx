@@ -9,7 +9,7 @@ import {default as IconX} from 'react-native-vector-icons/Ionicons';
 import XBottomNavigator from '../../components/common/XBottomNavigator';
 import HomeFrame from './HomeFrame';
 import SearchFrame from './SearchFrame.tsx';
-import {useTypedNavigator, useTypedSelector} from '../../utils/helpers';
+import {getData, useTypedNavigator, useTypedSelector} from '../../utils/helpers';
 import {useDispatch} from 'react-redux';
 import {switchTab} from '../../services/store/slices/MainScreenStateSlice';
 import {
@@ -23,6 +23,8 @@ import { fetchCart } from '../../services/store/slices/CartSlice.ts';
 import XModal from '../../components/common/XModal.tsx';
 import OrdersFrame from './OrdersFrame.tsx';
 import { fetchProducts } from '../../services/store/slices/ProductsSlice.ts';
+import { fetchUser } from '../../services/store/slices/UserSlice.ts';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const tabs = [
     {key: 'home', label: 'Home', icon: {name: 'home-outline', color: 'black'}},
@@ -59,10 +61,12 @@ export default function MainSreen() {
 
     useEffect(() => {
         const fetchData = async () => {
+            const token = await getData('user');
             await dispatch(fetchCategories());
             await dispatch(fetchProducts());
             await dispatch(fetchTree());
-            await dispatch(fetchCart())
+            await dispatch(fetchCart());
+            await dispatch(fetchUser(token ?? ''));
         };
         fetchData();
     }, [dispatch]);
