@@ -62,11 +62,12 @@ export default function MainSreen() {
     useEffect(() => {
         const fetchData = async () => {
             const token = await getData('user');
+            await dispatch(fetchUser(token ?? '')).unwrap();
             await dispatch(fetchCategories());
             await dispatch(fetchProducts());
             await dispatch(fetchTree());
             await dispatch(fetchCart());
-            await dispatch(fetchUser(token ?? ''));
+            
         };
         fetchData();
     }, [dispatch]);

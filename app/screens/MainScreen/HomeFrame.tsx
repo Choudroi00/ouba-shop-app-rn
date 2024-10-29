@@ -45,12 +45,24 @@ const HomeFrame = () => {
 
     const [productsRenderData, setRData] = useState<Product[][]>([]);
     const [catRenderData, setCatRData] = useState<Category[]>([]);
+    
+    const [data,setD] = useState([
+        {type: ITEM_TYPES.CATEGORY_HEADER},
+        {type: ITEM_TYPES.CATEGORY_LIST},
+        {type: ITEM_TYPES.SEARCH_BAR},
+        {type: ITEM_TYPES.PRODUCT_HEADER},
+        ...productsRenderData.map((product: Product[]) => ({
+            type: ITEM_TYPES.PRODUCT,
+            ...product,
+        })),
+    ]);
 
     useEffect(() => {
       const rd = categories.filter((_)=> {
             return userCats.find((__)=> __ === _.id ) 
         })
         setCatRData(rd)
+        setD([...data, {type: 'Default'}])
         if (products && products?.length > 0) {
             const filtredProducts = products.filter((_) => {
                 return userCats.find((__)=> __ === _.categories?.[0] )
@@ -80,6 +92,7 @@ const HomeFrame = () => {
 
 
             setRData(newData);
+            setD([...data, {type: 'Default'}])
         }
     }, [products, categories, userCats]);
 
@@ -146,7 +159,11 @@ const HomeFrame = () => {
                 case ITEM_TYPES.PRODUCT:
                     return renderProduct({item});
                 default:
-                    return null;
+                    return (
+                      <View>
+                        
+                      </View>
+                      );
             }
         },
         [categories, products, toSearchTab],
@@ -197,16 +214,7 @@ const HomeFrame = () => {
         [],
     );
 
-    const data = [
-        {type: ITEM_TYPES.CATEGORY_HEADER},
-        {type: ITEM_TYPES.CATEGORY_LIST},
-        {type: ITEM_TYPES.SEARCH_BAR},
-        {type: ITEM_TYPES.PRODUCT_HEADER},
-        ...productsRenderData.map((product: Product[]) => ({
-            type: ITEM_TYPES.PRODUCT,
-            ...product,
-        })),
-    ];
+    
 
     return (
         <View style={tw`flex-1`}>
