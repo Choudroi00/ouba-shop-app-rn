@@ -80,7 +80,7 @@ const HomeFrame = () => {
 
             setRData(newData);
         }
-    }, [products]);
+    }, [products, categories]);
 
     const toSearchTab = useCallback(() => {
         dispatch(switchTab('search'));
