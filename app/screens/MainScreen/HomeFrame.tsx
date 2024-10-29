@@ -44,17 +44,14 @@ const HomeFrame = () => {
     const [snv, setSnv] = useState(false);
 
     const [productsRenderData, setRData] = useState<Product[][]>([]);
-    const [catRenderData, setCatRData] = useState<Category[]>([]);
+    const [catRenderData, setCatRData] = useState<Category[]>(categories);
     
     const [data,setD] = useState([
         {type: ITEM_TYPES.CATEGORY_HEADER},
         {type: ITEM_TYPES.CATEGORY_LIST},
         {type: ITEM_TYPES.SEARCH_BAR},
         {type: ITEM_TYPES.PRODUCT_HEADER},
-        ...productsRenderData.map((product: Product[]) => ({
-            type: ITEM_TYPES.PRODUCT,
-            ...product,
-        })),
+
     ]);
 
     useEffect(() => {
@@ -91,8 +88,13 @@ const HomeFrame = () => {
                 })
 
 
-            setRData(newData);
-            setD([...data, {type: 'Default'}])
+            //setRData(newData);
+            setD((prev)=>[...prev, ...newData.map((prodCluster)=>{
+              return{
+                type: ITEM_TYPES.PRODUCT,
+                ...prodCluster
+              }
+            })])
         }
     }, [products, categories, userCats]);
 

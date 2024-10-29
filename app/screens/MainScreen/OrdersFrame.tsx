@@ -26,7 +26,7 @@ export default function OrdersFrame() {
                 </View>
                 <View style={styles.customerInfo}>
                     <Text style={styles.phone}>
-                        Phone: {order.order_details?.phone}
+                        Phone: 05-53-71-52-04
                     </Text>
                     <Text style={styles.text}>
                         Customer:{' '}
@@ -40,7 +40,7 @@ export default function OrdersFrame() {
                         return (
                             <View
                                 style={tw`flex-row border-b py-2 border-slate-500`}>
-                                <Text style={[styles.text, tw`flex-1 text-right text-white`]}>
+                                <Text style={[styles.text, tw`flex-1 text-left text-white`]}>
                                     {item.quantity}
                                 </Text>
                                 
