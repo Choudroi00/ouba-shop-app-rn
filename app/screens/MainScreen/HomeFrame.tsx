@@ -48,7 +48,7 @@ const HomeFrame = () => {
 
     useEffect(() => {
       const rd = categories.filter((_)=> {
-            return userCats.find((__)=> __ === _.id )
+            return userCats.find((__)=> __ === _.id ) 
         })
         setCatRData(rd)
         if (products && products?.length > 0) {
@@ -81,7 +81,7 @@ const HomeFrame = () => {
 
             setRData(newData);
         }
-    }, [products, categories]);
+    }, [products, categories, userCats]);
 
     const toSearchTab = useCallback(() => {
         dispatch(switchTab('search'));
