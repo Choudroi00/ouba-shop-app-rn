@@ -13,10 +13,16 @@ export interface UserReducersInt  {
     updateUser: (user: User) => void;
     updateCredentials: (email: string, password: string) => void;
     updateAddress: (address: Address) => void;
+    fetchUser: (token: string) => void;
 
 
 
 }
+
+export const fetchUser = createAsyncThunk('user/fetchUser', async (token: string) => {
+  const user = await getUser(token);
+  return user;
+})
 
 export interface UserState extends User {}
 
@@ -27,7 +33,7 @@ const initialState: UserState = {
     password: "",
     isAuthenticated: false,
     authStatus: "false",
-    
+    categories: [],
     token: "",
     cart: [],
     orders: [],
@@ -73,7 +79,9 @@ const userSlice = createSlice({
             //console.log('errro ', action.error);
             
             state.authStatus = 'error';
-          });
+          }).addCase(fetchUser.fulfilled, (state, action) => {
+            state.categories = action.payload?.categories?? [];
+          })
       }
     
 })

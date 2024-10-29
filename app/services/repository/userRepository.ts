@@ -3,7 +3,7 @@ import { axiosClient } from "../api"
 
 
 const getUser = async (email: string) : Promise<User>=> {
-    const user = await axiosClient.get("/users/1")
+    const user = await axiosClient.get("/me")
 
     return user.data as User;
 }
