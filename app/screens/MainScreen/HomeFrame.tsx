@@ -51,36 +51,34 @@ const HomeFrame = () => {
             return userCats.find((__)=> __ === _.id )
         }))
         if (products && products?.length > 0) {
-            const newData : Array<Array<Product & {isInCart: boolean}>> = new Array(Math.floor(products.length / 2))
+            const filtredProducts = products.filter((_) => {
+                return userCats.find((__)=> __ === _.categories?.[0] )
+            })
+            const newData : Array<Array<Product & {isInCart: boolean}>> = new Array(Math.floor(filtredProducts.length / 2))
                 .fill(0)
                 .map((_, index) : Array<Product & {isInCart: boolean}> => {
                     const isInCart = cartItems.some(
-                        item => item.product_id === products[2 * index].id,
+                        item => item.product_id === filtredProducts[2 * index].id,
                     );
                     const isInCart2 = cartItems.some(
-                        item => item.product_id === products[2 * index + 1].id,
+                        item => item.product_id === filtredProducts[2 * index + 1].id,
                     );
 
                     return [
                         {
-                            ...products[2 * index],
-                            isInCart: products[2 * index].isInCart ?? isInCart,
+                            ...filtredProducts[2 * index],
+                            isInCart: filtredProducts[2 * index].isInCart ?? isInCart,
                         },
                         {
-                            ...products[2 * index + 1],
+                            ...filtredProducts[2 * index + 1],
                             isInCart:
-                                products[2 * index + 1].isInCart ?? isInCart2,
+                                filtredProducts[2 * index + 1].isInCart ?? isInCart2,
                         },
                     ];
                 })
 
 
-            setRData(newData.filter((_)=> {
-                if (!userCats || userCats.length <= 0 ) return _;
-                return _.filter((__)=> {
-                    return __.categories ? (userCats.find((___)=> __.categories?.[0] && ___ === __.categories[0]) ? __ : undefined ) : __
-                })
-            }));
+            setRData(newData);
         }
     }, [products]);
 
@@ -117,7 +115,7 @@ const HomeFrame = () => {
                     return (
                         <FlatList
                             horizontal
-                            data={categories}
+                            data={catRenderData}
                             renderItem={renderCategory}
                             keyExtractor={(category, index) =>
                                 category?.id?.toString() ?? index.toString()
