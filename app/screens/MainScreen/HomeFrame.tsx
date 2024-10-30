@@ -58,19 +58,19 @@ const HomeFrame = () => {
 
   const [data, setD] = useState([
     { type: ITEM_TYPES.CATEGORY_HEADER },
-    { type: ITEM_TYPES.CATEGORY_LIST },
-    { type: ITEM_TYPES.SEARCH_BAR },
-    { type: ITEM_TYPES.PRODUCT_HEADER },
     {
         type: ITEM_TYPES.CATEGORY_LIST, 
         cats: [
             {
-                id: '1',
+                id: 1,
                 name: 'Category 1',
                 
             }
-        ] as Category
-    }
+        ] as Category[]
+    },
+    { type: ITEM_TYPES.SEARCH_BAR },
+    { type: ITEM_TYPES.PRODUCT_HEADER },
+    
 
   ]);
 
@@ -116,17 +116,20 @@ const HomeFrame = () => {
 
 
       //setRData(newData);
-      setD((prev) => [...prev, ...newData.map((prodCluster) => {
-        return {
-          type: ITEM_TYPES.PRODUCT,
-          ...prodCluster
-        }
-      }), {
-        type: ITEM_TYPES.CATEGORY_LIST,
-        cats: rd
-      }
-    
-    ])
+      setD((prev)=> {
+        return [
+            ...prev.map((item)=>{
+                return {...item, cats: rd }
+            }), 
+            ...newData.map((prodCluster) => {
+                return {
+                    type: ITEM_TYPES.PRODUCT,
+                   ...prodCluster
+                }
+            })
+        ]
+      })
+      
     }
   }, [products, categories, userCats]);
 
