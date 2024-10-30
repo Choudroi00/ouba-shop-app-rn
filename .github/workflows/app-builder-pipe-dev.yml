@@ -47,7 +47,7 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           DEPLOY_DIR:  ${{ secrets.DEPLOY_DIR }}
         run: |
-          echo "$DEPLOY_KEY" > deploy_key
+          echo "${DEPLOY_KEY}" > deploy_key
           chmod 600 deploy_key
           
           scp -i deploy_key -o StrictHostKeyChecking=no -P 65002 android/app/build/outputs/apk/release/app-release.apk $SERVER_USER@$SERVER_HOST:${DEPLOY_DIR}/
