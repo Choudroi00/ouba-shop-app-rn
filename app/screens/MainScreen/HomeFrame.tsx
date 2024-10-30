@@ -42,9 +42,16 @@ const HomeFrame = () => {
     const userCats = useTypedSelector(state => state.user.categories)
     const cartItems = useTypedSelector(state => state.cart.cartItems);
     const [snv, setSnv] = useState(false);
+    
+    const catscall = useCallback(()=>{
+      const rd = categories.filter((_)=> {
+          return userCats.find((__)=> __ === _.id ) 
+      })
+      setCatRData(rd)
+    },[categories, userCats])
 
     const [productsRenderData, setRData] = useState<Product[][]>([]);
-    const [catRenderData, setCatRData] = useState<Category[]>(categories);
+    const [catRenderData, setCatRData] = useState<Category[]>(catscall);
     
     const [data,setD] = useState([
         {type: ITEM_TYPES.CATEGORY_HEADER},
@@ -54,12 +61,7 @@ const HomeFrame = () => {
 
     ]);
     
-    useEffect(()=>{
-      const rd = categories.filter((_)=> {
-          return userCats.find((__)=> __ === _.id ) 
-      })
-      setCatRData(rd)
-    })
+    
 
     useEffect(() => {
       const rd = categories.filter((_)=> {
