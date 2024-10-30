@@ -54,10 +54,7 @@ const HomeFrame = () => {
   const [catRenderData, setCatRData] = useState < Category[] > ([]);
 
   // Call the callback function when needed
-  useEffect(() => {
-    catscall();
-    //setD([...data, { type: 'Default' }])
-  }, [catscall,data]);
+  
 
   const [data, setD] = useState([
     { type: ITEM_TYPES.CATEGORY_HEADER },
@@ -66,6 +63,11 @@ const HomeFrame = () => {
     { type: ITEM_TYPES.PRODUCT_HEADER },
 
   ]);
+
+  useEffect(() => {
+    catscall();
+    //setD([...data, { type: 'Default' }])
+  }, [catscall,data]);
 
 
 
