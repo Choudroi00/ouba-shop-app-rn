@@ -84,13 +84,13 @@ const HomeFrame = () => {
 
   useEffect(() => {
     const rd = categories.filter((_) => {
-      return userCats.find((__) => __ === _.id)
+      return (userCats && userCats.length > 0) ? userCats.find((__) => __ === _.id) : _
     })
     
     
     if (products && products?.length > 0) {
       const filtredProducts = products.filter((_) => {
-        return userCats.find((__) => __ === _.categories?.[0])
+        return (userCats && userCats.length > 0) ? userCats.find((__) => __ === _.categories?.[0]) : _
       })
       const newData: Array < Array < Product & { isInCart: boolean } >> = new Array(Math.floor(filtredProducts.length / 2))
         .fill(0)
