@@ -61,13 +61,24 @@ const HomeFrame = () => {
     { type: ITEM_TYPES.CATEGORY_LIST },
     { type: ITEM_TYPES.SEARCH_BAR },
     { type: ITEM_TYPES.PRODUCT_HEADER },
+    {
+        type: ITEM_TYPES.CATEGORY_LIST, 
+        cats: [
+            {
+                id: '1',
+                name: 'Category 1',
+                
+            }
+        ] as Category
+    }
 
   ]);
 
-  useEffect(() => {
-    catscall();
-    //setD([...data, { type: 'Default' }])
-  }, [catscall,data]);
+//   useEffect(() => {
+//     catscall();
+//     setD((prev)=> [...prev, { type: 'Default' }])
+//     //setD([...data, { type: 'Default' }])
+//   }, [catscall,data]);
 
 
 
@@ -75,8 +86,8 @@ const HomeFrame = () => {
     const rd = categories.filter((_) => {
       return userCats.find((__) => __ === _.id)
     })
-    setCatRData(rd)
-    setD([...data, { type: 'Default' }])
+    
+    
     if (products && products?.length > 0) {
       const filtredProducts = products.filter((_) => {
         return userCats.find((__) => __ === _.categories?.[0])
@@ -110,7 +121,12 @@ const HomeFrame = () => {
           type: ITEM_TYPES.PRODUCT,
           ...prodCluster
         }
-      })])
+      }), {
+        type: ITEM_TYPES.CATEGORY_LIST,
+        cats: rd
+      }
+    
+    ])
     }
   }, [products, categories, userCats]);
 
@@ -125,9 +141,12 @@ const HomeFrame = () => {
         [dispatch],
   );
 
-  interface typeAndProd extends Array < Product > {
+  interface typeAndProd extends Array <Product> {
     type: typeof ITEM_TYPES.PRODUCT;
+    cats?: Category[];
   }
+
+   
 
   const renderItem = useCallback(
     ({ item }: { item: typeAndProd }) => {
@@ -147,7 +166,7 @@ const HomeFrame = () => {
           return (
             <FlatList
                             horizontal
-                            data={catRenderData}
+                            data={item.cats}
                             renderItem={renderCategory}
                             keyExtractor={(category, index) =>
                                 category?.id?.toString() ?? index.toString()
