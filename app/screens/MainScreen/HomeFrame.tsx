@@ -56,6 +56,7 @@ const HomeFrame = () => {
   // Call the callback function when needed
   useEffect(() => {
     catscall();
+    setD([...data, { type: 'Default' }])
   }, [catscall]);
 
   const [data, setD] = useState([
