@@ -64,7 +64,7 @@ const HomeFrame = () => {
     { type: ITEM_TYPES.SEARCH_BAR },
     { type: ITEM_TYPES.PRODUCT_HEADER },
 
-    ]);
+  ]);
 
 
 
@@ -181,7 +181,7 @@ const HomeFrame = () => {
           );
       }
     },
-        [categories, products, toSearchTab],
+        [categories, products, toSearchTab, catscall],
   );
 
   const renderCategory = useCallback(
