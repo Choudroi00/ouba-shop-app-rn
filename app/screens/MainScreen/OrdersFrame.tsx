@@ -40,12 +40,12 @@ export default function OrdersFrame() {
                         return (
                             <View
                                 style={tw`flex-row border-b py-2 border-slate-500`}>
-                                <Text style={[styles.text, tw`flex-1 text-left text-white`]}>
+                                <Text style={[styles.text, tw`px-2 text-left text-white`]}>
                                     {item.quantity}
                                 </Text>
                                 
                                 <Text style={[styles.text, tw`flex-2 text-white text-center`]}>
-                                    {item.product.title?.slice(0,10) === item.product.title ? item.product.title : `${item.product.title?.slice(0,10)}...` }
+                                    {item.product.title?.slice(0,25) === item.product.title ? item.product.title : `${item.product.title?.slice(0,25)}...` }
                                 </Text>
                                 <Text style={[styles.text, tw`flex-1 text-center text-white`]}>
                                     {item.batch_size}
