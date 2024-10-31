@@ -1,8 +1,8 @@
 on:
   push:
     branches:
-      - main  # Trigger on push to the main branch
-  workflow_dispatch: # Allow manual triggers
+      - main
+  workflow_dispatch: 
 
 jobs:
   build-android:
@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20' # Ensure it matches your project
+          node-version: '20' 
 
       - name: Install dependencies
         run: |
@@ -48,16 +48,21 @@ jobs:
           DEPLOY_DIR:  ${{ secrets.DEPLOY_DIR }}
         run: |
           echo "${DEPLOY_KEY}" > deploy_key
+          
           chmod 600 deploy_key
           
-          scp -i deploy_key -o StrictHostKeyChecking=no -P 65002 android/app/build/outputs/apk/release/app-release.apk $SERVER_USER@$SERVER_HOST:${DEPLOY_DIR}/
+          scp -i deploy_key -o StrictHostKeyChecking=no -P 65002 android/app/build/outputs/apk/release/app-release.apk $SERVER_USER@$SERVER_HOST:${DEPLOY_DIR}_tmp/
           
           ssh -i deploy_key -o StrictHostKeyChecking=no -p 65002 $SERVER_USER@$SERVER_HOST << EOF
-            cd ${DEPLOY_DIR}
-            rm -rf app-release.apk 
-            cd ..
-            mv app-release.apk ./release/app-release.apk
           
+            cd ${DEPLOY_DIR}
+            
+            rm -rf app-release.apk 
+            
+            mv ${DEPLOY_DIR}_tmp/app-release.apk ./app-release.apk
+            
+            rm -rf ${DEPLOY_DIR}_tmp/app-release.apk
+            
           EOF
 
         
