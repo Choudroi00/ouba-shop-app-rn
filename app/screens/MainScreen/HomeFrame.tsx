@@ -73,6 +73,7 @@ const HomeFrame = () => {
 
       setData(prevData => [
         ...prevData.slice(0, 2).map(item => ({ ...item, cats: filteredCategories })),
+        { type: ITEM_TYPES.SEARCH_BAR },
         { type: ITEM_TYPES.PRODUCT_HEADER },
         ...productClusters.map(cluster => ({ type: ITEM_TYPES.PRODUCT, cluster })),
       ]);
