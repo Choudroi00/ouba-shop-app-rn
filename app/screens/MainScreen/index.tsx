@@ -107,7 +107,8 @@ export default function MainSreen() {
 
     const navigator = useTypedNavigator();
 
-    const [mvis,setMVis] = useState(false)
+    const [mvis,setMVis] = useState(false) 
+    
 
     useEffect(() => {
         navigator.addListener('beforeRemove', e => {
