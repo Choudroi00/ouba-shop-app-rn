@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
-import { Linking, Text, View } from 'react-native'
-import { Image } from 'react-native-reanimated/lib/typescript/Animated'
+import { Linking, Text, View, Image } from 'react-native'
+
 
 import tw from 'twrnc'
 import XButton from '../components/common/XButton'
