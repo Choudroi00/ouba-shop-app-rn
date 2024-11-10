@@ -9,7 +9,7 @@ export default function UpdateScreen() {
   const navigator = useTypedNavigator()
 
 
-  
+
 
   useEffect(() => {
     navigator.addListener('beforeRemove', e => {
@@ -17,6 +17,8 @@ export default function UpdateScreen() {
     });
 
     return () => {};
+
+    
 }, [navigator]);
 
 
