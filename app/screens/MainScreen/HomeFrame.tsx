@@ -158,6 +158,10 @@ const HomeFrame = () => {
   };
 
 
+
+  
+
+
   return (
     <View style={tw`flex-1`}>
       {snackbarVisible && (
