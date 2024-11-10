@@ -53,6 +53,8 @@ const AppEntry = () => {
             }
         }
         
+        loader()
+        
     })
 
     return(
