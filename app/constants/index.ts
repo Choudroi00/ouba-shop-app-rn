@@ -6,10 +6,12 @@ export const accentColor = '#7E60BF'
 
 
 
+
+
 export const screenHeight = Dimensions.get('screen').height
 
 
 export const screenWidth = Dimensions.get('screen').width
 
-export const app_version = '1.0.0'
+export const app_version = '1.0.1'
 
