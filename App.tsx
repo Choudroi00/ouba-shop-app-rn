@@ -6,7 +6,7 @@
  */
 
 import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 
 import { Provider } from 'react-redux';
 import store from './app/services/store/store';
@@ -24,6 +24,8 @@ import MainSreen from './app/screens/MainScreen';
 import AppEntry from './app/screens';
 import CartScreen from './app/screens/CartScreen';
 import ProductsScreen from './app/screens/ProductsScreen';
+import React from 'react';
+import UpdateScreen from './app/screens/UpdateScreen';
 
 
 
@@ -39,6 +41,7 @@ export type RootStackParamList = {
     query: string;
     title: string;
   };
+  UpdateScreen: undefined
   
 };
 
@@ -81,6 +84,7 @@ function App(): React.JSX.Element {
               <Stack.Screen name="MainScreen" component={MainSreen} /> 
               <Stack.Screen name="CartScreen" component={CartScreen} />  
               <Stack.Screen name="ProductsScreen" component={ProductsScreen} />
+              <Stack.Screen name="UpdateScreen" component={UpdateScreen} />
             </Stack.Navigator>
           </NavigationContainer>
           
