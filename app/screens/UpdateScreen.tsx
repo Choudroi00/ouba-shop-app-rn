@@ -8,6 +8,9 @@ import { useTypedNavigator } from '../utils/helpers'
 export default function UpdateScreen() {
   const navigator = useTypedNavigator()
 
+
+  
+
   useEffect(() => {
     navigator.addListener('beforeRemove', e => {
         e.preventDefault();
