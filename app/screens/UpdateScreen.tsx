@@ -5,6 +5,7 @@ import { Linking, Text, View, Image } from 'react-native'
 import tw from 'twrnc'
 import XButton from '../components/common/XButton'
 import { useTypedNavigator } from '../utils/helpers'
+import { primaryColor } from '../constants'
 export default function UpdateScreen() {
   const navigator = useTypedNavigator()
 
@@ -34,6 +35,7 @@ export default function UpdateScreen() {
               This app version is outdated, you should update to the latest version 
             </Text>
             <XButton 
+              color={primaryColor}
               onClick={()=>{
                 Linking.openURL(`https://flame-api.horizonsparkle.com/public/app/release/app-release.apk`)
               }} 
