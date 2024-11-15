@@ -35,7 +35,7 @@ export default function UpdateScreen() {
               This app version is outdated, you should update to the latest version 
             </Text>
             <XButton 
-              color={primaryColor}
+              backgroundColor={primaryColor}
               onClick={()=>{
                 Linking.openURL(`https://flame-api.horizonsparkle.com/public/app/release/app-release.apk`)
               }} 
