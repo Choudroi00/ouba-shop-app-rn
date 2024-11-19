@@ -19,7 +19,7 @@ export default function OrdersFrame() {
         console.log(order.total_price);
         
         return (
-            <View key={order.id} style={styles.card}>
+            <View key={order.id ?? index} style={styles.card}>
                 <View style={styles.header}>
                     <Text style={styles.title}>Order # {order.id}</Text>
                     <Text style={styles.dateTime}>{order.created_at} </Text>
@@ -56,7 +56,11 @@ export default function OrdersFrame() {
                                 </Text>
                             </View>
                         );
-                    })}
+                    }) ?? (
+                    <View style={tw`flex-row justify-center items-center`} >
+                        <Text style={[styles.text, tw`flex-1 text-center text-white`]}>تم حدف المنتج نهائيا</Text>
+                    </View>
+                )}
                 </View>
                 <View style={styles.text}>
                     <Text style={[styles.text, tw`text-left`]}>Total: {parseFloat(order.total_price.toString()).toFixed(2)}</Text>
