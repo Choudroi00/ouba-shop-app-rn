@@ -69,6 +69,8 @@ const CartScreen = () => {
         setItemToRemove(itemId);
     };
 
+    
+
     const isKeyboardOpen = useKeyboard();
 
     useEffect(() => {
