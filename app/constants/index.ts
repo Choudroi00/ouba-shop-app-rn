@@ -13,5 +13,5 @@ export const screenHeight = Dimensions.get('screen').height
 
 export const screenWidth = Dimensions.get('screen').width
 
-export const app_version = '1.0.13'
+export const app_version = '1.0.14'
 
