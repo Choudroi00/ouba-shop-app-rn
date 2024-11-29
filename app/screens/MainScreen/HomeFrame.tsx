@@ -56,7 +56,7 @@ const HomeFrame = () => {
     if (products && products.length > 0) {
       const filteredProducts = products.filter((product) => 
         !userCategories || userCategories.length === 0 || userCategories.includes(product.categories?.[0])
-      ).sort((a, b) => a.title.localCompare(b.title, 'ar'))
+      ).sort((a, b) => a.title.localeCompare(b.title, 'ar'))
 
       const productClusters = [];
       for (let i = 0; i < filteredProducts.length; i += 2) {
