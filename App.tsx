@@ -42,6 +42,7 @@ export type RootStackParamList = {
     title: string;
   };
   UpdateScreen: undefined
+  DisabledScreen: undefined
   
 };
 

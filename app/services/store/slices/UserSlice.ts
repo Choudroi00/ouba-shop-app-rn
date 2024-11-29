@@ -4,7 +4,7 @@ import { User } from "../../../models/User";
 
 import {reducers } from '../reducers/UserReducers'
 import { getUser, login, register } from "../../repository/userRepository";
-import { storeData } from "../../../utils/helpers";
+import { getData, storeData } from "../../../utils/helpers";
 
 export interface UserReducersInt  {
     login: () => void;
@@ -82,10 +82,21 @@ const userSlice = createSlice({
           }).addCase(fetchUser.fulfilled, (state, action) => {
             state.categories = action.payload?.categories?? [];
           })
+          .addCase(checkUser.fulfilled, (state, action) => {
+            
+          })
       }
     
 })
 
+
+export const checkUser = createAsyncThunk('user/checkUser', async () => {
+  const token = await getData('user')
+  if(token && token.token){
+    return await fetchUser(token.token);
+  }
+  return null;
+})
 
 export const userRegister = createAsyncThunk(
     'user/register',

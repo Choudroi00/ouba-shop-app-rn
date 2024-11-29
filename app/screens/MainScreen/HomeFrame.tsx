@@ -51,12 +51,17 @@ const HomeFrame = () => {
   useEffect(() => {
     const filteredCategories = categories.filter((category) => 
       !userCategories || userCategories.length === 0 || userCategories.includes(category.id)
-    );
+    )
 
     if (products && products.length > 0) {
       const filteredProducts = products.filter((product) => 
         !userCategories || userCategories.length === 0 || userCategories.includes(product.categories?.[0])
-      );
+      ).sort((a, b) => {
+        if (a.title && b.title) {
+          return a.title.localeCompare(b.title, 'ar');
+        }
+        return a.title ? -1 : b.title ? 1 : 0;
+      });
 
       const productClusters = [];
       for (let i = 0; i < filteredProducts.length; i += 2) {
