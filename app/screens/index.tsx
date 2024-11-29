@@ -35,6 +35,7 @@ const AppEntry = () => {
                     navigator.navigate('DisabledScreen')
                     return
                 }
+                
             }
             const get_version = async () => {
                 const version = await axiosClient.get('get-version')
