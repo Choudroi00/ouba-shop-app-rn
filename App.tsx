@@ -26,6 +26,7 @@ import CartScreen from './app/screens/CartScreen';
 import ProductsScreen from './app/screens/ProductsScreen';
 import React from 'react';
 import UpdateScreen from './app/screens/UpdateScreen';
+import DisabledScreen from './app/screens/DisabledScreen';
 
 
 
@@ -86,6 +87,7 @@ function App(): React.JSX.Element {
               <Stack.Screen name="CartScreen" component={CartScreen} />  
               <Stack.Screen name="ProductsScreen" component={ProductsScreen} />
               <Stack.Screen name="UpdateScreen" component={UpdateScreen} />
+              <Stack.Screen name="DisabledScreen" component={DisabledScreen} />
             </Stack.Navigator>
           </NavigationContainer>
           
