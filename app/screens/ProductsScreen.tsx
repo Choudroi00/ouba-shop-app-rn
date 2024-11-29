@@ -51,7 +51,7 @@ export default function ProductsScreen() {
         fetcher();
 
         const clone = byCategory?.products?.slice();
-        const sorted = clone?.sort((a, b) => {
+        const sorted = byCategory?.products?.slice()?.sort((a, b) => {
             if (a.title && b.title) {
               return a.title.localeCompare(b.title, 'ar');
             }
@@ -64,7 +64,7 @@ export default function ProductsScreen() {
         
 
         return () => {};
-    }, []);
+    }, [byCategory]);
 
     const onAddToCart = (id: number) => {
         dispatch(changeInCartStatus({id}));
