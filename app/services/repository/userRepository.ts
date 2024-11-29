@@ -14,6 +14,7 @@ const register = async ({email, password} : {email : string, password?: string})
     return r.data as User;
 }
 
+
 const login = async ({email, password} : {email? : string, password?: string}) : Promise<User> => {
     const r = await axiosClient.post("/login", {email, password}).catch((e)=> e)
 
