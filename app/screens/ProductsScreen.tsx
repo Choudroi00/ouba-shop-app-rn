@@ -78,7 +78,12 @@ export default function ProductsScreen() {
             </XAppBar>
 
             <FlatList
-                data={byCategory?.products?.map((_)=>{
+                data={byCategory?.products?.sort((a, b) => {
+                    if (a.title && b.title) {
+                      return a.title.localeCompare(b.title, 'ar');
+                    }
+                    return a.title ? -1 : b.title ? 1 : 0;
+                  }).map((_)=>{
                     return {..._, isInCart: cartItems.some(item => item.product_id === _.id)  };
                 })}
                 contentContainerStyle={tw`pt-10 gap-2`}
