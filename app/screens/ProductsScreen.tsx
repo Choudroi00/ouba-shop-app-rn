@@ -50,6 +50,16 @@ export default function ProductsScreen() {
 
         fetcher();
 
+        const clone = byCategory?.products?.slice();
+        const sorted = clone?.sort((a, b) => {
+            if (a.title && b.title) {
+              return a.title.localeCompare(b.title, 'ar');
+            }
+            return a.title ? -1 : b.title ? 1 : 0;
+          })
+
+        setProducts((prev) => sorted || prev);
+
         console.log(byCategory?.cid);
         
 
@@ -78,12 +88,7 @@ export default function ProductsScreen() {
             </XAppBar>
 
             <FlatList
-                data={byCategory?.products?.sort((a, b) => {
-                    if (a.title && b.title) {
-                      return a.title.localeCompare(b.title, 'ar');
-                    }
-                    return a.title ? -1 : b.title ? 1 : 0;
-                  }).map((_)=>{
+                data={products.map((_)=>{
                     return {..._, isInCart: cartItems.some(item => item.product_id === _.id)  };
                 })}
                 contentContainerStyle={tw`pt-10 gap-2`}

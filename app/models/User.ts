@@ -16,6 +16,8 @@ export interface User {
 
     authStatus?: 'false' | 'true' | 'error';
 
+    
+
     token?: string;
 
     status?: string;
