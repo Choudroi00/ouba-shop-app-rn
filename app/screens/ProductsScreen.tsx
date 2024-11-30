@@ -51,8 +51,18 @@ export default function ProductsScreen() {
         fetcher();
 
         const clone = byCategory?.products?.slice();
-        const sorted = byCategory?.products?.slice()?.sort((a, b) => {
+        
+        //console.log(byCategory?.cid);
+        
+
+        return () => {};
+    }, []);
+    
+    useEffect(()=>{
+      const sorted = byCategory?.products?.slice()?.sort((a, b) => {
+
             if (a.title && b.title) {
+
               return a.title.localeCompare(b.title, 'ar');
             }
             return a.title ? -1 : b.title ? 1 : 0;
@@ -60,11 +70,7 @@ export default function ProductsScreen() {
 
         setProducts((prev) => sorted || prev);
 
-        console.log(byCategory?.cid);
-        
-
-        return () => {};
-    }, [byCategory]);
+    }, [byCategory])
 
     const onAddToCart = (id: number) => {
         dispatch(changeInCartStatus({id}));
