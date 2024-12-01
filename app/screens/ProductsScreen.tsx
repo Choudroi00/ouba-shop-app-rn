@@ -112,7 +112,7 @@ export default function ProductsScreen() {
                 keyExtractor={item => item.id.toString()}
                 numColumns={2}
                 renderItem={({item}) => (
-                    <View style={tw`p-2 min-h-[370px]`}>
+                    <View style={tw`p-2 w-full min-h-[370px]`}>
                         <ProductItem onAddToCart={onAddToCart} product={item} />
                     </View>
                     
