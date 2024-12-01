@@ -21,6 +21,7 @@ import XAppBar from '../components/common/XAppBar';
 import {ActivityIndicator, FlatList, View} from 'react-native';
 import ProductItem from '../components/mainscreen/ProductItem';
 import {addToCart} from '../services/store/slices/CartSlice';
+import {clearCatProducts} from '../services/store/slices/ProductsSlice';
 
 const bar = [
     {
@@ -68,9 +69,19 @@ export default function ProductsScreen() {
             return a.title ? -1 : b.title ? 1 : 0;
           })
 
-        setProducts((prev) => sorted || prev);
+        if(!sorted) return
+
+        setProducts(sorted);
 
     }, [byCategory])
+
+    useEffect(() => {
+        navigator.addListener('beforeRemove', e => {
+            dispatch(clearCatProducts());
+        });
+
+        return () => {};
+    }, [navigator]);
 
     const onAddToCart = (id: number) => {
         dispatch(changeInCartStatus({id}));
@@ -101,7 +112,7 @@ export default function ProductsScreen() {
                 keyExtractor={item => item.id.toString()}
                 numColumns={2}
                 renderItem={({item}) => (
-                    <View style={tw`p-2 flex-1`}>
+                    <View style={tw`p-2 min-h-[370px]`}>
                         <ProductItem onAddToCart={onAddToCart} product={item} />
                     </View>
                     

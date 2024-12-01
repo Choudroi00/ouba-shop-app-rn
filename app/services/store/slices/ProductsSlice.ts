@@ -55,6 +55,8 @@ export const deleteProduct = createAsyncThunk(
   }
 );
 
+
+
 export interface ProductEngineState{
   items?: Product []
   status?: "idle" | "succeeded" | "failed" | "loading"
@@ -79,6 +81,9 @@ const productsSlice = createSlice({
   reducers: {
     changeInCartStatus: (state, payload )=>{
         state.items = state.items?.map((_)=>_.id === payload.payload.id ? {..._,isInCart:true} : _)
+    }, 
+    clearCatProducts: (state) => {
+      state.forCategory = null;
     }
   },
   extraReducers: (builder) => {
@@ -124,6 +129,6 @@ const productsSlice = createSlice({
 
 const reducer = productsSlice.reducer;
 
-export const {changeInCartStatus} = productsSlice.actions;
+export const {changeInCartStatus, clearCatProducts} = productsSlice.actions;
 
 export { reducer as productsReducer  };
