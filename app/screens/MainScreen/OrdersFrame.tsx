@@ -1,23 +1,27 @@
-import React, {useEffect} from 'react';
-import {FlatList, StyleSheet, Text, View} from 'react-native';
-import {useDispatch} from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import tw from 'twrnc';
-import {AppDispatch} from '../../services/store/store';
-import {fetchOrders} from '../../services/store/slices/CartSlice';
-import {Order} from '../../models/Order';
-import { useTypedSelector } from '../../utils/helpers';
+import { AppDispatch } from '../../services/store/store';
+import { fetchOrders } from '../../services/store/slices/CartSlice';
+import { Order } from '../../models/Order';
+import { useTypedNavigator, useTypedSelector } from '../../utils/helpers';
+import XButton from '../../components/common/XButton';
+import XModal from '../../components/common/XModal';
+import { axiosClient } from '../../services/api';
 
 export default function OrdersFrame() {
     const dispatch = useDispatch<AppDispatch>();
     const orders = useTypedSelector(state => state.cart.orders);
+    const navigator = useTypedNavigator(); 
 
     useEffect(() => {
         dispatch(fetchOrders());
-    },[dispatch]);
+    }, [dispatch]);
 
-    const renderOrder = ({index, item: order}: {index: number, item: Order} ) => {
+    const renderOrder = ({ index, item: order }: { index: number, item: Order }) => {
         console.log(order.total_price);
-        
+
         return (
             <View key={order.id ?? index} style={styles.card}>
                 <View style={styles.header}>
@@ -43,51 +47,84 @@ export default function OrdersFrame() {
                                 <Text style={[styles.text, tw`px-2 text-left text-white`]}>
                                     {item.quantity}
                                 </Text>
-                                
+
                                 <Text style={[styles.text, tw`flex-2 text-white text-center`]}>
-                                    {item.product.title?.slice(0,25) === item.product.title ? item.product.title : `${item.product.title?.slice(0,25)}...` }
+                                    {item.product.title?.slice(0, 25) === item.product.title ? item.product.title : `${item.product.title?.slice(0, 25)}...`}
                                 </Text>
                                 <Text style={[styles.text, tw`flex-1 text-center text-white`]}>
                                     {item.batch_size}
                                 </Text>
-                                
+
                                 <Text style={[styles.text, tw`flex-1 text-left text-white`]}>
                                     {(item.quantity * item.unit_price * item.batch_size).toFixed(2)}
                                 </Text>
                             </View>
                         );
                     }) ?? (
-                    <View style={tw`flex-row justify-center items-center`} >
-                        <Text style={[styles.text, tw`flex-1 text-center text-white`]}>تم حدف المنتج نهائيا</Text>
-                    </View>
-                )}
+                            <View style={tw`flex-row justify-center items-center`} >
+                                <Text style={[styles.text, tw`flex-1 text-center text-white`]}>تم حدف المنتج نهائيا</Text>
+                            </View>
+                        )}
                 </View>
                 <View style={styles.text}>
                     <Text style={[styles.text, tw`text-left`]}>Total: {parseFloat(order.total_price.toString()).toFixed(2)}</Text>
-                    
+
                 </View>
+
+                <XButton text='ارجاع الى السلة' onClick={() => {
+                    if(order.status === 'paid') {
+                        setBodyText('سيتم اعادة الطلب الى السلة لتعديل عليه . هل تريد المتابعة ؟ ')
+                        setTargetId(order.id);
+                    }else{
+                        setBodyText('لقد تم توصيل الطلب .. اتصل بالرقم لالغاءه')
+                    }
+
+                    setModalVisible(true);
+                }} >
+
+                </XButton>
             </View>
         );
     };
 
 
-    
-    return (<View style={styles.container}>
-        <Text style={[styles.title, tw`text-black text-left`]}>Orders</Text>
-        <FlatList
-        data={orders}
-        renderItem={renderOrder}
-        contentContainerStyle={{paddingVertical: 16}}
-        keyExtractor={order => order.id.toString()}
-        />
-    </View>)
+    const [modalVisible, setModalVisible] = useState(false);
+    const [targetId, setTargetId] = useState(-1);
+
+    const [bodyText, setBodyText] = useState('')
+
+    return (
+        <View style={styles.container}>
+            <Text style={[styles.title, tw`text-black text-left`]}>Orders</Text>
+            <FlatList
+                data={orders}
+                renderItem={renderOrder}
+                contentContainerStyle={{ paddingVertical: 16 }}
+                keyExtractor={order => order.id.toString()}
+            />
+
+            <XModal visible={modalVisible} title='ارجاع الى السلة' bodyText={bodyText} cancelText='الغاء' confirmText='حسنا' onCancel={() => setModalVisible(false)} onConfirm={async () => { 
+                if(targetId >= 0){
+                    setModalVisible(false);
+                    await axiosClient.post(`order/returnToCart/${targetId}`)
+                    setTargetId(-1)
+                    dispatch(fetchOrders());
+                    navigator.navigate('CartScreen')
+                }else{
+                    setModalVisible(false);
+                }
+             }}   >
+
+            </XModal>
+
+        </View>)
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-       
+
     },
     card: {
         backgroundColor: 'black',

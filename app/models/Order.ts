@@ -18,6 +18,8 @@ export interface Order{
 
   created_at: string;
 
+  status: 'paid' | 'processing' | 'completed' | 'cancelled';
+
   order_items: OrderItem[];
 
   order_details: {

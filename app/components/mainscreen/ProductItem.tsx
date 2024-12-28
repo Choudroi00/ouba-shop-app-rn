@@ -19,7 +19,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
 
     const animator = useSharedValue(0)
 
-    const delayedAnimator = useSharedValue(product.isInCart ? 0.8 : 1) 
+    const delayedAnimator = useSharedValue(product.isInCart ? 0.6 : 1) 
 
     const dispatch = useDispatch<AppDispatch>()
 
@@ -27,7 +27,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
 
     const fadeStyle = useAnimatedStyle(()=>{
         return {
-            backgroundColor: `rgba(99, 102, 241, ${delayedAnimator.value})`,
+            backgroundColor: `rgba(99, 102, ${delayedAnimator.value * 255}, 1)`,
         }
     })
 

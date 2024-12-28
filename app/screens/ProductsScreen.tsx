@@ -20,7 +20,7 @@ import XBarIcon from '../components/common/XBarIcon';
 import XAppBar from '../components/common/XAppBar';
 import {ActivityIndicator, FlatList, View} from 'react-native';
 import ProductItem from '../components/mainscreen/ProductItem';
-import {addToCart} from '../services/store/slices/CartSlice';
+import {addToCart, fetchCart} from '../services/store/slices/CartSlice';
 import {clearCatProducts} from '../services/store/slices/ProductsSlice';
 
 const bar = [
@@ -47,14 +47,10 @@ export default function ProductsScreen() {
     useEffect(() => {
         const fetcher = async () => {
             await dispatch(fetchProductsByCategory(query));
+            await dispatch(fetchCart());
         };
 
         fetcher();
-
-        const clone = byCategory?.products?.slice();
-        
-        //console.log(byCategory?.cid);
-        
 
         return () => {};
     }, []);
@@ -71,9 +67,16 @@ export default function ProductsScreen() {
 
         if(!sorted) return
 
-        setProducts(sorted);
+      const combineInCart = sorted.map((product) => {
+        return {
+         ...product,
+          isInCart: Boolean(cartItems.some(item => item.product_id === product.id)),
+        };
+      })
 
-    }, [byCategory])
+        setProducts(combineInCart);
+
+    }, [byCategory, cartItems])
 
     useEffect(() => {
         navigator.addListener('beforeRemove', e => {
@@ -105,9 +108,7 @@ export default function ProductsScreen() {
             </XAppBar>
 
             <FlatList
-                data={products.map((_)=>{
-                    return {..._, isInCart: cartItems.some(item => item.product_id === _.id)  };
-                })}
+                data={products}
                 contentContainerStyle={tw`pt-10 gap-2`}
                 keyExtractor={item => item.id.toString()}
                 numColumns={2}
