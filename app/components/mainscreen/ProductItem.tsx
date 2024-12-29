@@ -19,7 +19,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
 
     const animator = useSharedValue(0)
 
-    const delayedAnimator = useSharedValue(product.isInCart ? 0.5 : 1) 
+    const delayedAnimator = useSharedValue(product.isInCart ? 00 : 1) 
 
     const dispatch = useDispatch<AppDispatch>()
 
@@ -45,7 +45,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
 
     useEffect(()=>{
         const task = InteractionManager.runAfterInteractions(() => {
-            //if(!products?.slice(0,2).find( p => p.id === product.id )) return;
+            
             setTimeout(() => {
                 setTimeout(() => {
                     setLoading(false)
