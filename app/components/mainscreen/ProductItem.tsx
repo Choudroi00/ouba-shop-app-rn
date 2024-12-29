@@ -27,7 +27,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
 
     const fadeStyle = useAnimatedStyle(()=>{
         return {
-            backgroundColor: `rgba(${Math.min( 182 -  ( 1 - delayedAnimator.value) * 182, 255) }, ${Math.max( 0 +  ( 1 - delayedAnimator.value) * 202, 255) }, ${255 - delayedAnimator.value * (213)}, 1)`,
+            backgroundColor: `rgba(${Math.min( 182 -  ( 1 - delayedAnimator.value) * 182, 255) }, ${Math.min( 0 +  ( 1 - delayedAnimator.value) * 202, 255) }, ${255 - delayedAnimator.value * (213)}, 1)`,
         }
     })
 
@@ -112,7 +112,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
                     style={[tw`rounded-full flex-row justify-center py-2.5 pr-4 mt-2 items-center`, fadeStyle]}
                     disabled={product.isInCart || isAdding}
                     onPress={handleAddToCart}
-                    activeOpacity={0.8}>
+                    activeOpacity={0.9}>
                     {isAdding ? (
                         <LottieView 
                             source={{uri: 'https://res.cloudinary.com/dqtlhm4to/raw/upload/v1729130285/smwe1a0geou2pneq8a9a.json'}} 

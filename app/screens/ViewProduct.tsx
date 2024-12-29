@@ -10,7 +10,7 @@ export default function ViewProduct() {
 
   return (
     <View style={tw`w-full h-full bg-black`} >
-        <Image style={tw`aspect-1 w-full`} >
+        <Image source={{uri: url}} style={tw`aspect-1 w-full`} >
 
         </Image>
     </View>
