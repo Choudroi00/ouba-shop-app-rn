@@ -27,7 +27,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
 
     const fadeStyle = useAnimatedStyle(()=>{
         return {
-            backgroundColor: `rgba(${Math.min( 99 +  ( 1 - delayedAnimator.value) * 100, 255) }, ${Math.max( 102 +  ( 1 - delayedAnimator.value) * 100, 255) }, ${delayedAnimator.value * (255)}, 1)`,
+            backgroundColor: `rgba(${Math.min( 182 -  ( 1 - delayedAnimator.value) * 182, 255) }, ${Math.max( 0 +  ( 1 - delayedAnimator.value) * 202, 255) }, ${255 - delayedAnimator.value * (213)}, 1)`,
         }
     })
 
