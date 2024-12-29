@@ -71,7 +71,7 @@ export default function OrdersFrame() {
 
                 </View>
 
-                <XButton text='ارجاع الى السلة' onClick={() => {
+                <XButton color="#000" backgroundColor="#fff" text='ارجاع الى السلة' onClick={() => {
                     if(order.status === 'paid') {
                         setBodyText('سيتم اعادة الطلب الى السلة لتعديل عليه . هل تريد المتابعة ؟ ')
                         setTargetId(order.id);
@@ -103,12 +103,12 @@ export default function OrdersFrame() {
                 keyExtractor={order => order.id.toString()}
             />
 
-            <XModal visible={modalVisible} title='ارجاع الى السلة' bodyText={bodyText} cancelText='الغاء' confirmText='حسنا' onCancel={() => setModalVisible(false)} onConfirm={async () => { 
+            <XModal onDismiss={() => setModalVisible (false)} visible={modalVisible} title='ارجاع الى السلة' bodyText={bodyText} cancelText='الغاء' confirmText='حسنا' onCancel={() => setModalVisible(false)} onConfirm={async () => { 
                 if(targetId >= 0){
                     setModalVisible(false);
                     await axiosClient.post(`order/returnToCart/${targetId}`)
                     setTargetId(-1)
-                    dispatch(fetchOrders());
+                    await dispatch(fetchOrders()).unwrap();
                     navigator.navigate('CartScreen')
                 }else{
                     setModalVisible(false);

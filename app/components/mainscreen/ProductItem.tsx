@@ -19,15 +19,15 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
 
     const animator = useSharedValue(0)
 
-    const delayedAnimator = useSharedValue(product.isInCart ? 00 : 1) 
 
+    const delayedAnimator = useSharedValue(product.isInCart ? 0 : 1) 
     const dispatch = useDispatch<AppDispatch>()
 
     const [isAdding, setIsAdding] = useState(false)
 
     const fadeStyle = useAnimatedStyle(()=>{
         return {
-            backgroundColor: `rgba(${Math.min( 99 +  ( 1 - delayedAnimator.value) * 255, 255) }, ${Math.max( 102 +  ( 1 - delayedAnimator.value) * 255, 255) }, ${delayedAnimator.value * 255}, 1)`,
+            backgroundColor: `rgba(${210 - (1 - delayedAnimator.value) * 210},${19 + (1 - delayedAnimator.value) * 226},${255 + (1 - delayedAnimator.value) * (128 - 255 ) },1)`,
         }
     })
 
@@ -76,6 +76,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
     if(transposed) {
         return (
             <TouchableOpacity
+                activeOpacity={0.9}
                 onPress={()=> {
                     navigator.navigate('ViewProduct', { url: product.image_url || 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' })
                 }}
@@ -112,7 +113,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
                     style={[tw`rounded-full flex-row justify-center py-2.5 pr-4 mt-2 items-center`, fadeStyle]}
                     disabled={product.isInCart || isAdding}
                     onPress={handleAddToCart}
-                    activeOpacity={0.8}>
+                    activeOpacity={0.9}>
                     {isAdding ? (
                         <LottieView 
                             source={{uri: 'https://res.cloudinary.com/dqtlhm4to/raw/upload/v1729130285/smwe1a0geou2pneq8a9a.json'}} 
