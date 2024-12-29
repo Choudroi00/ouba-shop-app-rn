@@ -3,7 +3,7 @@ import { View, Image, Text, TouchableOpacity, InteractionManager } from 'react-n
 import tw from 'twrnc'
 import { Product } from '../../models/Product';
 import Animated, { FadeInDown, interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
-import { useTypedSelector } from '../../utils/helpers';
+import { useTypedNavigator, useTypedSelector } from '../../utils/helpers';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../services/store/store';
 import LottieView from 'lottie-react-native';
@@ -19,7 +19,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
 
     const animator = useSharedValue(0)
 
-    const delayedAnimator = useSharedValue(product.isInCart ? 0.6 : 1) 
+    const delayedAnimator = useSharedValue(product.isInCart ? 0.5 : 1) 
 
     const dispatch = useDispatch<AppDispatch>()
 
@@ -27,7 +27,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
 
     const fadeStyle = useAnimatedStyle(()=>{
         return {
-            backgroundColor: `rgba(99, 102, ${delayedAnimator.value * 255}, 1)`,
+            backgroundColor: `rgba(${Math.min( 99 +  ( 1 - delayedAnimator.value) * 255, 255) }, ${Math.max( 102 +  ( 1 - delayedAnimator.value) * 255, 255) }, ${delayedAnimator.value * 255}, 1)`,
         }
     })
 
@@ -56,6 +56,8 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
 
         return ()=>task.cancel()
     })
+
+    const navigator = useTypedNavigator();
 
     const handleAddToCart = () => {
         
@@ -129,7 +131,11 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
     }
 
     return (
-        <View  style={tw`flex-1 p-3 bg-slate-100 rounded-xl `}>
+        <TouchableOpacity
+            onPress={()=> {
+                navigator.navigate('ViewProduct', { url: product.image_url || 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' })
+            }}
+          style={tw`flex-1 p-3 bg-slate-100 rounded-xl `}>
             <View style={tw`relative`}>
                 <Animated.View style={[batchContainerStyle,tw`absolute z-1 bg-indigo-500 bg-opacity-70 flex-row gap-1 items-center  top-2 left-2 rounded-full p-1 px-4`]}  >
                     <View style={tw`rounded-full mt-1 mb-1 w-1 h-1 mr-1 bg-white`} >

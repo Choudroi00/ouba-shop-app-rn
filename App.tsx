@@ -27,6 +27,7 @@ import ProductsScreen from './app/screens/ProductsScreen';
 import React from 'react';
 import UpdateScreen from './app/screens/UpdateScreen';
 import DisabledScreen from './app/screens/DisabledScreen';
+import ViewProduct from './app/screens/ViewProduct';
 
 
 
@@ -44,6 +45,9 @@ export type RootStackParamList = {
   };
   UpdateScreen: undefined
   DisabledScreen: undefined
+  ViewProduct: {
+    url: string; 
+  }
   
 };
 
@@ -88,6 +92,7 @@ function App(): React.JSX.Element {
               <Stack.Screen name="ProductsScreen" component={ProductsScreen} />
               <Stack.Screen name="UpdateScreen" component={UpdateScreen} />
               <Stack.Screen name="DisabledScreen" component={DisabledScreen} />
+              <Stack.Screen name="ViewProduct" component={ViewProduct} />
             </Stack.Navigator>
           </NavigationContainer>
           
