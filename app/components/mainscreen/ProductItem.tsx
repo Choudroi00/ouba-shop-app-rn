@@ -75,7 +75,11 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
     }
     if(transposed) {
         return (
-            <View style={tw`flex-row bg-slate-100 rounded-xl p-3 mb-3`}>
+            <TouchableOpacity
+                onPress={()=> {
+                    navigator.navigate('ViewProduct', { url: product.image_url || 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' })
+                }}
+                style={tw`flex-row bg-slate-100 rounded-xl p-3 mb-3`}>
             <View style={tw`w-1/3 relative`}>
                 <Animated.View style={[batchContainerStyle, tw`absolute z-1 bg-indigo-500 bg-opacity-70 flex-row gap-1 items-center top-2 left-2 rounded-full p-1 px-4`]}>
                     <View style={tw`rounded-full mt-1 mb-1 w-1 h-1 mr-1 bg-white`} />
@@ -126,7 +130,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
                     </Text>
                 </AnimatedTouchableOpacity>
             </View>
-        </View>
+        </TouchableOpacity>
         )
     }
 
@@ -177,7 +181,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
                 {isAdding ? (<LottieView source={{uri: 'https://res.cloudinary.com/dqtlhm4to/raw/upload/v1729130285/smwe1a0geou2pneq8a9a.json'}} duration={1} resizeMode='center'  autoPlay loop style={tw` w-[24px] mr-1 justify-center items-center h-[20px]`} />) : (<View  style={tw`w-[24px] mr-1 justify-center items-center h-[20px]`} />) }
                 <Text style={tw`text-white font-semibold`}>{product.isInCart ? 'Already in cart' : 'Add to Cart'}</Text>
             </AnimatedTouchableOpacity>
-        </View>
+        </TouchableOpacity>
     );
 })
 
