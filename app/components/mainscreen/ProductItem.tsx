@@ -62,7 +62,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
     const handleAddToCart = () => {
         
         setIsAdding(true);
-        delayedAnimator.value = withTiming(0.8)
+        delayedAnimator.value = withTiming(0)
         const starter = async ()=> {
             setTimeout(() => {
                 setIsAdding(false);
