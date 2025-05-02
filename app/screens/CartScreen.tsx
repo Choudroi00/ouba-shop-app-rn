@@ -145,6 +145,7 @@ const CartScreen = () => {
     const handlePlaceOrder = () => {
         setProcessingModalVisible(true);
         dispatch(placeOrderFromCart());
+
     };
 
     return (
@@ -209,3 +210,5 @@ const CartScreen = () => {
 };
 
 export default CartScreen;
+
+// re getting in! let's rebuild the project 
