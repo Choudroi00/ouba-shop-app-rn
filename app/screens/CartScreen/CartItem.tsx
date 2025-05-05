@@ -1,5 +1,5 @@
 import { View, TouchableOpacity, TextInput, Image, Text } from "react-native";
-import { Icon } from "react-native-vector-icons/Icon";
+import Icon from 'react-native-vector-icons/Ionicons';
 import XButton from "../../components/common/XButton";
 import React = require("react");
 import { useDispatch } from "react-redux";
@@ -63,7 +63,7 @@ const CartItem = ({item, handlers}: {item: ViewableCartItem, handlers: CartItemH
                     <View style={tw`flex-row items-center justify-end`}>
                         <TouchableOpacity
                             activeOpacity={0.8}
-                            onPress={handleDecrement}
+                            onPress={() => handleDecrement(item.id)}
                             style={tw`bg-gray-200 w-8 h-8 rounded-full items-center justify-center`}>
                             <Icon name="remove" size={20} color="#333" />
                         </TouchableOpacity>
@@ -75,7 +75,7 @@ const CartItem = ({item, handlers}: {item: ViewableCartItem, handlers: CartItemH
                         />
                         <TouchableOpacity
                             activeOpacity={0.8}
-                            onPress={handleIncrement}
+                            onPress={() => handleIncrement(item.id)}
                             style={tw`bg-gray-200 w-8 h-8 rounded-full items-center justify-center`}>
                             <Icon name="add" size={20} color="#333" />
                         </TouchableOpacity>
