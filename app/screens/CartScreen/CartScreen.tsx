@@ -1,0 +1,269 @@
+import {useEffect, useState} from 'react';
+import {
+    View,
+    Text,
+    FlatList,
+
+    Keyboard,
+    ActivityIndicator,
+} from 'react-native';
+import {useDispatch} from 'react-redux';
+import {AppDispatch, RootState} from '../../services/store/store';
+import {
+    fetchCart,
+    placeOrderFromCart,
+    removeFromCart,
+    updateQuantity,
+} from '../../services/store/slices/CartSlice';
+import XAppBar from '../../components/common/XAppBar';
+import XBarIcon from '../../components/common/XBarIcon';
+import Icon from 'react-native-vector-icons/Ionicons';
+import tw from 'twrnc';
+import {useTypedNavigator, useTypedSelector} from '../../utils/helpers';
+import XButton from '../../components/common/XButton';
+import XModal from '../../components/common/XModal';
+import {primaryColor} from '../../constants';
+import useKeyboard from '../../hook/useKeyboard';
+import XSnackbar from '../../components/common/XSnakeBar';
+import React = require('react');
+import CartItem, { CartItemHandlers, ViewableCartItem } from './CartItem';
+import useDebounceAction from './DebounceAction';
+
+
+
+
+const CartScreen = () => {
+    const dispatch = useDispatch<AppDispatch>();
+    const navigator = useTypedNavigator();
+    
+    const navigationBack = () => navigator.goBack();
+    
+    const navigationBars = [
+        {
+            key: 'back',
+            position: 'left',
+            icon: <Icon name="chevron-back" size={20} color="#333" />,
+            onPress: navigationBack,
+        },
+    ];
+
+    const isKeyboardOpen = useKeyboard();
+
+    useEffect(() => {
+        if (!isKeyboardOpen) {
+            Keyboard.dismiss();
+        }
+    }, [isKeyboardOpen]);
+
+    const products = useTypedSelector(state => state.products.items);
+    const {cartItems, total, loading, error} = useTypedSelector(
+        state => state.cart,
+    );
+
+    const [cartState, setCartState] = useState<ViewableCartItem[]>([])
+
+    useEffect(() => {
+        const dowable = async () => {
+            if(!cartItems || cartItems.length === 0) await dispatch(fetchCart()).unwrap();
+            const shapedCartItems = cartItems.map((item) => {
+                const product = products.find(p => p.id === item.product_id);
+                if(!product) return null;
+                return {
+                    id: item.id,
+                    p_id: product?.id,
+
+                    image_url: product?.image_url,
+                    title: product?.title,
+                    price: product?.price,
+                    batch_size: product?.batch_size,
+
+                    quantity: item.quantity,
+                }
+            }).filter(Boolean)
+
+            setCartState(shapedCartItems);
+            
+        }
+        dowable();
+    }, [dispatch, cartItems]);
+
+    const [removalModalVisible, setRemovalModalVisible] = useState(false);
+    const [processingModalVisible, setProcessingModalVisible] = useState(false);
+    const [snackbarVisible, setSnackbarVisible] = useState(false);
+    const [itemToRemove, setItemToRemove] = useState(-1);
+    const [pendingUpdate, setPendingUpdate] = useState(false);
+
+    // const handleRemoveItem = () => {
+    //     dispatch(removeFromCart(itemToRemove));
+    //     setRemovalModalVisible(false);
+    // };
+
+    // const handleQuantityUpdate = (productId, quantity) => {
+    //     dispatch(updateQuantity({productId, quantity}));
+    // };
+
+    // const handleRemoveRequest = itemId => {
+    //     setRemovalModalVisible(true);
+    //     setItemToRemove(itemId);
+    // };
+
+    const handlers : CartItemHandlers & {handleRemoveItem: (itemId: number) => void} = {
+        handleIncrement: (id: number) => {
+            const item = cartState.find(item => item.id === id);
+            if (item) {
+                setPendingUpdate(true);
+                const newQuantity = item.quantity + 1;
+                setCartState(prevState => prevState.map(cartItem => ({...cartItem, quantity: cartItem.id === id ? newQuantity : cartItem.quantity})));
+                useDebounceAction(async ()=> {
+                    await dispatch(updateQuantity({productId: item.p_id, quantity: newQuantity})).unwrap();
+                    setPendingUpdate(false);
+                })
+            }
+        },
+        handleDecrement: (id: number) => {
+            const item = cartState.find(item => item.id === id);
+            if (item) {
+                setPendingUpdate(true);
+                const newQuantity = Math.max(1, item.quantity - 1);
+                setCartState(prevState => prevState.map(cartItem => ({...cartItem, quantity: cartItem.id === id ? newQuantity : cartItem.quantity})));
+                useDebounceAction(async ()=> {
+                    await dispatch(updateQuantity({productId: item.p_id, quantity: newQuantity})).unwrap();
+                    setPendingUpdate(false);
+                })
+            }
+        },
+        handleRemoveRequest: itemId => {
+            setRemovalModalVisible(true);
+            setItemToRemove(itemId);
+        },
+        handleRemoveItem: (itemId: number) => {
+            dispatch(removeFromCart(itemId));
+            setRemovalModalVisible(false);
+        },
+    }
+
+
+
+    useEffect(() => {
+        if (processingModalVisible && !loading) {
+            setTimeout(() => {
+                setProcessingModalVisible(false);
+                setSnackbarVisible(true);
+                setTimeout(() => setSnackbarVisible(false), 2000);
+            }, 250);
+        }
+    }, [loading, processingModalVisible]);
+
+    const renderCartItem = ({item}: {item: ViewableCartItem}) => {
+        return (
+            <CartItem item={item} handlers={handlers} />
+        )
+    };
+
+    const handlePlaceOrder = () => {
+        setProcessingModalVisible(true);
+        dispatch(placeOrderFromCart());
+    };
+
+    return (
+        <View style={tw`flex-1 bg-white pt-[53]`}>
+            <XModal
+                visible={removalModalVisible}
+                onConfirm={() => handlers.handleRemoveItem(itemToRemove)}
+                onDismiss={() => setRemovalModalVisible(false)}
+                onCancel={() => setRemovalModalVisible(false)}
+                title="Remove item from Cart?"
+                bodyText="You are about removing this item from cart, this is irreversible and you will need to re-choose it again!"
+            />
+            <XModal
+                visible={processingModalVisible}
+                dismissRequested={() => false}
+                noActions
+                title="Processing Order"
+                bodyText="Please wait while we place your order...">
+                <ActivityIndicator
+                    size="large"
+                    style={tw`pb-10`}
+                    color="#0000ff"
+                />
+            </XModal>
+
+            {snackbarVisible && (
+                <XSnackbar
+                    type={error ? 'error' : 'success'}
+                    message={
+                        error
+                            ? 'Check the quantity you ordered, it seems you exceeded the total.'
+                            : 'Order placed successfully'
+                    }
+                />
+            )}
+
+            <XAppBar title="Your Cart" style={tw`bg-white shadow-sm`}>
+                {navigationBars.map(bar => (
+                    <XBarIcon
+                        key={bar.key}
+                        indentifier={bar.key}
+                        position={bar.position as any}
+                        onPress={bar.onPress}>
+                        {bar.icon}
+                    </XBarIcon>
+                ))}
+            </XAppBar>
+
+            <View style={tw`relative w-full h-full`}>
+                <View style={tw`flex-1 px-4 pt-4`}>
+                    {cartItems.length === 0 && (
+                        <View style={tw`flex-1 items-center justify-center`}>
+                            <Icon
+                                name="cart-outline"
+                                size={64}
+                                color="#CCCCCC"
+                            />
+                            <Text style={tw`text-gray-500 text-lg mt-4`}>
+                                Your cart is empty _\(^^)/_
+                            </Text>
+                            <XButton
+                                backgroundColor={primaryColor}
+                                onClick={navigationBack}
+                                style={tw`mt-4 py-2 px-4 rounded-full`}>
+                                <Text style={tw`text-white font-semibold`}>
+                                    Start Shopping
+                                </Text>
+                            </XButton>
+                        </View>
+                    )}
+                    <>
+                        <FlatList
+                            data={cartState}
+                            keyExtractor={item => item.id.toString()}
+                            renderItem={renderCartItem}
+                            contentContainerStyle={tw`py-2`}
+                            showsVerticalScrollIndicator={false}
+                        />
+                        <View
+                            style={tw`bg-slate-50 p-6 rounded-t-2xl border-b-0 border-[4px] border-slate-200`}>
+                            <Text
+                                style={tw`text-xl font-semibold text-[${primaryColor}] mb-7`}>
+                                Total: {total.toFixed(2)}
+                            </Text>
+                            <XButton
+                                disabled={loading || pendingUpdate}
+                                backgroundColor={primaryColor}
+                                onClick={handlePlaceOrder}>
+                                <Text
+                                    style={tw`text-white text-center font-semibold`}>
+                                    Proceed to Checkout
+                                </Text>
+                            </XButton>
+                        </View>
+                    </>
+                </View>
+            </View>
+        </View>
+    );
+};
+
+export default CartScreen;
+
+// re getting in! let's rebuild the project

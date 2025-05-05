@@ -87,6 +87,8 @@ export const fetchOrders = createAsyncThunk(
   'cart/fetchOrders',
   async () => {
     const response = await axiosClient.get('/order/indexFor');
+    console.log('a fetch');
+    
     return response.data.data;
   }
 );
@@ -137,6 +139,8 @@ const cartSlice = createSlice({
       })
       .addCase(fetchCart.fulfilled, (state, action) => {
         state.loading = false;
+        console.log('a fetch');
+        
         
         state.cartItems = action.payload.cart_items;
         

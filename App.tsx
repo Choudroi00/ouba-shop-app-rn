@@ -22,7 +22,7 @@ import LoginScreen from './app/screens/AuthScreen';
 import { Animated, Easing } from 'react-native';
 import MainSreen from './app/screens/MainScreen';
 import AppEntry from './app/screens';
-import CartScreen from './app/screens/CartScreen';
+import CartScreen from './app/screens/CartScreen/CartScreen';
 import ProductsScreen from './app/screens/ProductsScreen';
 import React from 'react';
 import UpdateScreen from './app/screens/UpdateScreen';
