@@ -420,7 +420,7 @@ const CartScreen = () => {
 
     useEffect(() => {
       
-      const total = cartState.reduce((acc, item) => acc + (~~item.price * ~~item.quantity * ~~item.batch_size) )
+      const total = cartState.reduce((acc, item) => acc + (~~item.price * ~~item.quantity * ~~item.batch_size), 0)
       setTotalPrice(total)
     }, [cartState]);
 
@@ -445,8 +445,7 @@ const CartScreen = () => {
                 };
               })
               .filter(Boolean);
-            const total = shapedCartItems.reduce((acc, item) => acc + (~~item.price * ~~item.quantity * ~~item.batch_size) )
-            setTotalPrice(total)
+            
             setCartState((prev) => {
                 if(JSON.stringify(prev) === JSON.stringify(shapedCartItems)) return prev;
                 return shapedCartItems
