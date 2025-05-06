@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 
 export default function useDebounceAction<T>(
@@ -6,16 +6,27 @@ export default function useDebounceAction<T>(
     delay: number = 300
 ): ((arg: T) => void) {
 
-    const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const [counter, setCounter] = useState<T>();
+    
+    const isFirstRender = useRef(true);
 
     const debouncedAction = useCallback((arg: T) => {
-        if (timerRef.current) {
-            clearTimeout(timerRef.current);
+        setCounter((prev) => arg);
+    },[] )
+
+    useEffect(()=>{
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
         }
-        timerRef.current = setTimeout(() => {
-            action(arg);
+        const id = setTimeout(() => {
+            action(counter);
         }, delay);
-    }, [action, delay]);
+
+        return () => {
+            clearTimeout(id);
+        };
+    }, [counter])
 
     return debouncedAction;
 }

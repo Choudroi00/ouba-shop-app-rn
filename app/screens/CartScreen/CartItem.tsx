@@ -33,9 +33,17 @@ const CartItem = ({item, handlers}: {item: ViewableCartItem, handlers: CartItemH
     const { handleDecrement, handleIncrement, handleRemoveRequest } = handlers;
     const imageUrl = imageGetter(item.image_url);
 
+    React.useEffect(() => {
+        if(Number(item.id) === 132){
+            console.log('item id 51');
+        }
+    }, [item.id])
+    if(Number(item.id) === 132){ console.log('hello');}
+    
 
-    return (
-        <View style={tw`gap-x-2.5 flex-row-reverse flex-1`}>
+
+    return (        
+        <View style={tw`gap-x-2.5 flex-row-reverse`}>
             <View style={tw`flex-col justify-around`}>
                 <XButton
                     style={tw`rounded-2xl bg-slate-50 p-3.5`}
@@ -98,4 +106,4 @@ const imageGetter = (imageUrl?: string) => {
 }
 
 
-export default CartItem;
+export default React.memo(CartItem);
