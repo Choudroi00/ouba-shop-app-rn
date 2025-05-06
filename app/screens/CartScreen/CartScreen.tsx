@@ -322,6 +322,7 @@ const CartScreen = () => {
     const {cartItems} = useTypedSelector(state => state.cart);
 
     const [cartState, setCartState] = useState<ViewableCartItem[]>([]);
+    const [totalPrice, setTotalPrice] = useState(0)
 
     const [removalModalVisible, setRemovalModalVisible] = useState(false);
     const [processingModalVisible, setProcessingModalVisible] = useState(false);
@@ -418,7 +419,9 @@ const CartScreen = () => {
     };
 
     useEffect(() => {
-        console.log('cart screen');
+      
+      const total = cartState.reduce((acc, item) => acc + (~~item.price * ~~item.quantity * ~~item.batch_size) )
+      setTotalPrice(total)
     }, [cartState]);
 
     useEffect(() => {
@@ -442,7 +445,8 @@ const CartScreen = () => {
                 };
               })
               .filter(Boolean);
-          
+            const total = shapedCartItems.reduce((acc, item) => acc + (~~item.price * ~~item.quantity * ~~item.batch_size) )
+            setTotalPrice(total)
             setCartState((prev) => {
                 if(JSON.stringify(prev) === JSON.stringify(shapedCartItems)) return prev;
                 return shapedCartItems
@@ -535,7 +539,7 @@ const CartScreen = () => {
                     style={tw`bg-slate-50 p-6 rounded-t-2xl border-b-0 border-[4px] border-slate-200`}>
                     <Text
                         style={tw`text-xl font-semibold text-[#171834] mb-7`}>
-                        ToT{/* Total: {total.toFixed(2)} */}
+                        Total: {totalPrice.toFixed(2)}
                     </Text>
                     <XButton
                         disabled={pendingUpdate}
