@@ -47,7 +47,7 @@ const CartItem = ({item, handlers}: {item: ViewableCartItem, handlers: CartItemH
             <View style={tw`flex-col justify-around`}>
                 <XButton
                     style={tw`rounded-2xl bg-slate-50 p-3.5`}
-                    onClick={() => handleRemoveRequest(item.id)}>
+                    onClick={() => handleRemoveRequest(item.p_id)}>
                     <Icon name="trash" size={20} color="#333" />
                 </XButton>
             </View>

@@ -295,7 +295,7 @@ import XSnackbar from '../../components/common/XSnakeBar';
 // // re getting in! let's rebuild the project
 
 const fetchCartLocal = async () => {
-    const response = await axiosClient.get('/cart');
+    const response = await axiosClient.get(`/cart?t=${Date.now()}`);
     const {cart_items, products, total} = response.data;
 
 
@@ -344,7 +344,7 @@ const CartScreen = () => {
         },
     ];
 
-    const debouncedQuantityUpdate = useCallback(
+    const debouncedQuantityUpdate = useDebounceAction(
         async ({
             productId,
             quantity,
@@ -353,10 +353,9 @@ const CartScreen = () => {
             quantity: number;
         }) => {
             console.log('do3');
-            await updateQuantity({productId, quantity});
-
+            const response = await axiosClient.post(`/cart/updateQuantity/${productId}`, { quantity });
             setPendingUpdate(false);
-        }, [dispatch]);
+        }, 400);
 
     const handlers: CartItemHandlers & {
         handleRemoveItem: (itemId: number) => void;
@@ -406,8 +405,9 @@ const CartScreen = () => {
             setRemovalModalVisible(true);
             setItemToRemove(itemId);
         },
-        handleRemoveItem: (itemId: number) => {
-            dispatch(removeFromCart(itemId));
+        handleRemoveItem: async (itemId: number) => {
+            await axiosClient.delete(`/cart/remove/${itemId}`);
+            setCartState(prevState => prevState.filter(item => item.id !== itemId));
             setRemovalModalVisible(false);
         },
     }), [cartState, debouncedQuantityUpdate, dispatch]);
@@ -424,6 +424,8 @@ const CartScreen = () => {
     useEffect(() => {
         const dowable = async () => {
             const result = await fetchCartLocal();
+            console.log('do', result);
+            
             
             const shapedCartItems = result.cart_items
               .map(item => {
