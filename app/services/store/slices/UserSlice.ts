@@ -106,9 +106,6 @@ export const userRegister = createAsyncThunk(
       if (user) rejectWithValue('user already exists');
   
       user = await register(payload);
-
-      console.log(user);
-      
   
       if (user) return user;
   

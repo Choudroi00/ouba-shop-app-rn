@@ -8,30 +8,34 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import {default as IconX} from 'react-native-vector-icons/Ionicons';
 import XBottomNavigator from '../../components/common/XBottomNavigator';
 import HomeFrame from './HomeFrame';
-import SearchFrame from './SearchFrame.tsx';
+import SearchFrame from './SearchFrame';
 import {getData, useTypedNavigator, useTypedSelector} from '../../utils/helpers';
 import {useDispatch} from 'react-redux';
 import {switchTab} from '../../services/store/slices/MainScreenStateSlice';
 import {
     fetchCategories,
     fetchTree,
-} from '../../services/store/slices/CategotiesSlice.ts';
+} from '../../services/store/slices/CategotiesSlice';
 
-import {AppDispatch} from '../../services/store/store.tsx';
+import {AppDispatch} from '../../services/store/store';
 import CategoriesFrame from './CategoriesFrame';
-import { fetchCart } from '../../services/store/slices/CartSlice.ts';
-import XModal from '../../components/common/XModal.tsx';
-import OrdersFrame from './OrdersFrame.tsx';
-import { fetchProducts } from '../../services/store/slices/ProductsSlice.ts';
-import { fetchUser } from '../../services/store/slices/UserSlice.ts';
+import { fetchCart } from '../../services/store/slices/CartSlice';
+import XModal from '../../components/common/XModal';
+import OrdersFrame from './OrdersFrame';
+import { fetchProducts } from '../../services/store/slices/ProductsSlice';
+import { fetchUser } from '../../services/store/slices/UserSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const tabs = [
-    {key: 'home', label: 'Home', icon: {name: 'home-outline', color: 'black'}},
     {
         key: 'categories',
         label: 'Categories',
         icon: {name: 'grid-outline', color: 'black'},
+    },
+    {
+        key: 'home', 
+        label: 'Home', 
+        icon: {name: 'home-outline', color: 'black'}
     },
     {
         key: 'search',
@@ -74,8 +78,8 @@ export default function MainSreen() {
 
     //const [activeTab, setActiveTab] = useState('home');
     const [tabStates, setTabStates] = useState({
-        home: <HomeFrame />,
         categories: <CategoriesFrame />,
+        home: <HomeFrame />,
         search: <SearchFrame />,
         orders: <OrdersFrame/>,
         profile: <View style={tw`flex-1 bg-black`}></View>,

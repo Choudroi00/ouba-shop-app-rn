@@ -9,7 +9,11 @@ const getUser = async (email: string) : Promise<User>=> {
 }
 
 const register = async ({email, password} : {email : string, password?: string}) : Promise<User>=> {
-    const r = await axiosClient.post("/users", {email, password})
+    const r = await axiosClient.post("/register", {email, password})
+
+    if(r.status === 200){
+        return r.data as User;
+    }
 
     return r.data as User;
 }
@@ -22,7 +26,7 @@ const login = async ({email, password} : {email? : string, password?: string}) :
         return r.data as User;
     }
 
-    console.log(r);
+    
     
 
     throw new Error("Invalid email or password");

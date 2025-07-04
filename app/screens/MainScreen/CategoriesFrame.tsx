@@ -23,14 +23,16 @@ const CategoryItem = ({ category, onCategoryPress }: { category: { item: Categor
           }}
         />
       </TouchableWithoutFeedback>
-      {children && children.length > 0 && (
+      {/* {children && children.length > 0 && (
         <FlatList
           data={children}
           keyExtractor={(item) => item.id.toString()}
           renderItem={(item) => <CategoryItem onCategoryPress={onCategoryPress} category={item} />}
           style={styles.subCategoryList}
         />
-      )}
+      )} 
+        TODO: this part for subcategories removed 
+       */}
     </View>
   );
 };

@@ -18,7 +18,7 @@ import WalkthroughScreen from './app/screens/WalkthroughScreen';
 
 import { setCustomText, setCustomTextInput } from 'react-native-global-props';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import LoginScreen from './app/screens/AuthScreen';
+import LoginScreen, { RegisterScreen } from './app/screens/AuthScreen';
 import { Animated, Easing } from 'react-native';
 import MainSreen from './app/screens/MainScreen';
 import AppEntry from './app/screens';
@@ -36,6 +36,7 @@ const qclient = new QueryClient();
 export type RootStackParamList = {
   Walkthrough: undefined;
   Auth: undefined;
+  RegisterScreen: undefined;
   MainScreen: undefined 
   AppEntry: undefined;
   CartScreen: undefined;
@@ -87,6 +88,7 @@ function App(): React.JSX.Element {
               <Stack.Screen name='AppEntry' component={AppEntry} />
               <Stack.Screen name="Walkthrough" component={WalkthroughScreen} />
               <Stack.Screen name="Auth" component={LoginScreen} />
+              <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
               <Stack.Screen name="MainScreen" component={MainSreen} /> 
               <Stack.Screen name="CartScreen" component={CartScreen} />  
               <Stack.Screen name="ProductsScreen" component={ProductsScreen} />
