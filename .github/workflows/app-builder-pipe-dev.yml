@@ -75,3 +75,14 @@ jobs:
           name: android-apk
           path: android/app/build/outputs/apk/release/app-release.apk
 
+      - name: SendTelegram
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: "Android APK has been built and deployed successfully."
+          disable_web_page_preview: true
+          parse_mode: "Markdown"
+          file: android/app/build/outputs/apk/release/app-release.apk
+          caption: "F.A.M.E - Android Release"
+
