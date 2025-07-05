@@ -75,14 +75,20 @@ jobs:
           name: android-apk
           path: android/app/build/outputs/apk/release/app-release.apk
 
+      - name: Install zip
+        uses: montudor/action-zip@v1
+
+      - name: Zip with Maximum Compression
+        run: zip -r -9 android/app/build/outputs/apk/release/app.zip android/app/build/outputs/apk/release/app-release.apk
+
       - name: SendTelegram
-        uses: xz-dev/TelegramFileUploader@v1
+        uses: appleboy/telegram-action@master
         with:
-          to-who: ${{ secrets.TELEGRAM_CHAT_ID }}
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: "Android APK has been built and deployed successfully."
-          files: android/app/build/outputs/apk/release/app-release.apk
-        env:
-          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          API_ID: ${{ secrets.TELEGRAM_API_ID }}
-          API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+          disable_web_page_preview: true
+          parse_mode: "Markdown"
+          document: android/app/build/outputs/apk/release/app.zip
+          caption: "F.A.M.E - Android Release"
 
