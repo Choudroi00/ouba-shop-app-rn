@@ -8,7 +8,7 @@ export interface MainScreenState {
 }
 
 const initialState: MainScreenState = {
-    activeTab: "home",
+    activeTab: "categories", // Default active tab
 };
 
 
