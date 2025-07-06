@@ -92,6 +92,11 @@ export default function ProductsScreen() {
 
         if (categoriesTree && categoriesTree.length > 0 && query) {
             const subs = findSubCategories(categoriesTree, parseInt(query));
+            dispatch(fetchProductsByCategory(parseInt(query)));
+            console.log('subs', JSON.stringify(subs));
+            console.log('query', query);
+            
+            
             setSubCategories(subs);
         }
     }, [categoriesTree, query]);

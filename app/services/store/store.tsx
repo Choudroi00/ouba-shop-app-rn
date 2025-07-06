@@ -5,6 +5,7 @@ import { mainScreenReducer } from "./slices/MainScreenStateSlice";
 import { productsReducer } from "./slices/ProductsSlice";
 import { categoriesReducer } from "./slices/CategotiesSlice";
 import { cartReducer } from "./slices/CartSlice";
+import { AdsReducer } from "./slices/AdsSlice";
 
 
 
@@ -17,7 +18,8 @@ const store = configureStore({
         mainscreen: mainScreenReducer,
         products: productsReducer,
         categories: categoriesReducer,
-        cart: cartReducer
+        cart: cartReducer,
+        ads: AdsReducer
     }
 })
 
