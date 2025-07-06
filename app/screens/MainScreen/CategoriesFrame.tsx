@@ -5,8 +5,13 @@ import { CategoriesTree } from '../../models/CategoriesTree';
 import { useTypedNavigator, useTypedSelector } from '../../utils/helpers';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useAds } from '../../services/store/slices/AdsSlice';
+import Video from 'react-native-video';
 
-import { Video } from 'expo-av';
+const ITEM_TYPES = {
+  ADS_HEADER: 'ADS_HEADER',
+  ADS_LIST: 'ADS_LIST',
+  CATEGORY: 'CATEGORY',
+};
 
 const CategoryItem = ({ category, onCategoryPress }: { category: { item: CategoriesTree }, onCategoryPress: (id: number) => void }) => {
   const { photo, id, label, children } = category.item;
@@ -45,8 +50,8 @@ const CategoriesFrame = () => {
   const originalTree = useTypedSelector((state) => state.categories.tree);
   const [filteredTree, setFilteredTree] = useState<CategoriesTree[]>([]);
   const navigation = useTypedNavigator();
-  // hook to load ads
   const { ads, loading: adsLoading, error: adsError, refreshAds } = useAds();
+  const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
     const filterTree = (tree: CategoriesTree[]): CategoriesTree[] => {
@@ -63,6 +68,22 @@ const CategoriesFrame = () => {
   useEffect(() => {
     refreshAds();
   }, []);
+
+  useEffect(() => {
+    const newData: any[] = [];
+
+    if (ads && ads.length > 0) {
+      newData.push({ type: ITEM_TYPES.ADS_HEADER });
+      newData.push({ type: ITEM_TYPES.ADS_LIST, ads: ads });
+    }
+
+    if (filteredTree && filteredTree.length > 0) {
+      const categoryItems = filteredTree.map(category => ({ type: ITEM_TYPES.CATEGORY, category: { item: category } }));
+      newData.push(...categoryItems);
+    }
+
+    setData(newData);
+  }, [ads, filteredTree]);
 
   const getCategoryLabel = (tree: CategoriesTree[], targetId: number): string => {
     for (const item of tree) {
@@ -83,40 +104,50 @@ const CategoriesFrame = () => {
     navigation.navigate('ProductsScreen', { query: categoryId.toString(), title: getCategoryLabel(filteredTree, categoryId) });
   };
 
+  const renderItem = ({ item }: { item: any }) => {
+    switch (item.type) {
+      case ITEM_TYPES.ADS_HEADER:
+        return <Text style={tw`p-4 px-6 font-bold text-xl text-slate-800`}>Ads</Text>;
+      case ITEM_TYPES.ADS_LIST:
+        return (
+          <FlatList
+            data={item.ads}
+            horizontal
+            keyExtractor={(ad) => ad.id.toString()}
+            renderItem={({ item: adItem }) =>
+              adItem.resource_type === 'banner' ? (
+                <Image
+                  style={tw`w-96 h-40 rounded-lg mr-2`}
+                  source={{ uri: adItem.resource_url }}
+                  resizeMode="cover"
+                />
+              ) : (
+                <Video
+                  source={{ uri: adItem.resource_url }}
+                  style={{ width: 300, height: 200, borderRadius: 8, marginRight: 8 }}
+                  controls
+                  resizeMode="cover"
+                />
+              )
+            }
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={tw`py-2 px-2`}
+          />
+        );
+      case ITEM_TYPES.CATEGORY:
+        return <CategoryItem onCategoryPress={navigateToProducts} category={item.category} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <View style={styles.container}>
-      {/* render ad banner carousel if available */}
-      {ads?.length > 0 && (
-        <FlatList
-          data={ads}
-          horizontal
-          keyExtractor={ad => ad.id.toString()}
-          renderItem={({ item }) =>
-            item.resource_type === 'banner' ? (
-              <Image
-                style={tw`w-full h-40 rounded-lg mr-2`}
-                source={{ uri: item.resource_url }}
-                resizeMode="cover"
-              />
-            ) : (
-              <Video
-                source={{ uri: item.resource_url }}
-                style={{ width: 300, height: 200, borderRadius: 8, marginRight: 8 }}
-                useNativeControls
-                resizeMode="cover"
-              />
-            )
-          }
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={tw`py-4 px-2`}
-        />
-      )}
-
       <FlatList
-        data={filteredTree}
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => `${item.type}-${index}`}
         contentContainerStyle={tw`pb-[100px] pt-[16px]`}
-        keyExtractor={(_, index) => index.toString()}
-        renderItem={item => <CategoryItem onCategoryPress={navigateToProducts} category={item} />}
       />
     </View>
   );
