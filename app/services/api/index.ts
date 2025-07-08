@@ -30,5 +30,28 @@ axiosClient.interceptors.request.use(
     }
 );
 
+axiosClient.interceptors.response.use(
+  (response) => {
+    //console.log("Response:", response);
+    return response;
+  },
+  (error) => {
+    if (error.response) {
+      // Server responded with a status other than 2xx
+      console.error("Error Response Data:", error.response.data);
+      console.error("Error Response Status:", error.response.status);
+      console.error("Error Response Headers:", error.response.headers);
+    } else if (error.request) {
+      // Request was made but no response received
+      console.error("Error Request:", error.request);
+    } else {
+      // Something else caused the error
+      console.error("Error Message:", error.message);
+    }
+    console.error("Response Error:", error);
+    return Promise.reject(error);
+  }
+);
+
 export {axiosClient}
 

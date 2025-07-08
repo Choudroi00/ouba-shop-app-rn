@@ -1,5 +1,5 @@
 import { Text, View, ViewProps } from "react-native"
-import { getData, useTypedNavigator } from "../utils/helpers";
+import { getData, storeData, useTypedNavigator } from "../utils/helpers";
 import { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
@@ -60,6 +60,12 @@ const AppEntry = () => {
         const checker = async () => {
             const isAuthenticated = await getData('isAuthenticated')
             const isGuest = await getData('isGuest')
+            if(!isAuthenticated && !isGuest) {
+                await storeData('isGuest', 'true')
+                navigator.navigate('MainScreen')
+                
+
+            }
             if (isAuthenticated || isGuest) {
 
                 navigator.navigate('MainScreen')
