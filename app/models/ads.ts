@@ -3,4 +3,5 @@ export type Advertisment = {
     title: string;
     resource_url: string;
     resource_type: 'banner' | 'video';
+    timeout: number;
 }

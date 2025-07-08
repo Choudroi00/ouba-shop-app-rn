@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 import tw from 'twrnc';
 import { CategoriesTree } from '../../models/CategoriesTree';
@@ -119,12 +119,29 @@ const CategoriesFrame = () => {
   };
 
   const renderItem = ({ item }: { item: any }) => {
+    const adsListRef = useRef<FlatList>(null);
+    const currentIndex = useRef(0);
+
+    useEffect(() => {
+      if (item.type === ITEM_TYPES.ADS_LIST && item.ads.length > 0) {
+        const interval = setInterval(() => {
+          if (adsListRef.current) {
+            currentIndex.current = (currentIndex.current + 1) % item.ads.length;
+            adsListRef.current.scrollToIndex({ index: currentIndex.current, animated: true });
+          }
+        }, item.ads[currentIndex.current]?.timeout * 1000 || 3000); // Default to 3 seconds if timeout is not defined
+
+        return () => clearInterval(interval);
+      }
+    }, [item.ads]);
+
     switch (item.type) {
       case ITEM_TYPES.ADS_HEADER:
         return <Text style={tw`p-4 px-6 font-bold text-xl text-slate-800`}>Ads</Text>;
       case ITEM_TYPES.ADS_LIST:
         return (
           <FlatList
+            ref={adsListRef}
             data={item.ads}
             horizontal
             keyExtractor={(ad) => ad.id.toString()}
@@ -140,7 +157,6 @@ const CategoriesFrame = () => {
                 <Video
                   source={{ uri: adItem.resource_url }}
                   style={{ width: 300, height: 200, borderRadius: 8, marginRight: 8 }}
-                  
                   resizeMode="stretch"
                 />
               )
