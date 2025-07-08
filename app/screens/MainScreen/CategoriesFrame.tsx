@@ -6,6 +6,10 @@ import { useTypedNavigator, useTypedSelector } from '../../utils/helpers';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useAds } from '../../services/store/slices/AdsSlice';
 import Video from 'react-native-video';
+import { HOST } from '../../services/api';
+import { useDispatch } from 'react-redux';
+import { fetchTree } from '../../services/store/slices/CategotiesSlice';
+import { AppDispatch } from '../../services/store/store';
 
 const ITEM_TYPES = {
   ADS_HEADER: 'ADS_HEADER',
@@ -25,9 +29,9 @@ const CategoryItem = ({ category, onCategoryPress }: { category: { item: Categor
         <Image
           style={tw`w-full border-2 border-slate-100 rounded-3xl h-35`}
           source={{
-            uri: `https://cvigtavmna.cloudimg.io/${
-              photo?.replace(/^https?:\/\//, '') ?? 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
-            }?force_format=jpeg&optipress=3`,
+            uri: photo ? `https://cvigtavmna.cloudimg.io/${
+              (HOST + photo.replace(/^https?:\/\/flame-api\.horizonsparkle\.com\//, ''))?.replace(/^https?:\/\//, '') ?? 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
+            }?force_format=jpeg&optipress=3` : 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
           }}
         />
       </TouchableWithoutFeedback>
@@ -52,6 +56,7 @@ const CategoriesFrame = () => {
   const navigation = useTypedNavigator();
   const { ads, loading: adsLoading, error: adsError, refreshAds } = useAds();
   const [data, setData] = useState<any[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     const filterTree = (tree: CategoriesTree[]): CategoriesTree[] => {
@@ -67,6 +72,15 @@ const CategoriesFrame = () => {
   // fetch ads on mount
   useEffect(() => {
     refreshAds();
+    const worker = async () => {
+      try {
+        await dispatch(fetchTree()).unwrap();
+      } catch (error) {
+        console.error('Error fetching ads:', error);
+      }
+    }
+
+    worker();
   }, []);
 
   useEffect(() => {
@@ -114,19 +128,20 @@ const CategoriesFrame = () => {
             data={item.ads}
             horizontal
             keyExtractor={(ad) => ad.id.toString()}
+            style={tw`mb-10`}
             renderItem={({ item: adItem }) =>
               adItem.resource_type === 'banner' ? (
                 <Image
                   style={tw`w-96 h-40 rounded-lg mr-2`}
                   source={{ uri: adItem.resource_url }}
-                  resizeMode="cover"
+                  resizeMode="stretch"
                 />
               ) : (
                 <Video
                   source={{ uri: adItem.resource_url }}
                   style={{ width: 300, height: 200, borderRadius: 8, marginRight: 8 }}
-                  controls
-                  resizeMode="cover"
+                  
+                  resizeMode="stretch"
                 />
               )
             }

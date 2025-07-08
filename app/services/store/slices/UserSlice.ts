@@ -55,11 +55,15 @@ const userSlice = createSlice({
           })
           .addCase(userRegister.fulfilled, (state, action) => {
             state.authStatus = 'true';
-            
+            state.token = action.payload?.token?? '';
+            console.log(state);
+
+            storeData('tok', action.payload?.token??'')
             
             state = action.payload ?? state;
           })
           .addCase(userRegister.rejected, (state, action) => {
+            console.log('errro ', action.error);
             state.authStatus = 'error';
           })
           .addCase(userLogin.pending, (state, action) => {
@@ -76,7 +80,7 @@ const userSlice = createSlice({
             state = action.payload ?? state;
           })
           .addCase(userLogin.rejected, (state, action) => {
-            //console.log('errro ', action.error);
+            console.log('errro ', action.error);
             
             state.authStatus = 'error';
           }).addCase(fetchUser.fulfilled, (state, action) => {
@@ -101,15 +105,24 @@ export const checkUser = createAsyncThunk('user/checkUser', async () => {
 export const userRegister = createAsyncThunk(
     'user/register',
     async (payload: User, {rejectWithValue}) => {
-      let user = await getUser(payload.email ?? '');
-  
-      if (user) rejectWithValue('user already exists');
-  
-      user = await register(payload);
-  
-      if (user) return user;
-  
-      rejectWithValue('failed to register user');
+      try {
+        let user = null;
+      
+        if (user) rejectWithValue('user already exists');
+      
+        user = await register({
+          password: payload.password,
+          phone: payload.email,
+          name: payload.name || 'joe',
+        });
+      
+        if (user) return user;
+      
+        rejectWithValue(user);
+      } catch (error) {
+        console.error('Error during user registration:', error);
+        rejectWithValue('An error occurred during registration');
+      }
     },
   );
   
@@ -120,22 +133,25 @@ export const userRegister = createAsyncThunk(
   
       //if (!user) rejectWithValue('invalid email');
 
-      const {email, password} = payload;
-  
-      const user = await login({email, password})
+      try {
+        const {email, password} = payload;
       
-
-      if (user) {
+        const user = await login({email, password});
+        console.log('user login response: ', user);
         
-        return user;
-        
+        if (user) {
+          return user;
+        }
+      
+        return rejectWithValue('failed to login user');
+      } catch (error) {
+        console.error('Error during user login:', error.data || error.message);
+        return rejectWithValue('An error occurred during login');
       }
-  
-      rejectWithValue('failed to login user');
     },
   );
 
-export const { updateUser } = userSlice.actions;
+export const { updateUser, setAuthStatus } = userSlice.actions;
 
 const {reducer} = userSlice;
 

@@ -61,9 +61,10 @@ export const deleteCategory = createAsyncThunk(
 );
 
 export const fetchTree = createAsyncThunk(
-    'categories/fetchTree",'
+    'categories/fetchTree'
     ,async ()=>{
-    const response = await axiosClient.get("/categories/tree");
+    const response = await axiosClient.get("/categories/tree").catch((e)=>{
+        console.log("Error during fetching categories tree: ", e.response?.data || e.message)});
 
     //console.log(response.data);
     

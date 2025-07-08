@@ -27,6 +27,7 @@ import { fetchCategories } from '../services/store/slices/CategotiesSlice';
 import MainTitle from '../components/mainscreen/MainTitle';
 import HeaderAction from '../components/mainscreen/HeaderAction';
 import { CategoriesTree } from '../models/CategoriesTree';
+import { HOST } from '../services/api';
 
 const bar = [
     {
@@ -160,10 +161,11 @@ export default function ProductsScreen() {
         >
             <View style={tw`w-[200px] p-2`}>
                 <Image
-                    source={{ 
-                        uri: `https://cvigtavmna.cloudimg.io/${
-                            item.photo?.replace(/^https?:\/\//, '') ?? 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
-                        }?force_format=jpeg&optipress=3`
+                    source={{
+                        uri: `https://cvigtavmna.cloudimg.io/${item.photo ? 
+                            (HOST + item.photo?.replace(/^https?:\/\/flame-api\.horizonsparkle\.com\//, '')).replace(/^https?:\/\//, '') :
+                            'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
+                        }?force_format=jpeg&optipress=3`,
                     }}
                     style={tw`w-full h-30 rounded-lg`}
                 />

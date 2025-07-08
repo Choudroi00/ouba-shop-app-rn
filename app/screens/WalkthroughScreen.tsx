@@ -147,6 +147,18 @@ const WalkthroughScreen = () => {
               </Text>
             </Animated.View>
           </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback
+            
+            onPress={async () => {
+              await storeData('isGuest', 'true')
+              navigator.navigate('MainScreen');
+            }}>
+            <Animated.View pointerEvents={'auto'} style={[tw`flex-row justify-center items-center rounded-full px-6 py-3 bg-[${primaryColor}]`]}>
+              <Text style={tw`text-white text-[15px] font-medium`}>
+                Guest 
+              </Text>
+            </Animated.View>
+          </TouchableWithoutFeedback>
         </View>
       </View>
     </Animated.View>

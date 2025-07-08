@@ -8,8 +8,11 @@ const getUser = async (email: string) : Promise<User>=> {
     return user.data as User;
 }
 
-const register = async ({email, password} : {email : string, password?: string}) : Promise<User>=> {
-    const r = await axiosClient.post("/register", {email, password})
+const register = async ({phone, password, name } : {phone : string, password?: string, name: string}) : Promise<User>=> {
+    const r = await axiosClient.post("/register", {phone, password, name})
+
+    console.log(`register response: `, r.data);
+    
 
     if(r.status === 200){
         return r.data as User;
@@ -20,16 +23,24 @@ const register = async ({email, password} : {email : string, password?: string})
 
 
 const login = async ({email, password} : {email? : string, password?: string}) : Promise<User> => {
-    const r = await axiosClient.post("/login", {email, password}).catch((e)=> e)
+    try {
+        const r = await axiosClient.post("/login", {email, password})
 
-    if(r.status === 200){
-        return r.data as User;
+        console.log(`login response: `, r.data);
+
+        if (r.status === 200) {
+            return r.data as User;
+        }
+
+        throw new Error("Invalid email or password");
+    } catch (error) {
+        console.error("Error during login:",JSON.stringify( {
+            email,
+            error:  error.message,
+            stack: error instanceof Error ? error.stack : null,
+        }));
+        throw new Error("Login failed. Please check your credentials and try again.");
     }
-
-    
-    
-
-    throw new Error("Invalid email or password");
     
 }
 

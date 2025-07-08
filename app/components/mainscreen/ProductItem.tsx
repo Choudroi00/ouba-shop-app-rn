@@ -3,10 +3,11 @@ import { View, Image, Text, TouchableOpacity, InteractionManager } from 'react-n
 import tw from 'twrnc'
 import { Product } from '../../models/Product';
 import Animated, { FadeInDown, interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
-import { useTypedNavigator, useTypedSelector } from '../../utils/helpers';
+import { getData, useTypedNavigator, useTypedSelector } from '../../utils/helpers';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../services/store/store';
 import LottieView from 'lottie-react-native';
+import { HOST } from '../../services/api';
 
 
 interface ProductItemProps {
@@ -16,6 +17,18 @@ interface ProductItemProps {
 }
 export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: ProductItemProps) => {
     const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+    const [isGuest, setIsGuest] = useState(false);
+
+    useEffect(() => {
+        const checkGuestStatus = async () => {
+            const guestStatus = await getData('isGuest');
+            console.log(`Guest status: ${guestStatus}`);
+            
+            setIsGuest(guestStatus);
+        };
+
+        checkGuestStatus();
+    }, [])
 
     const animator = useSharedValue(0)
 
@@ -78,7 +91,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
             <TouchableOpacity
                 activeOpacity={0.9}
                 onPress={()=> {
-                    navigator.navigate('ViewProduct', { url: product.image_url || 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' })
+                    navigator.navigate('ViewProduct', { url: `${HOST}product.image_url` || 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' })
                 }}
                 style={tw`flex-row bg-slate-100 rounded-xl p-3 mb-3`}>
             <View style={tw`w-1/3 relative`}>
@@ -90,8 +103,8 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
                 </Animated.View>
                 <Image
                     source={{
-                        uri: `https://cvigtavmna.cloudimg.io/${
-                            product.image_url?.replace(/^https?:\/\//, '') ??
+                        uri: `https://cvigtavmna.cloudimg.io/${product.image_url ? 
+                            (HOST + product.image_url).replace(/^https?:\/\//, '') :
                             'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
                         }?force_format=jpeg&optipress=3`,
                     }}
@@ -111,8 +124,14 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
                 </View>
                 <AnimatedTouchableOpacity
                     style={[tw`rounded-full flex-row justify-center py-2.5 pr-4 mt-2 items-center`, fadeStyle]}
-                    disabled={product.isInCart || isAdding}
-                    onPress={handleAddToCart}
+                    disabled={product.isInCart || isAdding || isGuest}
+                    onPress={() => {
+                    if (isGuest) {
+                            navigator.navigate('Auth');
+                            return;
+                        }
+                        handleAddToCart()
+                    }}
                     activeOpacity={0.9}>
                     {isAdding ? (
                         <LottieView 
@@ -155,8 +174,8 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
                 </Animated.View>
                 <Image
                     source={{
-                        uri: `https://cvigtavmna.cloudimg.io/${
-                            product.image_url?.replace(/^https?:\/\//, '') ??
+                        uri: `https://cvigtavmna.cloudimg.io/${product.image_url ? 
+                            (HOST + product.image_url).replace(/^https?:\/\//, '') :
                             'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
                         }?force_format=jpeg&optipress=3`,
                     }}
@@ -177,7 +196,13 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
                 style={[tw`rounded-full flex-row justify-center py-2.5 pr-4  mt-3 items-center`, fadeStyle]}
                 disabled={product.isInCart || isAdding}
                 
-                onPress={handleAddToCart}
+                onPress={() => {
+                    if (isGuest) {
+                        navigator.navigate('Auth');
+                        return;
+                    }
+                    handleAddToCart()
+                }}
                 activeOpacity={0.8}>
                 {isAdding ? (<LottieView source={{uri: 'https://res.cloudinary.com/dqtlhm4to/raw/upload/v1729130285/smwe1a0geou2pneq8a9a.json'}} duration={1} resizeMode='center'  autoPlay loop style={tw` w-[24px] mr-1 justify-center items-center h-[20px]`} />) : (<View  style={tw`w-[24px] mr-1 justify-center items-center h-[20px]`} />) }
                 <Text style={tw`text-white font-semibold`}>{product.isInCart ? 'Already in cart' : 'Add to Cart'}</Text>

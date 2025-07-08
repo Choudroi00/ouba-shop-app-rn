@@ -4,6 +4,7 @@ import { getData } from "../../utils/helpers";
 
 
 const base_url = "https://fame.ayoub-dev.xyz/api"
+export const HOST = "https://fame.ayoub-dev.xyz/"
 
 const axiosClient = axios.create({
     baseURL: base_url,
@@ -19,7 +20,7 @@ axiosClient.interceptors.request.use(
   async (config) => {
       const token = await getData('user');
 
-      //console.log(token);
+      console.log(token.token);
       
       if (token) {
         config.headers['Authorization'] = `Bearer ${token.token}`;

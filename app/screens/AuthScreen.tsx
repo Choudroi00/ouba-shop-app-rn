@@ -6,10 +6,11 @@ import useKeyboard from '../hook/useKeyboard';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import XModal from '../components/common/XModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateUser, userLogin, UserState } from '../services/store/slices/UserSlice';
+import { setAuthStatus, updateUser, userLogin, userRegister, UserState } from '../services/store/slices/UserSlice';
 import { AppDispatch, RootState } from '../services/store/store';
-import { storeData, useTypedNavigator, useTypedSelector } from '../utils/helpers';
+import { getData, storeData, useTypedNavigator, useTypedSelector } from '../utils/helpers';
 import XSnackbar from '../components/common/XSnakeBar';
+import { reducers } from '../services/store/reducers/UserReducers';
 
 
 
@@ -63,6 +64,17 @@ const LoginScreen = () => {
 
   useEffect(() => {
     navigator.addListener('beforeRemove',(e) => {e.preventDefault();});
+    const worker = async () => {
+      const isLoggedIn = await getData('isAuthenticated');
+      const isGuest = await getData('isGuest');
+
+      if(isGuest === 'true'){
+        storeData('isGuest', 'false');
+      }
+
+    }
+
+    worker();
   
     return () => {
       
@@ -76,12 +88,17 @@ const LoginScreen = () => {
       setModelVisible(false);
       storeData('isAuthenticated', 'true');
       storeData('user', JSON.stringify({email: email, password: password, token : token}));
+      storeData('isGuest', 'false');
 
       setSnbar(true);
 
-      setTimeout(() => {
-        navigator.navigate('MainScreen');
+      const timeoutId = setTimeout(() => {
+        if (navigator) {
+          navigator.navigate('MainScreen');
+        }
       }, 3500);
+
+      return () => clearTimeout(timeoutId);
 
     }else if(authStatus === 'error'){
       setModelVisible(false);
@@ -91,6 +108,7 @@ const LoginScreen = () => {
 
   }, [authStatus]);
   const handleLogin = async () => {
+    dispatch(setAuthStatus('false'));
     dispatch(userLogin({email : email, password: password}));
 
     console.log('Login attempted with:', { email, password });
@@ -169,14 +187,27 @@ const LoginScreen = () => {
             <Text style={tw`text-white font-semibold text-[16px]`}>Login</Text>
           </Pressable>
 
-          <Pressable
-            android_ripple={{ color: "#E4B1F0", radius: 70 }}
-            style={[tw`flex-1 rounded-full px-7 py-3 items-center`]}
-            onPress={() => navigator.navigate('RegisterScreen')}
-          >
-            <Text style={tw`text-[${accentColor}] font-semibold text-[16px]`}>Don't have an account?</Text>
-          </Pressable>
           
+        </View>
+         <View
+            style={tw`flex-row justify-end mb-2 mt-12`}>
+            <Pressable
+              android_ripple={{ color: "#E4B1F0", radius: 70 }}
+              style={[tw`flex-1 rounded-full px-7 py-3 items-center`]}
+              onPress={() => navigator.navigate('RegisterScreen')}
+            >
+              <Text style={tw`text-[${accentColor}] font-semibold text-[16px]`}>Don't have an account?</Text>
+            </Pressable>
+        </View>
+        <View
+            style={tw`flex-row justify-end mb-2 mt-12`}>
+            <Pressable
+              android_ripple={{ color: "#E4B1F0", radius: 70 }}
+              style={[tw`flex-1 rounded-full px-7 py-3 items-center`]}
+              onPress={() => navigator.navigate('MainScreen')}
+            >
+              <Text style={tw`text-[${accentColor}] font-semibold text-[16px]`}>ضيف ؟ </Text>
+            </Pressable>
         </View>
       </Animated.View>
     </View>
@@ -207,6 +238,7 @@ const RegisterScreen = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('joe');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const tcAnimeStyle = useAnimatedStyle(()=>{
@@ -232,6 +264,18 @@ const RegisterScreen = () => {
 
   useEffect(() => {
     navigator.addListener('beforeRemove',(e) => {e.preventDefault();});
+
+    const worker = async () => {
+      const isLoggedIn = await getData('isAuthenticated');
+      const isGuest = await getData('isGuest');
+
+      if(isGuest === 'true'){
+        storeData('isGuest', 'false');
+      }
+
+    }
+
+    worker();
   
     return () => {
       
@@ -241,25 +285,33 @@ const RegisterScreen = () => {
   
   useEffect(()=>{
     // TODO: Add register status handling logic here
-    // if(authStatus === 'registered'){
-    //   setModelVisible(false);
-    //   storeData('isAuthenticated', 'true');
-    //   storeData('user', JSON.stringify({email: email, password: password, token : token}));
-    //   setSnbar(true);
-    //   setTimeout(() => {
-    //     navigator.navigate('MainScreen');
-    //   }, 3500);
-    // }else if(authStatus === 'error'){
-    //   setModelVisible(false);
-    //   storeData('isAuthenticated', 'false');
-    //   setSnbar(true);
-    // }
+    if(authStatus === 'true'){
+      setModelVisible(false);
+      storeData('isAuthenticated', 'true');
+      storeData('user', JSON.stringify({email: email, password: password, token : token}));
+      console.log(`token is ${token}`);
+      storeData('isGuest', 'false');
+      
+      setSnbar(true);
+      setTimeout(() => {
+
+        navigator.navigate('MainScreen');
+      }, 3000);
+    }else if(authStatus === 'error'){
+      setModelVisible(false);
+      storeData('isAuthenticated', 'false');
+      setSnbar(true);
+    }
 
   }, [authStatus]);
 
   const handleRegister = async () => {
     // TODO: Add register dispatch logic here
-    // dispatch(userRegister({email : email, password: password, confirmPassword: confirmPassword}));
+    const r = await dispatch(userRegister({email : email, password: password, name: name, categories: []})).unwrap();
+    if(r) {
+      console.log('Register response:', r)
+      
+    };
 
     console.log('Register attempted with:', { email, password, confirmPassword });
 
@@ -296,6 +348,14 @@ const RegisterScreen = () => {
         <Text style={tw`text-2xl font-bold text-black mb-6 text-center`}>Create Account</Text>
         <TextInput
           style={tw`bg-gray-100 rounded-full p-3.5 placeholder:text-slate-500 px-7 text-black mb-6`}
+          placeholder="Your name"
+          placeholderTextColor={`#475569`}
+          value={name}
+          onChangeText={setName}
+          autoCapitalize="none"
+        />
+        <TextInput
+          style={tw`bg-gray-100 rounded-full p-3.5 placeholder:text-slate-500 px-7 text-black mb-6`}
           placeholder="Email or phone"
           placeholderTextColor={`#475569`}
           value={email}
@@ -320,14 +380,6 @@ const RegisterScreen = () => {
         />
         <View
           style={tw`flex-row justify-end mb-2 mt-12`}>
-
-          <Pressable
-            android_ripple={{color: "#E4B1F0",radius: 70}}
-            style={[tw` flex-1 rounded-full px-7 py-3 items-center`]}
-            onPress={() => navigator.navigate('Auth')}>
-            <Text style={tw`text-[${accentColor}] font-semibold text-[16px]`}>already have account ?</Text>
-          </Pressable>
-
           <Pressable
             disabled={isAuthenticated}
             android_ripple={{color: accentColor,radius: 60}}
@@ -336,6 +388,25 @@ const RegisterScreen = () => {
             <Text style={tw`text-white font-semibold text-[16px]`}>Register</Text>
           </Pressable>
           
+        </View>
+        <View
+          style={tw`flex-row justify-end mb-2 mt-12`}>
+          <Pressable
+            android_ripple={{color: "#E4B1F0",radius: 70}}
+            style={[tw` flex-1 rounded-full px-7 py-3 items-center`]}
+            onPress={() => navigator.navigate('Auth')}>
+            <Text style={tw`text-[${accentColor}] font-semibold text-[16px]`}>already have account ?</Text>
+          </Pressable>
+          <View
+            style={tw`flex-row justify-end mb-2 mt-12`}>
+            <Pressable
+              android_ripple={{ color: "#E4B1F0", radius: 70 }}
+              style={[tw`flex-1 rounded-full px-7 py-3 items-center`]}
+              onPress={() => navigator.navigate('MainScreen')}
+            >
+              <Text style={tw`text-[${accentColor}] font-semibold text-[16px]`}>ضيف ؟ </Text>
+            </Pressable>
+        </View>
         </View>
       </Animated.View>
     </View>

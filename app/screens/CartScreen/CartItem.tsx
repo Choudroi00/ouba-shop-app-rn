@@ -7,6 +7,7 @@ import { removeFromCart, updateQuantity } from "../../services/store/slices/Cart
 import { AppDispatch } from "../../services/store/store";
 
 import tw from "twrnc";
+import { HOST } from "../../services/api";
 
 export type ViewableCartItem = {
     id: number,
@@ -101,7 +102,7 @@ const imageGetter = (imageUrl?: string) => {
     const DEFAULT_URL = 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png';
 
     return imageUrl
-        ? `${BASE_URL}${imageUrl.replace(/^https?:\/\//, '')}?force_format=jpeg&optipress=3`
+        ? `${BASE_URL}${(HOST +  imageUrl.replace(/^https?:\/\/flame-api\.horizonsparkle\.com\//, '')).replace(/^https?:\/\//, '')}?force_format=jpeg&optipress=3`
         : DEFAULT_URL;
 }
 

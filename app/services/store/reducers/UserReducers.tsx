@@ -11,8 +11,10 @@ export const reducers = {
   updateUser: (state: UserState, action: PayloadAction<User>) => {
     state = action.payload;
     
-    
   },
+  setAuthStatus: (state: UserState, action: PayloadAction<string>) => {
+    state.authStatus = action.payload as "true" | "false" | "error";
+  }
 };
 
 

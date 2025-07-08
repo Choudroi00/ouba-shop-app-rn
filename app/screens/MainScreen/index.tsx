@@ -90,7 +90,7 @@ export default function MainSreen() {
         key: 'logout',
         icon: <Icon name="swap" size={20} color="black" />,
         position: 'left',
-        onPress: () => console.log('Logout'),
+        onPress: () => navigator.navigate('Auth'),
 
       },
       {
@@ -104,7 +104,18 @@ export default function MainSreen() {
         key: 'cart',
         icon: <Icon name="shoppingcart" size={20} color="black" />,
         position: 'right',
-        onPress: () => navigator.navigate('CartScreen'),
+        onPress: () => {
+            getData('isGuest').then(isGuest => {
+                if(isGuest === 'true') {
+                    navigator.navigate('Auth');
+                    return;
+                }else{
+                    navigator.navigate('CartScreen')
+                }
+            }).catch(err => {
+                navigator.navigate('CartScreen')
+            });
+        },
 
       },
     ]);

@@ -319,7 +319,7 @@ const CartScreen = () => {
     
 
     const products = useTypedSelector(state => state.products.items);
-    const {cartItems} = useTypedSelector(state => state.cart);
+    const {cartItems, status} = useTypedSelector(state => state.cart);
 
     const [cartState, setCartState] = useState<ViewableCartItem[]>([]);
     const [totalPrice, setTotalPrice] = useState(0)
@@ -420,9 +420,15 @@ const CartScreen = () => {
 
     useEffect(() => {
       
-      const total = cartState.reduce((acc, item) => acc + (~~item.price * ~~item.quantity * ~~item.batch_size), 0)
-      setTotalPrice(total)
-    }, [cartState]);
+      if(status === 'succeeded'){
+        setProcessingModalVisible(false);
+        setSnackbarVisible(true);
+
+        const timeout = setTimeout(() => setSnackbarVisible(false), 2000);
+        setCartState([]);
+        return () => clearTimeout(timeout);
+      }
+    }, [status]);
 
     useEffect(() => {
         const dowable = async () => {
@@ -432,7 +438,7 @@ const CartScreen = () => {
             
             const shapedCartItems = result.cart_items
               .map(item => {
-                const product = products.find(p => p.id === item.product_id);
+                const product = result.products.find(p => p.id === item.product_id);
                 if (!product) return null;
                 return {
                   id: item.id,
@@ -445,6 +451,9 @@ const CartScreen = () => {
                 };
               })
               .filter(Boolean);
+
+              console.log('shapedCartItems', products);
+              
             
             setCartState((prev) => {
                 if(JSON.stringify(prev) === JSON.stringify(shapedCartItems)) return prev;
@@ -461,6 +470,10 @@ const CartScreen = () => {
         )
     }, [handlers]);
 
+    useEffect(() => {
+        console.log('cartState updated:', cartState);
+        
+    }, [cartState]);
     if (cartState.length === 0) {
         return (
             <View>

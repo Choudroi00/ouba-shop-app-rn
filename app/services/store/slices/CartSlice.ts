@@ -12,6 +12,7 @@ interface CartState{
     loading: boolean;
     error: string | null;
     orders: Order[];
+    status: 'idle' | 'loading' | 'succeeded' | 'failed';
 }
 
 const initialState: CartState = {
@@ -20,6 +21,7 @@ const initialState: CartState = {
   total: 0,
   loading: false,
   error: null,
+  status: 'idle',
   orders: []
 };
 
@@ -78,8 +80,15 @@ export const removeFromCart = createAsyncThunk(
 export const placeOrderFromCart = createAsyncThunk(
   'cart/placeOrder',
   async () => {
-    const response = await axiosClient.post('/order/storeFromCart');
-    return response.data;
+    try {
+      const response = await axiosClient.post('/order/storeFromCart');
+      return response.data;
+    } catch (error) {
+      console.error('Error placing order:', error);
+      console.error('Error response:', error.response);
+      console.error('Error message:', error.response?.data?.message || 'No error message available');
+      throw new Error(error.response?.data?.message || 'Failed to place order');
+    }
   }
 )
 
@@ -178,6 +187,7 @@ const cartSlice = createSlice({
         state.error = null
         state.loading = false;
         state.cartItems = [];
+        state.status = 'succeeded';
         state.total = 0;
         state.products = [];
       })
