@@ -91,7 +91,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
             <TouchableOpacity
                 activeOpacity={0.9}
                 onPress={()=> {
-                    navigator.navigate('ViewProduct', { url: `${HOST}product.image_url` || 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' })
+                    navigator.navigate('ViewProduct', { url: `${HOST + product.image_url}` || 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' })
                 }}
                 style={tw`flex-row bg-slate-100 rounded-xl p-3 mb-3`}>
             <View style={tw`w-1/3 relative`}>
@@ -104,7 +104,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
                 <Image
                     source={{
                         uri: `https://cvigtavmna.cloudimg.io/${product.image_url ? 
-                            (HOST + product.image_url).replace(/^https?:\/\//, '') :
+                            (HOST + product.image_url) :
                             'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
                         }?force_format=jpeg&optipress=3`,
                     }}
@@ -157,7 +157,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
     return (
         <TouchableOpacity
             onPress={()=> {
-                navigator.navigate('ViewProduct', { url: product.image_url || 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' })
+                navigator.navigate('ViewProduct', { url: HOST + product.image_url || 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' })
             }}
           style={tw`flex-1 p-3 bg-slate-100 rounded-xl `}>
             <View style={tw`relative`}>
@@ -175,7 +175,7 @@ export  const  ProductItem = React.memo( ({product, transposed, onAddToCart}: Pr
                 <Image
                     source={{
                         uri: `https://cvigtavmna.cloudimg.io/${product.image_url ? 
-                            (HOST + product.image_url).replace(/^https?:\/\//, '') :
+                            (HOST + product.image_url) :
                             'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
                         }?force_format=jpeg&optipress=3`,
                     }}

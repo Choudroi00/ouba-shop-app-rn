@@ -102,7 +102,7 @@ const imageGetter = (imageUrl?: string) => {
     const DEFAULT_URL = 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png';
 
     return imageUrl
-        ? `${BASE_URL}${(HOST +  imageUrl.replace(/^https?:\/\/flame-api\.horizonsparkle\.com\//, '')).replace(/^https?:\/\//, '')}?force_format=jpeg&optipress=3`
+        ? `${BASE_URL}${(HOST +  imageUrl.replace(/^https?:\/\/flame-api\.horizonsparkle\.com\//, ''))}?force_format=jpeg&optipress=3`
         : DEFAULT_URL;
 }
 
