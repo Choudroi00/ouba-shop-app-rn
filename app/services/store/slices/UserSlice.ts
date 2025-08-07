@@ -1,18 +1,20 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Address } from "../../../models/address";
-import { User } from "../../../models/User";
+
 
 import {reducers } from '../reducers/UserReducers'
 import { getUser, login, register } from "../../repository/userRepository";
 import { getData, storeData } from "../../../utils/helpers";
+import { Customer } from "../../../models/Customers";
+import { User } from "../../../models/User";
 
 export interface UserReducersInt  {
     login: () => void;
     register: () => void;
     logout: () => void;
-    updateUser: (user: User) => void;
+
+    updateUser: (user: Customer) => void;
     updateCredentials: (email: string, password: string) => void;
-    updateAddress: (address: Address) => void;
+    updateAddress: (address: string) => void;
     fetchUser: (token: string) => void;
 
 
@@ -27,19 +29,16 @@ export const fetchUser = createAsyncThunk('user/fetchUser', async (token: string
 export interface UserState extends User {}
 
 const initialState: UserState = {
-    id: -1,
-    name: "",
-    email: "",
-    password: "",
-    isAuthenticated: false,
-    authStatus: "false",
-    categories: [],
-    token: "",
-    cart: [],
-    orders: [],
-    address: {},
-
-
+  id: -1,
+  first_name: "",
+  last_name: "",
+  phone: "",
+  password: "",
+  isAuthenticated: false,
+  authStatus: "false",
+  categories: [],
+  token: "",
+  address: '',
 }
 
 
@@ -111,9 +110,9 @@ export const userRegister = createAsyncThunk(
         if (user) rejectWithValue('user already exists');
       
         user = await register({
-          password: payload.password,
-          phone: payload.email,
-          name: payload.name || 'joe',
+          password: payload.password ?? '',
+          phone: payload.email ?? '',
+          name: payload.first_name || 'joe',
         });
       
         if (user) return user;
@@ -145,7 +144,7 @@ export const userRegister = createAsyncThunk(
       
         return rejectWithValue('failed to login user');
       } catch (error) {
-        console.error('Error during user login:', error.data || error.message);
+        console.error('Error during user login:', String(error));
         return rejectWithValue('An error occurred during login');
       }
     },

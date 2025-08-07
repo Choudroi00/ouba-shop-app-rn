@@ -1,4 +1,5 @@
-import { User } from "../../models/User"
+
+import { User } from "../../models/User";
 import { axiosClient } from "../api"
 
 
@@ -36,7 +37,7 @@ const login = async ({email, password} : {email? : string, password?: string}) :
     } catch (error) {
         console.error("Error during login:",JSON.stringify( {
             email,
-            error:  error.message,
+            error:  String(error),
             stack: error instanceof Error ? error.stack : null,
         }));
         throw new Error("Login failed. Please check your credentials and try again.");

@@ -9,13 +9,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import tw from 'twrnc';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../services/store/store';
-import { fetchCategories } from '../../services/store/slices/CategotiesSlice';
-import { fetchProducts, changeInCartStatus } from '../../services/store/slices/ProductsSlice';
-import { switchTab } from '../../services/store/slices/MainScreenStateSlice';
-import { addToCart } from '../../services/store/slices/CartSlice';
-import { useTypedNavigator, useTypedSelector } from '../../utils/helpers';
+import { useTypedNavigator } from '../../utils/helpers';
 import MainTitle from '../../components/mainscreen/MainTitle';
 import HeaderAction from '../../components/mainscreen/HeaderAction';
 import { Product } from '../../models/Product';
@@ -23,6 +17,10 @@ import Animated from 'react-native-reanimated';
 import ProductItem from '../../components/mainscreen/ProductItem';
 import XSnackbar from '../../components/common/XSnakeBar';
 import { Category } from '../../models/Category';
+import { useProducts } from '../../services/repository/useProducts';
+import { useCategories } from '../../services/repository/useCategories';
+import { useCart } from '../../services/repository/useCart';
+import { useMainScreenState } from '../../hook/useMainScreenState';
 
 const ITEM_TYPES = {
   CATEGORY_HEADER: 'CATEGORY_HEADER',
@@ -32,69 +30,75 @@ const ITEM_TYPES = {
   PRODUCT: 'PRODUCT',
 };
 
-const HomeFrame = () => {
+const HomeFrame = ({ onTabSwitch }: { onTabSwitch?: (tab: string) => void }) => {
   const navigator = useTypedNavigator();
-  const dispatch = useDispatch<AppDispatch>();
-  const products = useTypedSelector(state => state.products.items);
-  const categories = useTypedSelector(state => state.categories.items);
-  const userCategories = useTypedSelector(state => state.user.categories);
-  const cartItems = useTypedSelector(state => state.cart.cartItems);
+  const { products, refreshProducts } = useProducts();
+  const { categories } = useCategories();
+  const { cartItems, addToCartMutation } = useCart();
   const [snackbarVisible, setSnackbarVisible] = useState(false);
 
-  const [data, setData] = useState([
+  const [data, setData] = useState<any[]>([
     { type: ITEM_TYPES.CATEGORY_HEADER },
     { type: ITEM_TYPES.CATEGORY_LIST, cats: [] },
     { type: ITEM_TYPES.SEARCH_BAR },
     { type: ITEM_TYPES.PRODUCT_HEADER },
   ]);
 
+  // Load initial data
   useEffect(() => {
-    const filteredCategories = categories.filter((category) => 
-      !userCategories || userCategories.length === 0 || userCategories.includes(category.id)
-    )
+    refreshProducts();
+  }, []);
+
+  useEffect(() => {
+    // For now, let's assume userCategories is empty (you may need to implement user preferences)
+    const userCategories: number[] = [];
+    
+    const filteredCategories = categories?.filter((category: Category) => 
+      !userCategories || userCategories.length === 0 || userCategories.includes(category.id!)
+    ) || [];
 
     if (products && products.length > 0) {
-      const filteredProducts = products.filter((product) => 
-        !userCategories || userCategories.length === 0 || userCategories.includes(product.categories?.[0])
-      ).sort((a, b) => {
+      const filteredProducts = products.filter((product: Product) => 
+        !userCategories || userCategories.length === 0 || (product.category && userCategories.includes(typeof product.category === 'number' ? product.category : product.category.id!))
+      ).sort((a: Product, b: Product) => {
         if (a.title && b.title) {
           return a.title.localeCompare(b.title, 'ar');
         }
         return a.title ? -1 : b.title ? 1 : 0;
       });
 
-      const productClusters = [];
+      const productClusters: any[] = [];
       for (let i = 0; i < filteredProducts.length; i += 2) {
         const product1 = {
           ...filteredProducts[i],
-          isInCart: cartItems.some(item => item.product_id === filteredProducts[i].id),
+          isInCart: cartItems?.some(item => item.product_id === filteredProducts[i].id!) || false,
         };
         const product2 = filteredProducts[i + 1] ? {
           ...filteredProducts[i + 1],
-          isInCart: cartItems.some(item => item.product_id === filteredProducts[i + 1].id),
+          isInCart: cartItems?.some(item => item.product_id === filteredProducts[i + 1].id!) || false,
         } : null;
         productClusters.push([product1, product2]);
       }
 
-      setData(prevData => [
-        ...prevData.slice(0, 2).map(item => ({ ...item, cats: filteredCategories })),
+      setData([
+        ...data.slice(0, 2).map(item => ({ ...item, cats: filteredCategories })),
         { type: ITEM_TYPES.SEARCH_BAR },
         { type: ITEM_TYPES.PRODUCT_HEADER },
         ...productClusters.map(cluster => ({ type: ITEM_TYPES.PRODUCT, cluster })),
       ]);
     }
-  }, [products, categories, userCategories, cartItems]);
+  }, [products, categories, cartItems]);
 
   const navigateToSearch = useCallback(() => {
-    dispatch(switchTab('search'));
-  }, [dispatch]);
+    onTabSwitch?.('search');
+  }, [onTabSwitch]);
 
-  const navigateToTab = useCallback((tab) => {
-    dispatch(switchTab(tab));
-  }, [dispatch]);
+  const navigateToTab = useCallback((tab: string) => {
+    onTabSwitch?.(tab);
+  }, [onTabSwitch]);
 
 
-  const renderItem = useCallback(({ item }) => {
+  const renderItem = useCallback(({ item }: { item: any }) => {
     switch (item.type) {
       case ITEM_TYPES.CATEGORY_HEADER:
         return (
@@ -109,7 +113,7 @@ const HomeFrame = () => {
             horizontal
             data={item.cats}
             renderItem={renderCategory}
-            keyExtractor={(category) => category?.id?.toString()}
+            keyExtractor={(category) => category?.id?.toString() ?? '0'}
             showsHorizontalScrollIndicator={false}
             style={tw`w-full`}
           />
@@ -134,7 +138,7 @@ const HomeFrame = () => {
       case ITEM_TYPES.PRODUCT:
         return (
           <View style={tw`w-full py-2 gap-x-4 px-3 flex-row`}>
-            {item.cluster.map((product, index) => product && (
+            {item.cluster.map((product: any, index: number) => product && (
               <ProductItem key={index} onAddToCart={onAddToCart} product={product} />
             ))}
           </View>
@@ -144,11 +148,11 @@ const HomeFrame = () => {
     }
   }, [navigateToSearch, navigateToTab]);
 
-  const renderCategory = useCallback(({ item }) => (
+  const renderCategory = useCallback(({ item }: { item: Category }) => (
     <TouchableWithoutFeedback onPress={() => navigator.navigate('ProductsScreen', { title: item.name ?? '', query: item.id?.toString() ?? '-1' })}>
       <View style={tw`w-[250px] p-2`}>
         <Image
-          source={{ uri: item.photo ?? 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' }}
+          source={{ uri: item.photo && typeof item.photo === 'string' ? item.photo : 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' }}
           style={tw`w-full h-37 rounded-lg`}
         />
         <Text style={tw`mt-2 ml-3 font-semibold text-base text-black`}>{item.name}</Text>
@@ -156,9 +160,8 @@ const HomeFrame = () => {
     </TouchableWithoutFeedback>
   ), [navigator]);
 
-  const onAddToCart = (id) => {
-    dispatch(changeInCartStatus({ id }));
-    dispatch(addToCart({ productId: id, quantity: 1 }));
+  const onAddToCart = (id: number) => {
+    addToCartMutation({ product_id: id, quantity: 1 });
     setSnackbarVisible(true);
   };
 

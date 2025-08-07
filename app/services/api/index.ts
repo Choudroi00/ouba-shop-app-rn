@@ -4,7 +4,7 @@ import { getData } from "../../utils/helpers";
 
 
 const base_url = "https://fame.ayoub-dev.xyz/api"
-export const HOST = "https://fame.ayoub-dev.xyz/"
+
 
 const axiosClient = axios.create({
     baseURL: base_url,
@@ -53,5 +53,33 @@ axiosClient.interceptors.response.use(
   }
 );
 
-export {axiosClient}
+export const HOST = "api-fame.ayoub-dev.xyz";
+
+
+const axiosClientV2 = axios.create({
+  baseURL: "https://api-fame.ayoub-dev.xyz/api/v2",
+
+  timeout: 5000,
+  headers: {
+    "Cache-Control": "no-cache",
+    'Pragma': "no-cache",
+    'Expires': "0",
+  },
+});
+
+axiosClientV2.interceptors.request.use(
+  async (config) => {
+      const token = await getData('user');
+      
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token.token}`;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+);
+
+export {axiosClient, axiosClientV2};
 

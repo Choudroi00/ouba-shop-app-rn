@@ -1,31 +1,9 @@
-import { Address } from "./address";
-import { Order } from "./Order";
-import { Product } from "./Product";
+import { Customer } from "./Customers";
 
-
-export interface User {
-    id?: number;
-    name?: string;
-    email: string;
-    password?: string;
+export interface User extends Customer {
     isAuthenticated?: boolean;
-
-    categories: number[];
-
-
-
-    
-    authStatus?: 'false' | 'true' | 'error';
-    
-
+    authStatus?: 'true' | 'false' | 'error';
     token?: string;
 
-    status?: string;
     
-    cart?: Product[];
-    orders?: Order[];
-    address?: Address;
-    //notifications: Notification[];
-
-
 }

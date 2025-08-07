@@ -2,24 +2,32 @@ import { View, TouchableOpacity, TextInput, Image, Text } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
 import XButton from "../../components/common/XButton";
 import React from "react";
+import { useDispatch } from "react-redux";
+import { removeFromCart, updateQuantity } from "../../services/store/slices/CartSlice";
+import { AppDispatch } from "../../services/store/store";
+
 import tw from "twrnc";
 import { useAsset } from "../../utils/helpers";
 
 export type ViewableCartItem = {
-    id: number;
-    p_id: number;
-    image_url?: string;
-    title: string;
-    price: number;
-    batch_size: number;
-    quantity: number;
+    id: number,
+    p_id: number,
+    image_url?: string,
+    title: string,
+    price: number,
+    batch_size: number,
+    quantity: number,
+
 }
 
 export type CartItemHandlers = {
     handleDecrement: (id: number) => void;
     handleIncrement: (id: number) => void;
+    //handleQuantityChange: (text: string) => void;
     handleRemoveRequest: (itemId: number) => void;
+
 }
+
 
 const CartItem = ({item, handlers}: {item: ViewableCartItem, handlers: CartItemHandlers }) => {
 
@@ -28,11 +36,12 @@ const CartItem = ({item, handlers}: {item: ViewableCartItem, handlers: CartItemH
 
     React.useEffect(() => {
         if(Number(item.id) === 132){
-            console.log('item id 132');
+            console.log('item id 51');
         }
     }, [item.id])
-    
     if(Number(item.id) === 132){ console.log('hello');}
+    
+
 
     return (        
         <View style={tw`gap-x-2.5 flex-row-reverse`}>
@@ -85,5 +94,7 @@ const CartItem = ({item, handlers}: {item: ViewableCartItem, handlers: CartItemH
         </View>
     );
 };
+
+
 
 export default React.memo(CartItem);

@@ -1,32 +1,19 @@
-import { Product } from "./Product";
+import { OrderDetail } from "./OrderDetail";
+import { OrderItem } from "./OrderItem";
 
-export interface OrderItem{
-  id: number;
-  unit_price: number;
-  batch_size: number;
-  quantity: number;
+export interface Order {
+    id?: null |  number;
+    total_price?: null |  number;
+    status?: 'pending' | 'completed' | 'cancelled';
+    
 
-  product: Product;
+    created_at?: null |  Date;
+    updated_at?: null |  Date;
 
-  
+    created_by?: null |  number;
+    updated_by?: null |  number;
 
-}
+    items?: OrderItem[];
+    details?: OrderDetail; 
 
-export interface Order{
-  id: number;
-  total_price: number;
-
-  created_at: string;
-
-  status: 'paid' | 'processing' | 'completed' | 'cancelled';
-
-  order_items: OrderItem[];
-
-  order_details: {
-    id: number;
-    first_name: string;
-    last_name: string;
-    address: string;
-    phone: string;
   }
-}

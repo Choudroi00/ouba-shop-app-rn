@@ -1,15 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 import tw from 'twrnc';
-import { CategoriesTree } from '../../models/CategoriesTree';
-import { useTypedNavigator, useTypedSelector } from '../../utils/helpers';
+import { Category } from '../../models/Category';
+import { useTypedNavigator, useAsset } from '../../utils/helpers';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { useAds } from '../../services/store/slices/AdsSlice';
 import Video from 'react-native-video';
-import { HOST } from '../../services/api';
-import { useDispatch } from 'react-redux';
-import { fetchTree } from '../../services/store/slices/CategotiesSlice';
-import { AppDispatch } from '../../services/store/store';
+import { useCategories } from '../../services/repository/useCategories';
+import { useAds } from '../../services/repository/useAds';
 
 const ITEM_TYPES = {
   ADS_HEADER: 'ADS_HEADER',
@@ -17,21 +14,20 @@ const ITEM_TYPES = {
   CATEGORY: 'CATEGORY',
 };
 
-const CategoryItem = ({ category, onCategoryPress }: { category: { item: CategoriesTree }, onCategoryPress: (id: number) => void }) => {
-  const { photo, id, label, children } = category.item;
+const CategoryItem = ({ category, onCategoryPress }: { category: { item: Category }, onCategoryPress: (id: number) => void }) => {
+  const { photo, id, name, children } = category.item;
+  const imageUrl = useAsset(typeof photo === 'string' ? photo : undefined);
 
   return (
     <View style={[styles.categoryContainer, tw`flex-col px-2 relative`]}>
       <View style={tw`rounded-full px-6 py-1 bg-indigo-600 bg-opacity-80 absolute top-5 right-7 z-1`}>
-        <Text style={tw`text-white text-xl`}>{label}</Text>
+        <Text style={tw`text-white text-xl`}>{name}</Text>
       </View>
-      <TouchableWithoutFeedback onPress={() => onCategoryPress(id)}>
+      <TouchableWithoutFeedback onPress={() => id && onCategoryPress(id)}>
         <Image
           style={tw`w-full border-2 border-slate-100 rounded-3xl h-35`}
           source={{
-            uri: photo ? `https://cvigtavmna.cloudimg.io/${
-              (HOST + photo.replace(/^https?:\/\/flame-api\.horizonsparkle\.com\//, ''))?.replace(/^https?:\/\//, '') ?? 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
-            }?force_format=jpeg&optipress=3` : 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
+            uri: imageUrl,
           }}
         />
       </TouchableWithoutFeedback>
@@ -50,123 +46,95 @@ const CategoryItem = ({ category, onCategoryPress }: { category: { item: Categor
 };
 
 const CategoriesFrame = () => {
-  const userCategories = useTypedSelector((state) => state.user.categories);
-  const originalTree = useTypedSelector((state) => state.categories.tree);
-  const [filteredTree, setFilteredTree] = useState<CategoriesTree[]>([]);
-  const navigation = useTypedNavigator();
-  const { ads, loading: adsLoading, error: adsError, refreshAds } = useAds();
-  const [data, setData] = useState<any[]>([]);
-  const dispatch = useDispatch<AppDispatch>();
-
-  useEffect(() => {
-    const filterTree = (tree: CategoriesTree[]): CategoriesTree[] => {
-      return tree.filter((item) => userCategories.includes(item.id)).map((item) => ({
-        ...item,
-        children: item.children ? filterTree(item.children) : undefined,
-      }));
-    };
-
-    setFilteredTree(userCategories && userCategories.length > 0 ? filterTree(originalTree) : originalTree);
-  }, [userCategories, originalTree]);
-
-  // fetch ads on mount
-  useEffect(() => {
-    refreshAds();
-    const worker = async () => {
-      try {
-        await dispatch(fetchTree()).unwrap();
-      } catch (error) {
-        console.error('Error fetching ads:', error);
-      }
-    }
-
-    worker();
-  }, []);
-
-  useEffect(() => {
-    const newData: any[] = [];
-
-    if (ads && ads.length > 0) {
-      newData.push({ type: ITEM_TYPES.ADS_HEADER });
-      newData.push({ type: ITEM_TYPES.ADS_LIST, ads: ads });
-    }
-
-    if (filteredTree && filteredTree.length > 0) {
-      const categoryItems = filteredTree.map(category => ({ type: ITEM_TYPES.CATEGORY, category: { item: category } }));
-      newData.push(...categoryItems);
-    }
-
-    setData(newData);
-  }, [ads, filteredTree]);
-
-  const getCategoryLabel = (tree: CategoriesTree[], targetId: number): string => {
-    for (const item of tree) {
-      if (item.id === targetId) {
-        return item.label;
-      }
-      if (item.children) {
-        const label = getCategoryLabel(item.children, targetId);
-        if (label) {
-          return label;
-        }
-      }
-    }
-    return '';
-  };
-
-  const navigateToProducts = (categoryId: number) => {
-    navigation.navigate('ProductsScreen', { query: categoryId.toString(), title: getCategoryLabel(filteredTree, categoryId) });
-  };
-
-  const adsListRef = useRef<FlatList>(null);
+  const navigator = useTypedNavigator();
+  const { getCategoriesTree } = useCategories();
+  const { ads } = useAds();
+  
+  // For now, let's assume userCategories is empty (you may need to implement user preferences)
+  const userCategories: number[] = [];
+  const [filteredTree, setFilteredTree] = useState<Category[]>([]);
+  const [currentAdIndex, setCurrentAdIndex] = useState(0);
+  const [adsData, setAdsData] = useState<any[]>([]);
   const currentIndex = useRef(0);
 
+  const filterTree = (tree: Category[]): Category[] => {
+    if (!userCategories || userCategories.length === 0) {
+      return tree;
+    }
+    
+    return tree.filter(category => 
+      category.id ? userCategories.includes(category.id) : false
+    );
+  };
+
   useEffect(() => {
-    if (ads.length > 0) {
-      const interval = setInterval(() => {
-        if (adsListRef.current) {
-          currentIndex.current = (currentIndex.current + 1) % ads.length;
-          adsListRef.current.scrollToIndex({ index: currentIndex.current, animated: true });
+    const fetchData = async () => {
+      try {
+        const tree = await getCategoriesTree();
+        if (tree) {
+          const filtered = filterTree(tree);
+          setFilteredTree(filtered);
         }
-      }, ads[currentIndex.current]?.timeout * 1000 || 3000); // Default to 3 seconds if timeout is not defined
+      } catch (error) {
+        console.error('Failed to fetch categories tree:', error);
+      }
+    };
+    
+    fetchData();
+  }, [userCategories]);
+
+  const onCategoryPress = (categoryId: number) => {
+    const getCategoryName = (tree: Category[], targetId: number): string => {
+      for (const category of tree) {
+        if (category.id === targetId) {
+          return category.name || '';
+        }
+        if (category.children && category.children.length > 0) {
+          const found = getCategoryName(category.children, targetId);
+          if (found) return found;
+        }
+      }
+      return '';
+    };
+
+    const categoryName = getCategoryName(filteredTree, categoryId);
+    navigator.navigate('ProductsScreen', {
+      title: categoryName,
+      query: categoryId.toString(),
+    });
+  };
+
+  // Handle ads rotation
+  useEffect(() => {
+    if (ads && ads.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentAdIndex(prev => (prev + 1) % ads.length);
+      }, 3000); // Default to 3 seconds
 
       return () => clearInterval(interval);
     }
   }, [ads]);
-  const renderItem = ({ item }: { item: any }) => {
 
+  // Build render data
+  useEffect(() => {
+    const data = [];
+    
+    if (ads && ads.length > 0) {
+      data.push({ type: ITEM_TYPES.ADS_HEADER });
+      data.push({ type: ITEM_TYPES.ADS_LIST });
+    }
+    
+    filteredTree.forEach(category => {
+      data.push({ type: ITEM_TYPES.CATEGORY, item: category });
+    });
+    
+    setAdsData(data);
+  }, [ads, filteredTree]);
+
+  const renderItem = ({ item }: { item: any }) => {
     switch (item.type) {
-      case ITEM_TYPES.ADS_HEADER:
-        return <Text style={tw`p-4 px-6 font-bold text-xl text-slate-800`}>Ads</Text>;
-      case ITEM_TYPES.ADS_LIST:
-        return (
-          <FlatList
-            ref={adsListRef}
-            data={item.ads}
-            horizontal
-            keyExtractor={(ad) => ad.id.toString()}
-            style={tw`mb-10`}
-            renderItem={({ item: adItem }) =>
-              adItem.resource_type === 'banner' ? (
-                <Image
-                  style={tw`w-96 h-40 rounded-lg mr-2`}
-                  source={{ uri: adItem.resource_url }}
-                  resizeMode="stretch"
-                />
-              ) : (
-                <Video
-                  source={{ uri: adItem.resource_url }}
-                  style={{ width: 300, height: 200, borderRadius: 8, marginRight: 8 }}
-                  resizeMode="stretch"
-                />
-              )
-            }
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={tw`py-2 px-2`}
-          />
-        );
       case ITEM_TYPES.CATEGORY:
-        return <CategoryItem onCategoryPress={navigateToProducts} category={item.category} />;
+        return <CategoryItem category={{ item: item.item }} onCategoryPress={onCategoryPress} />;
       default:
         return null;
     }
@@ -175,10 +143,11 @@ const CategoriesFrame = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={data}
+        data={adsData}
         renderItem={renderItem}
         keyExtractor={(item, index) => `${item.type}-${index}`}
-        contentContainerStyle={tw`pb-[100px] pt-[16px]`}
+        numColumns={2}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );

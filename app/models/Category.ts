@@ -7,6 +7,7 @@ export interface Category {
     slug?: string;
     active?: boolean;
     parent_id?: number | null;
+    children?: Category[];
     created_by?: number;
     updatedBy?: number;
     deletedBy?: number;
@@ -15,4 +16,5 @@ export interface Category {
     deletedAt?: Date;
     
     photo?: string | Blob | null ; 
+    image_url?: string;
   }

@@ -6,28 +6,20 @@ import {
 } from '@react-navigation/native';
 import * as React from 'react';
 import {useEffect} from 'react';
-
 import tw from 'twrnc';
 import {Product} from '../models/Product';
-import {useDispatch} from 'react-redux';
-import {AppDispatch} from '../services/store/store';
-import {
-    changeInCartStatus,
-    fetchProductsByCategory,
-} from '../services/store/slices/ProductsSlice';
-import {useTypedNavigator, useTypedSelector} from '../utils/helpers';
+import {useTypedNavigator, useAsset} from '../utils/helpers';
 import Icon from 'react-native-vector-icons/AntDesign';
 import XBarIcon from '../components/common/XBarIcon';
 import XAppBar from '../components/common/XAppBar';
 import {ActivityIndicator, FlatList, View, Text, Image, TouchableWithoutFeedback} from 'react-native';
 import ProductItem from '../components/mainscreen/ProductItem';
-import {addToCart, fetchCart} from '../services/store/slices/CartSlice';
-import {clearCatProducts} from '../services/store/slices/ProductsSlice';
-import { fetchCategories } from '../services/store/slices/CategotiesSlice';
 import MainTitle from '../components/mainscreen/MainTitle';
 import HeaderAction from '../components/mainscreen/HeaderAction';
-import { CategoriesTree } from '../models/CategoriesTree';
-import { HOST } from '../services/api';
+import { Category } from '../models/Category';
+import { useProducts } from '../services/repository/useProducts';
+import { useCategories } from '../services/repository/useCategories';
+import { useCart } from '../services/repository/useCart';
 
 const bar = [
     {
@@ -45,38 +37,34 @@ const ITEM_TYPES = {
 
 export default function ProductsScreen() {
     const navigator = useTypedNavigator();
-
-    const {query, title} = useRoute().params as {query: string, title: string};
+    const { query, title } = useRoute().params as {query: string, title: string};
+    
+    const { getProductsForCategory } = useProducts();
+    const { getCategoriesTree } = useCategories();
+    const { cartItems, addToCartMutation } = useCart();
 
     const [products, setProducts] = React.useState<Product[]>([]);
-    const [subCategories, setSubCategories] = React.useState<CategoriesTree[]>([]);
+    const [subCategories, setSubCategories] = React.useState<Category[]>([]);
     const [renderData, setRenderData] = React.useState<any[]>([]);
-
-    const cartItems = useTypedSelector(state => state.cart.cartItems);
-
-    const dispatch = useDispatch<AppDispatch>();
-
-    const byCategory = useTypedSelector(state => state.products.forCategory);
-
-    const categoriesTree = useTypedSelector(state => state.categories.tree);
-
-
+    const [categoriesTree, setCategoriesTree] = React.useState<Category[]>([]);
 
     useEffect(() => {
         const fetcher = async () => {
-            await dispatch(fetchProductsByCategory(parseInt(query)));
-            await dispatch(fetchCart());
-            await dispatch(fetchCategories)
+            // Fetch products for this category
+            const categoryProducts = await getProductsForCategory(parseInt(query));
+            setProducts(categoryProducts);
+            
+            // Fetch categories tree
+            const tree = await getCategoriesTree();
+            setCategoriesTree(tree);
         };
 
         fetcher();
-
-        return () => {};
-    }, []);
+    }, [query]);
     
     // Filter subcategories based on the current category (query)
     useEffect(() => {
-        const findSubCategories = (tree: CategoriesTree[], targetId: number): CategoriesTree[] => {
+        const findSubCategories = (tree: Category[], targetId: number): Category[] => {
             for (const item of tree) {
                 if (item.id === targetId) {
                     return item.children || [];
@@ -93,10 +81,8 @@ export default function ProductsScreen() {
 
         if (categoriesTree && categoriesTree.length > 0 && query) {
             const subs = findSubCategories(categoriesTree, parseInt(query));
-            dispatch(fetchProductsByCategory(parseInt(query)));
             console.log('subs', JSON.stringify(subs));
             console.log('query', query);
-            
             
             setSubCategories(subs);
         }
@@ -115,66 +101,35 @@ export default function ProductsScreen() {
         
         setRenderData(data);
     }, [subCategories, products]);
-    
-    useEffect(()=>{
-      const sorted = byCategory?.products?.slice()?.sort((a, b) => {
-
-            if (a.title && b.title) {
-
-              return a.title.localeCompare(b.title, 'ar');
-            }
-            return a.title ? -1 : b.title ? 1 : 0;
-          })
-
-        if(!sorted) return
-
-      const combineInCart = sorted.map((product) => {
-        return {
-         ...product,
-          isInCart: Boolean(cartItems.some(item => item.product_id === product.id)),
-        };
-      })
-
-        setProducts(combineInCart);
-
-    }, [byCategory, cartItems])
-
-    useEffect(() => {
-        navigator.addListener('beforeRemove', e => {
-            dispatch(clearCatProducts());
-        });
-
-        return () => {};
-    }, [navigator]);
 
     const onAddToCart = (id: number) => {
-        dispatch(changeInCartStatus({id}));
-        dispatch(addToCart({productId: id, quantity: 1}));
+        addToCartMutation({ product_id: id, quantity: 1 });
     };
 
-    const renderSubCategory = React.useCallback(({ item }: { item: CategoriesTree }) => (
-        <TouchableWithoutFeedback 
-            onPress={() => navigator.navigate('ProductsScreen', { 
-                title: item.label ?? '', 
-                query: item.id?.toString() ?? '-1' 
-            })}
-        >
-            <View style={tw`w-[200px] p-2`}>
-                <Image
-                    source={{
-                        uri: `https://cvigtavmna.cloudimg.io/${item.photo ? 
-                            (HOST + item.photo?.replace(/^https?:\/\/flame-api\.horizonsparkle\.com\//, '')).replace(/^https?:\/\//, '') :
-                            'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png'
-                        }?force_format=jpeg&optipress=3`,
-                    }}
-                    style={tw`w-full h-30 rounded-lg`}
-                />
-                <Text style={tw`mt-2 ml-3 font-semibold text-base text-black`}>
-                    {item.label}
-                </Text>
-            </View>
-        </TouchableWithoutFeedback>
-    ), [navigator]);
+    const renderSubCategory = React.useCallback(({ item }: { item: Category }) => {
+        const imageUrl = useAsset(typeof item.photo === 'string' ? item.photo : undefined);
+        
+        return (
+            <TouchableWithoutFeedback 
+                onPress={() => navigator.navigate('ProductsScreen', { 
+                    title: item.name ?? '', 
+                    query: item.id?.toString() ?? '-1' 
+                })}
+            >
+                <View style={tw`w-[200px] p-2`}>
+                    <Image
+                        source={{
+                            uri: imageUrl,
+                        }}
+                        style={tw`w-full h-30 rounded-lg`}
+                    />
+                    <Text style={tw`mt-2 ml-3 font-semibold text-base text-black`}>
+                        {item.name}
+                    </Text>
+                </View>
+            </TouchableWithoutFeedback>
+        )
+    }, [navigator]);
 
     const renderItem = React.useCallback(({ item }: { item: any }) => {
         switch (item.type) {
@@ -191,7 +146,7 @@ export default function ProductsScreen() {
                         horizontal
                         data={item.subCats}
                         renderItem={renderSubCategory}
-                        keyExtractor={(subCat) => subCat?.id?.toString()}
+                        keyExtractor={(subCat) => subCat?.id?.toString() ?? '0'}
                         showsHorizontalScrollIndicator={false}
                         style={tw`w-full mb-4`}
                     />

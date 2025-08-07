@@ -5,7 +5,6 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { axiosClient } from "../services/api";
 import { app_version } from "../constants";
-import { fetchUser } from "../services/store/slices/UserSlice";
 import { getUser } from "../services/repository/userRepository";
 
 

@@ -1,19 +1,19 @@
-
+import { Category } from './Category';
 
 export interface Product {
-    id: number ;
-    title: string | null;
-    description: string;
-    price: number | null;
-    quantity: number | null;
-    batch_size: number | null;
-    images?: {url?:string}[];
-    image_url?: string | null;
-    categories?: number[];
+  id?: number;
+  title: string; 
+  slug?: string;
+  published?: boolean;
 
-    isInCart?: boolean;
-    
-    published: boolean | number;
-    created_by: number;
-    updated_by: number;
-  }
+  category?: Category | number;
+
+  image_url?: string | null;
+  image?: File | null;
+
+  price: number;
+  base_price: number;
+  quantity?: number;
+  batch_size: number;
+
+}

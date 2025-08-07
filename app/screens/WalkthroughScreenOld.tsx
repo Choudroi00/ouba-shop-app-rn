@@ -1,4 +1,7 @@
 import React, {useEffect, useState} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+import {switchFrame} from '../services/store/slices/WalkthroughSlice';
+import {AppDispatch, RootState} from '../services/store/store';
 import {
   View,
   Image,
@@ -25,7 +28,10 @@ import { useNavigation } from '@react-navigation/native';
 import { RootStackNavigationProp } from '../../App';
 
 const WalkthroughScreen = () => {
-  const [currentFrame, setCurrentFrame] = useState(0);
+  const dispatch = useDispatch<AppDispatch>();
+  const currentFrame = useSelector(
+    (state: RootState) => state.walkthrough.currentFrame,
+  );
 
   const navigator = useNavigation<RootStackNavigationProp>()
 
@@ -55,13 +61,13 @@ const WalkthroughScreen = () => {
       return;
     }
     triggerAnime();
-    setCurrentFrame(currentFrame + 1);
+    dispatch(switchFrame(currentFrame + 1));
   };
 
   const handlePrevious = () => {
     if (currentFrame > 0) {
       triggerAnime();
-      setCurrentFrame(currentFrame - 1);
+      dispatch(switchFrame(currentFrame - 1));
     }
   };
 
@@ -94,6 +100,7 @@ const WalkthroughScreen = () => {
   const logAsGuest = async () => {
     await storeData('isGuest', 'true');
     navigator.navigate('MainScreen');
+
   }
 
   // ...

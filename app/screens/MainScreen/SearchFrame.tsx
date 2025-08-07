@@ -8,46 +8,48 @@ import {
     TouchableOpacity,
     StyleSheet,
 } from 'react-native';
-import {useTypedSelector} from '../../utils/helpers';
 import {Product} from '../../models/Product';
 import tw from 'twrnc';
 import ProductItem from '../../components/mainscreen/ProductItem';
-import { AppDispatch } from '../../services/store/store';
-import { useDispatch } from 'react-redux';
-import { changeInCartStatus } from '../../services/store/slices/ProductsSlice';
-import { addToCart } from '../../services/store/slices/CartSlice';
 import XSnackbar from '../../components/common/XSnakeBar';
+import { useProducts } from '../../services/repository/useProducts';
+import { useCart } from '../../services/repository/useCart';
 
 const SearchFrame: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const cartItems = useTypedSelector(state => state.cart.cartItems);
-    const userCats = useTypedSelector(state => state.user.categories)
-    const products = (useTypedSelector(state => state.products.items) || []).map((it)=>{
-      return {
-        ...it, 
-        isInCart: cartItems.some(item => item.product_id === it.id),
-      }
-    }).filter((it)=> {
+    const { products } = useProducts();
+    const { cartItems, addToCartMutation } = useCart();
+    const [snv, setSnv] = useState(false);
+
+    // For now, let's assume userCats is empty (you may need to implement user preferences)
+    const userCats: number[] = [];
+    
+    const processedProducts = useMemo(() => {
+        if (!products) return [];
         
-        if (!userCats || userCats.length <= 0 ) return it;
-
-        return it.categories? (userCats.find((___)=> it.categories?.[0] && ___ === it.categories[0])? it : undefined ) : it
-
-    });
+        return products.map((product) => ({
+            ...product,
+            isInCart: cartItems?.some(item => item.product_id === product.id) || false,
+        })).filter((product) => {
+            if (!userCats || userCats.length <= 0) return product;
+            
+            const categoryId = typeof product.category === 'number' 
+                ? product.category 
+                : product.category?.id;
+                
+            return categoryId ? userCats.includes(categoryId) : product;
+        });
+    }, [products, cartItems, userCats]);
 
     const filteredProducts = useMemo(() => {
-        return products.filter(product =>
+        return processedProducts.filter(product =>
             product.title?.toLowerCase().includes(searchQuery.toLowerCase()),
         );
-    }, [products, searchQuery]);
-
-    const dispatch = useDispatch<AppDispatch>();
+    }, [processedProducts, searchQuery]);
 
     const onAddToCart = (id: number) => {
-        dispatch(changeInCartStatus({id}));
-        dispatch(addToCart({productId: id, quantity: 1}));
+        addToCartMutation({ product_id: id, quantity: 1 });
         setSnv(true);
-        
     };
 
     const renderProduct = useCallback(
@@ -57,9 +59,7 @@ const SearchFrame: React.FC = () => {
         [],
     );
 
-    const keyExtractor = useCallback((item: Product) => item.id.toString(), []);
-
-    const [snv, setSnv] = useState(false);
+    const keyExtractor = useCallback((item: Product & { isInCart?: boolean }) => item.id?.toString() ?? '0', []);
 
     return (
         <View style={tw`flex-1 bg-white`}>

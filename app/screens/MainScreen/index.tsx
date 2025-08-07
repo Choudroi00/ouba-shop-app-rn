@@ -3,28 +3,19 @@ import {BackHandler, SafeAreaView, ScrollView, View} from 'react-native';
 import tw from 'twrnc';
 import XAppBar from '../../components/common/XAppBar';
 import XBarIcon from '../../components/common/XBarIcon';
-
 import Icon from 'react-native-vector-icons/AntDesign';
 import {default as IconX} from 'react-native-vector-icons/Ionicons';
 import XBottomNavigator from '../../components/common/XBottomNavigator';
 import HomeFrame from './HomeFrame';
 import SearchFrame from './SearchFrame';
-import {getData, useTypedNavigator, useTypedSelector} from '../../utils/helpers';
-import {useDispatch} from 'react-redux';
-import {switchTab} from '../../services/store/slices/MainScreenStateSlice';
-import {
-    fetchCategories,
-    fetchTree,
-} from '../../services/store/slices/CategotiesSlice';
-
-import {AppDispatch} from '../../services/store/store';
+import {getData, useTypedNavigator} from '../../utils/helpers';
 import CategoriesFrame from './CategoriesFrame';
-import { fetchCart } from '../../services/store/slices/CartSlice';
 import XModal from '../../components/common/XModal';
 import OrdersFrame from './OrdersFrame';
-import { fetchProducts } from '../../services/store/slices/ProductsSlice';
-import { fetchUser } from '../../services/store/slices/UserSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useMainScreenState } from '../../hook/useMainScreenState';
+import { useProducts } from '../../services/repository/useProducts';
+import { useCategories } from '../../services/repository/useCategories';
 
 export const tabs = [
     {
@@ -55,31 +46,25 @@ export const tabs = [
 ];
 
 export default function MainSreen() {
-    const {activeTab} = useTypedSelector(state => state.mainscreen);
-
-    const dispatch = useDispatch<AppDispatch>();
-
+    const { activeTab, switchTab } = useMainScreenState();
+    const { refreshProducts } = useProducts();
+    const { categories } = useCategories();
+    
     const changeTab = (tabKey: string) => {
-        dispatch(switchTab(tabKey));
+        switchTab(tabKey as any);
     };
 
     useEffect(() => {
         const fetchData = async () => {
-            const token = await getData('user');
-            await dispatch(fetchUser(token ?? '')).unwrap();
-            await dispatch(fetchCategories());
-            await dispatch(fetchProducts());
-            await dispatch(fetchTree());
-            await dispatch(fetchCart());
-            
+            // Initialize data loading
+            refreshProducts();
         };
         fetchData();
-    }, [dispatch]);
+    }, []);
 
-    //const [activeTab, setActiveTab] = useState('home');
     const [tabStates, setTabStates] = useState({
         categories: <CategoriesFrame />,
-        home: <HomeFrame />,
+        home: <HomeFrame onTabSwitch={changeTab} />,
         search: <SearchFrame />,
         orders: <OrdersFrame/>,
         profile: <View style={tw`flex-1 bg-black`}></View>,

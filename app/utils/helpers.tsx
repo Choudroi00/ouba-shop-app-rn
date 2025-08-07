@@ -7,6 +7,7 @@ import { TypedUseSelectorHook, useSelector } from "react-redux";
 import { RootState } from "../services/store/store";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackNavigationProp, RootStackParamList } from "../../App";
+import { HOST } from "../services/api";
 
 
 export const mesureContainer = (containerStyle : StyleProp<any>,content : React.JSX.Element, setter: (dims: number)=> void )=> {
@@ -60,3 +61,11 @@ export const useTypedNavigator = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   return navigation as NavigationProp<RootStackParamList>;
 };
+
+
+export const useAsset = (asset?: string): string => {
+  const url = asset ? `${HOST}/${asset}` : `${HOST}/public/placeholder.png`;
+  const imageService = 'https://cvigtavmna.cloudimg.io/'
+
+  return `${imageService}${url.replace(/^https?:\/\//, '')}?force_format=jpeg&optipress=3`;
+}
