@@ -41,32 +41,32 @@ jobs:
           cd android && chmod +x ./gradlew && ./gradlew assembleRelease
 
       # - name: Publish App To Server
-        env:
-          DEPLOY_KEY:  ${{ secrets.DEPLOY_KEY }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          DEPLOY_DIR:  ${{ secrets.DEPLOY_DIR }}
-        run: |
-          echo "${DEPLOY_KEY}" > deploy_key
+        # env:
+        #   DEPLOY_KEY:  ${{ secrets.DEPLOY_KEY }}
+        #   SERVER_USER: ${{ secrets.SERVER_USER }}
+        #   SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        #   DEPLOY_DIR:  ${{ secrets.DEPLOY_DIR }}
+        # run: |
+        #   echo "${DEPLOY_KEY}" > deploy_key
           
-          chmod 600 deploy_key
+        #   chmod 600 deploy_key
           
-          scp -i deploy_key -o StrictHostKeyChecking=no -P 65002 android/app/build/outputs/apk/release/app-release.apk $SERVER_USER@$SERVER_HOST:${DEPLOY_DIR}_tmp/
+        #   scp -i deploy_key -o StrictHostKeyChecking=no -P 65002 android/app/build/outputs/apk/release/app-release.apk $SERVER_USER@$SERVER_HOST:${DEPLOY_DIR}_tmp/
           
-          ssh -i deploy_key -o StrictHostKeyChecking=no -p 65002 $SERVER_USER@$SERVER_HOST << EOF
+        #   ssh -i deploy_key -o StrictHostKeyChecking=no -p 65002 $SERVER_USER@$SERVER_HOST << EOF
           
-            cd ${DEPLOY_DIR}
+        #     cd ${DEPLOY_DIR}
             
-            rm -rf app-release.apk 
+        #     rm -rf app-release.apk 
             
-            mv ${DEPLOY_DIR}_tmp/app-release.apk ./app-release.apk
+        #     mv ${DEPLOY_DIR}_tmp/app-release.apk ./app-release.apk
             
-            rm -rf ${DEPLOY_DIR}_tmp/app-release.apk
+        #     rm -rf ${DEPLOY_DIR}_tmp/app-release.apk
             
-          EOF
+        #   EOF
 
         
-          rm deploy_key
+        #   rm deploy_key
 
 
       - name: Upload APK as an artifact
