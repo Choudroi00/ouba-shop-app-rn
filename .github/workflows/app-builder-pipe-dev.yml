@@ -40,7 +40,7 @@ jobs:
         run: |
           cd android && chmod +x ./gradlew && ./gradlew assembleRelease
 
-      - name: Publish App To Server
+      # - name: Publish App To Server
         env:
           DEPLOY_KEY:  ${{ secrets.DEPLOY_KEY }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
