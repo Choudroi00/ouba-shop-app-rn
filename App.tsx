@@ -18,7 +18,8 @@ import WalkthroughScreen from './app/screens/WalkthroughScreen';
 
 import { setCustomText, setCustomTextInput } from 'react-native-global-props';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import LoginScreen, { RegisterScreen } from './app/screens/AuthScreen';
+import LoginScreen from './app/screens/LoginScreen';
+import RegisterScreen from './app/screens/RegisterScreen';
 import { Animated, Easing } from 'react-native';
 import MainSreen from './app/screens/MainScreen';
 import AppEntry from './app/screens';

@@ -131,9 +131,13 @@ const LoginScreen = () => {
         });
 
         // Navigate after delay
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
           navigator.navigate('MainScreen');
+          console.log('Navigating to MainScreen');
+          
         }, 2000);
+
+        return () => clearTimeout(timeoutId);
       } else if (authStatus === 'error') {
         setIsLoading(false);
         await storeData('isAuthenticated', 'false');
@@ -409,10 +413,7 @@ const RegisterScreen = () => {
       formData.name
     );
     
-    if (errors.length > 0) {
-      Alert.alert('Validation Error', errors.join('\n'));
-      return;
-    }
+    
 
     // Start registration process
     setIsLoading(true);
