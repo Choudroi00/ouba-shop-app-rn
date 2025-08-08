@@ -15,9 +15,9 @@ export default function OrdersFrame() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [targetId, setTargetId] = useState<number>(0);
 
-    const renderOrder = ({ index, item: order }: { index: number, item: Order }) => {
+    const renderOrder = ({ item: order }: { item: Order }) => {
         return (
-            <View key={order.id ?? index} style={styles.card}>
+            <View key={order.id ?? 0} style={styles.card}>
                 <View style={styles.header}>
                     <Text style={styles.title}>Order # {order.id}</Text>
                     <Text style={styles.dateTime}>{order.created_at?.toString()} </Text>
@@ -36,7 +36,7 @@ export default function OrdersFrame() {
                             <View key={index} style={styles.itemContainer}>
                                 <View style={styles.itemInfo}>
                                     <Text style={styles.itemText}>
-                                        {item.product?.title || `Product ID: ${item.product.id}`}
+                                        {item.product?.title || `Product ID: ${item.product?.id}`}
                                     </Text>
                                     <View
                                         style={[
@@ -64,7 +64,7 @@ export default function OrdersFrame() {
                 <View style={styles.actions}>
                     <XButton 
                         onClick={() => {
-                            if(order.status === 'completed') {
+                            if(order.status === 'pending') {
                                 setIsModalVisible(true);
                                 setTargetId(order.id ?? 0);
                             }
