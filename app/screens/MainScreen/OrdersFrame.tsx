@@ -59,7 +59,7 @@ export default function OrdersFrame() {
                     })}
                 </View>
                 <View style={styles.footer}>
-                    <Text style={[styles.text, tw`text-left`]}>Total: {(order.total_price ?? 0).toFixed(2)}</Text>
+                    <Text style={[styles.text, tw`text-left`]}>Total: {Number(order.total_price ?? 0).toFixed(2)}</Text>
                 </View>
                 <View style={styles.actions}>
                     <XButton 
