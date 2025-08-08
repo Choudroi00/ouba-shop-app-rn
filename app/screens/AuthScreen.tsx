@@ -153,10 +153,7 @@ const LoginScreen = () => {
   const handleLogin = useCallback(async () => {
     // Validate form
     const errors = validateForm(formData.email, formData.password);
-    if (errors.length > 0) {
-      Alert.alert('Validation Error', errors.join('\n'));
-      return;
-    }
+    
 
     // Start login process
     setIsLoading(true);
