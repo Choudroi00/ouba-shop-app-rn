@@ -36,7 +36,7 @@ export default function OrdersFrame() {
                             <View key={index} style={styles.itemContainer}>
                                 <View style={styles.itemInfo}>
                                     <Text style={styles.itemText}>
-                                        {item.product?.title || `Product ID: ${item.product_id}`}
+                                        {item.product?.title || `Product ID: ${item.product.id}`}
                                     </Text>
                                     <View
                                         style={[
@@ -70,7 +70,7 @@ export default function OrdersFrame() {
                             }
                         }} 
                         backgroundColor={order.status === 'completed' ? '#4CAF50' : '#ccc'}
-                        disabled={order.status !== 'completed'}
+                        disabled={order.status !== 'pending'}
                         style={tw`flex-1 mr-2`}
                     >
                         <Text style={tw`text-white font-bold`}>Return to Cart</Text>
