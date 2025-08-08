@@ -66,12 +66,14 @@ const AppEntry = () => {
             if(!isAuthenticated && !isGuest) {
                 await storeData('isGuest', 'true')
                 navigator.navigate('MainScreen')
+                return;
                 
 
             }
             if (isAuthenticated || isGuest) {
 
                 navigator.navigate('MainScreen')
+                return;
                 
                 
             } else {
