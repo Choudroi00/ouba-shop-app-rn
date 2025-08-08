@@ -89,7 +89,7 @@ export const useCart = () => {
   }): Promise<CartItem> => {
     const res = await axiosClientV2.post<{ data: CartItem }>(
       `/cart/update/${id}`,
-      { quantity }
+      { product_id, quantity }
     );
     if (res.status === 200) {
       return res.data.data;
