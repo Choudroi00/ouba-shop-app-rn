@@ -11,6 +11,7 @@ import XAppBar from '../../components/common/XAppBar';
 import XBarIcon from '../../components/common/XBarIcon';
 import XModal from '../../components/common/XModal';
 import XSnackbar from '../../components/common/XSnakeBar';
+import { useMutationTracker } from '../../hook/useMutationTracker';
 
 const CartScreen = () => {
     const navigator = useTypedNavigator();
@@ -29,6 +30,10 @@ const CartScreen = () => {
     const [processingModalVisible, setProcessingModalVisible] = useState(false);
     const [snackbarVisible, setSnackbarVisible] = useState(false);
     const [itemToRemove, setItemToRemove] = useState(-1);
+
+    const updateTracker = useMutationTracker('updateCartItem')
+
+    
 
     const navigationBack = () => navigator.goBack();
 
@@ -56,7 +61,7 @@ const CartScreen = () => {
             setCartState(viewableItems);
             
             // Calculate total price
-            const total = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+            const total = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity * item.product.batch_size), 0);
             setTotalPrice(total);
         }
     }, [cartItems]);
@@ -71,6 +76,12 @@ const CartScreen = () => {
                     id: cartItem.id,
                     quantity: cartItem.quantity + 1,
                 });
+
+                setCartState(prevState =>
+                    prevState.map(item => 
+                        item.id === id ? {...item, quantity: item.quantity + 1} : item
+                    )
+                );
             }
         },
         handleDecrement: (id: number) => {
@@ -78,8 +89,14 @@ const CartScreen = () => {
             if (cartItem && cartItem.quantity > 1) {
                 updateCartItemMutation({
                     id: cartItem.id,
-                    quantity: cartItem.quantity - 1,
+                    quantity: Math.max(1, cartItem.quantity - 1),
                 });
+
+                setCartState(prevState =>
+                    prevState.map(item => 
+                        item.id === id ? {...item, quantity: Math.max(1, item.quantity - 1)} : item
+                    )
+                );
             }
         },
         handleRemoveRequest: itemId => {
@@ -221,7 +238,7 @@ const CartScreen = () => {
                         Total: {totalPrice.toFixed(2)}
                     </Text>
                     <XButton
-                        disabled={isLoading}
+                        disabled={isLoading || updateTracker.isPending}
                         backgroundColor={primaryColor}
                         onClick={handlePlaceOrder}>
                         <Text style={tw`text-white text-center font-semibold`}>

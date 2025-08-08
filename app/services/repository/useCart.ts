@@ -96,6 +96,7 @@ export const useCart = () => {
   };
 
   const { mutate: updateCartItemMutation } = useMutation<CartItem, Error, { id: number; quantity: number }, unknown>({
+    mutationKey: ["updateCartItem"],
     mutationFn: updateCartItem,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["cart"] }),
   });

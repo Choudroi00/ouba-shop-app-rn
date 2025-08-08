@@ -43,7 +43,7 @@ export default function ProductsScreen() {
     const { getCategoriesTree } = useCategories();
     const { cartItems, addToCartMutation } = useCart();
 
-    const [products, setProducts] = React.useState<Product[]>([]);
+    const [products, setProducts] = React.useState<(Product & { isInCart?: boolean })[]>([]);
     const [subCategories, setSubCategories] = React.useState<Category[]>([]);
     const [renderData, setRenderData] = React.useState<any[]>([]);
     const [categoriesTree, setCategoriesTree] = React.useState<Category[]>([]);
@@ -52,7 +52,14 @@ export default function ProductsScreen() {
         const fetcher = async () => {
             // Fetch products for this category
             const categoryProducts = await getProductsForCategory(parseInt(query));
-            setProducts(categoryProducts);
+
+            const combineCartState = (products: Product[]) => {
+                return products.map(product => {
+                    const isInCart = cartItems?.some(item => item.product_id === product.id);
+                    return {...product, isInCart};
+                });
+            }
+            setProducts(combineCartState(categoryProducts));
             
             // Fetch categories tree
             const tree = await getCategoriesTree();
@@ -60,7 +67,7 @@ export default function ProductsScreen() {
         };
 
         fetcher();
-    }, [query]);
+    }, [query, cartItems]);
     
     // Filter subcategories based on the current category (query)
     useEffect(() => {
