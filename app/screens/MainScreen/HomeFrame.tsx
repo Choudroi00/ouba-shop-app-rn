@@ -9,7 +9,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import tw from 'twrnc';
-import { useTypedNavigator } from '../../utils/helpers';
+import { useAsset, useTypedNavigator } from '../../utils/helpers';
 import MainTitle from '../../components/mainscreen/MainTitle';
 import HeaderAction from '../../components/mainscreen/HeaderAction';
 import { Product } from '../../models/Product';
@@ -152,7 +152,7 @@ const HomeFrame = ({ onTabSwitch }: { onTabSwitch?: (tab: string) => void }) => 
     <TouchableWithoutFeedback onPress={() => navigator.navigate('ProductsScreen', { title: item.name ?? '', query: item.id?.toString() ?? '-1' })}>
       <View style={tw`w-[250px] p-2`}>
         <Image
-          source={{ uri: item.photo && typeof item.photo === 'string' ? item.photo : 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png' }}
+          source={{ uri: useAsset(typeof item.photo === 'string' ? item.photo : '') }}
           style={tw`w-full h-37 rounded-lg`}
         />
         <Text style={tw`mt-2 ml-3 font-semibold text-base text-black`}>{item.name}</Text>

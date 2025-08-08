@@ -7,12 +7,45 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Video from 'react-native-video';
 import { useCategories } from '../../services/repository/useCategories';
 import { useAds } from '../../services/repository/useAds';
+import MainTitle from '../../components/mainscreen/MainTitle';
+import HeaderAction from '../../components/mainscreen/HeaderAction';
+import { Advertisment } from '../../models/Advertisment';
 
 const ITEM_TYPES = {
   ADS_HEADER: 'ADS_HEADER',
   ADS_LIST: 'ADS_LIST',
+  CATEGORY_HEADER: 'CATEGORY_HEADER',
   CATEGORY: 'CATEGORY',
 };
+
+const AdItem = ({ ad }: { ad: Advertisment }) => {
+  
+  
+  return (
+    <TouchableWithoutFeedback
+                
+                style={tw`mr-4 border-2 border-slate-400 rounded-lg`}
+                
+              >
+                <View style={tw``}>
+                  {ad.type === 'video' ? (
+                    <Video
+                      source={{ uri: useAsset(ad.resource_url) ?? '' }}
+                      style={tw`w-64 h-44 rounded-lg`}
+                      resizeMode="cover"
+                      repeat
+                    />
+                  ) : (
+                    <Image
+                      source={{ uri: useAsset(ad.resource_url) ?? '' }}
+                      style={tw`w-64 h-44 rounded-lg`}
+                      resizeMode='cover'
+                    />
+                  )}
+                </View>
+    </TouchableWithoutFeedback>
+  );
+}
 
 const CategoryItem = ({ category, onCategoryPress }: { category: { item: Category }, onCategoryPress: (id: number) => void }) => {
   const { photo, id, name, children } = category.item;
@@ -23,24 +56,16 @@ const CategoryItem = ({ category, onCategoryPress }: { category: { item: Categor
       <View style={tw`rounded-full px-6 py-1 bg-indigo-600 bg-opacity-80 absolute top-5 right-7 z-1`}>
         <Text style={tw`text-white text-xl`}>{name}</Text>
       </View>
-      <TouchableWithoutFeedback onPress={() => id && onCategoryPress(id)}>
+      <TouchableWithoutFeedback onPress={() => {onCategoryPress(id ?? -1); console.log('hey');
+      }}>
         <Image
-          style={tw`w-full border-2 border-slate-100 rounded-3xl h-35`}
+          style={tw`w-full border-2 border-indigo-300 rounded-3xl h-35`}
           source={{
             uri: imageUrl,
           }}
         />
       </TouchableWithoutFeedback>
-      {/* {children && children.length > 0 && (
-        <FlatList
-          data={children}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={(item) => <CategoryItem onCategoryPress={onCategoryPress} category={item} />}
-          style={styles.subCategoryList}
-        />
-      )} 
-        TODO: this part for subcategories removed 
-       */}
+
     </View>
   );
 };
@@ -50,38 +75,26 @@ const CategoriesFrame = () => {
   const { getCategoriesTree } = useCategories();
   const { ads } = useAds();
   
-  // For now, let's assume userCategories is empty (you may need to implement user preferences)
-  const userCategories: number[] = [];
-  const [filteredTree, setFilteredTree] = useState<Category[]>([]);
+  const [renderData, setRenderData] = useState<any[]>([]);
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
-  const [adsData, setAdsData] = useState<any[]>([]);
-  const currentIndex = useRef(0);
+  const flatListRef = useRef<FlatList>(null);
+  const [tree, setTree] = useState<Category[]>([]);
 
-  const filterTree = (tree: Category[]): Category[] => {
-    if (!userCategories || userCategories.length === 0) {
-      return tree;
-    }
-    
-    return tree.filter(category => 
-      category.id ? userCategories.includes(category.id) : false
-    );
-  };
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const tree = await getCategoriesTree();
-        if (tree) {
-          const filtered = filterTree(tree);
-          setFilteredTree(filtered);
-        }
+        setTree(tree);
+        
       } catch (error) {
         console.error('Failed to fetch categories tree:', error);
       }
     };
     
     fetchData();
-  }, [userCategories]);
+  }, []);
 
   const onCategoryPress = (categoryId: number) => {
     const getCategoryName = (tree: Category[], targetId: number): string => {
@@ -97,23 +110,46 @@ const CategoriesFrame = () => {
       return '';
     };
 
-    const categoryName = getCategoryName(filteredTree, categoryId);
-    navigator.navigate('ProductsScreen', {
-      title: categoryName,
-      query: categoryId.toString(),
-    });
+    if (true) {
+      console.warn('Categories tree is empty');
+      
+    }
+    const categoryName = getCategoryName(tree, categoryId);
+      navigator.navigate('ProductsScreen', {
+        title: categoryName,
+        query: categoryId.toString(),
+      });
   };
 
   // Handle ads rotation
   useEffect(() => {
-    if (ads && ads.length > 0) {
-      const interval = setInterval(() => {
-        setCurrentAdIndex(prev => (prev + 1) % ads.length);
-      }, 3000); // Default to 3 seconds
+    let timer: NodeJS.Timeout | null = null;
 
-      return () => clearInterval(interval);
+    const scheduleNextAd = (index: number) => {
+      if (ads && ads.length > 0) {
+        const nextIndex = (index + 1) % ads.length;
+        const timeout = ads[index]?.timeout ? ads[index].timeout * 1000 : 3000; // Default to 3 seconds
+
+        timer = setTimeout(() => {
+          setCurrentAdIndex(nextIndex);
+          if (flatListRef.current) {
+            flatListRef.current.scrollToIndex({ index: nextIndex, animated: true });
+          }
+          scheduleNextAd(nextIndex);
+        }, timeout);
+      }
+    };
+
+    if (ads && ads.length > 0) {
+      scheduleNextAd(currentAdIndex);
     }
-  }, [ads]);
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [ads, currentAdIndex]);
 
   // Build render data
   useEffect(() => {
@@ -124,15 +160,45 @@ const CategoriesFrame = () => {
       data.push({ type: ITEM_TYPES.ADS_LIST });
     }
     
-    filteredTree.forEach(category => {
+    data.push({ type: ITEM_TYPES.CATEGORY_HEADER });
+    tree.forEach(category => {
       data.push({ type: ITEM_TYPES.CATEGORY, item: category });
     });
     
-    setAdsData(data);
-  }, [ads, filteredTree]);
+
+    setRenderData(data)
+    
+  }, [ads, tree]);
 
   const renderItem = ({ item }: { item: any }) => {
     switch (item.type) {
+      case ITEM_TYPES.ADS_HEADER:
+        return (
+          <View style={tw`flex-row justify-between p-4 px-6`}>
+            <MainTitle text="اعلانات" />
+            <HeaderAction onPress={() => {}} text="view all" />
+          </View>
+        );
+      case ITEM_TYPES.ADS_LIST:
+        return (
+            <FlatList
+              ref={flatListRef}
+              horizontal
+              scrollEnabled={true}
+              data={ads}
+              keyExtractor={(item, index) => `ad-${index}`}
+              renderItem={({ item: ad }) => <AdItem ad={ad} />}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={tw`px-4`}
+            />
+        )
+      case ITEM_TYPES.CATEGORY_HEADER:
+        return (
+          <View style={tw`flex-row justify-between p-4 px-6`}>
+            <MainTitle text="Categories" />
+            <HeaderAction onPress={() => {}} text="view all" />
+          </View>
+          )
       case ITEM_TYPES.CATEGORY:
         return <CategoryItem category={{ item: item.item }} onCategoryPress={onCategoryPress} />;
       default:
@@ -143,10 +209,12 @@ const CategoriesFrame = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={adsData}
+        data={renderData}
         renderItem={renderItem}
         keyExtractor={(item, index) => `${item.type}-${index}`}
-        numColumns={2}
+        
+        horizontal={false}
+        
         showsVerticalScrollIndicator={false}
       />
     </View>
@@ -157,7 +225,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 8,
-    backgroundColor: '#fff',
+    backgroundColor: 'white',
   },
   categoryContainer: {
     marginVertical: 4,

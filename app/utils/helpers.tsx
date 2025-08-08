@@ -63,7 +63,7 @@ export const useTypedNavigator = () => {
 };
 
 
-export const useAsset = (asset?: string): string => {
+export const useAsset = (asset?: string | null): string => {
   const url = asset ? `${HOST}/${asset}` : `${HOST}/public/placeholder.png`;
   const imageService = 'https://cvigtavmna.cloudimg.io/'
 

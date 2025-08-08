@@ -45,10 +45,14 @@ const AppEntry = () => {
 
             const server = await get_version()
 
+            console.log(`Local version: ${local}, Server version: ${server} check result: ${String(local) === String(server)}`);
+
             if (local === server) {
                 checker()
                 return 
             }
+            checker() // if the version is not the same, we will still check for login status and navigate accordingly
+            return; // try to fix the version mismatch issue
 
             navigator.navigate('UpdateScreen')
             return 

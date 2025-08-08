@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getData } from "../../utils/helpers";
 
 
-const base_url = "https://fame.ayoub-dev.xyz/api"
+const base_url = "https://api-fame.ayoub-dev.xyz/api"
 
 
 const axiosClient = axios.create({
