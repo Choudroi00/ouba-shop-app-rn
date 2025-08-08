@@ -97,7 +97,7 @@ export const useCart = () => {
     throw new Error("Failed to update cart item");
   };
 
-  const { mutate: updateCartItemMutation } = useMutation<CartItem, Error, { id: number; quantity: number }, unknown>({
+  const { mutate: updateCartItemMutation } = useMutation<CartItem, Error, { id: number; quantity: number; product_id: number; }, unknown>({
     mutationKey: ["updateCartItem"],
     mutationFn: updateCartItem,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["cart"] }),
