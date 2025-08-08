@@ -80,9 +80,11 @@ export const useCart = () => {
   // Update cart item
   const updateCartItem = async ({
     id,
+    product_id,
     quantity,
   }: {
     id: number;
+    product_id: number;
     quantity: number;
   }): Promise<CartItem> => {
     const res = await axiosClientV2.post<{ data: CartItem }>(

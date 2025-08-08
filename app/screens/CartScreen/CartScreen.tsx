@@ -74,6 +74,7 @@ const CartScreen = () => {
             if (cartItem) {
                 updateCartItemMutation({
                     id: cartItem.id,
+                    product_id: cartItem.product.id,
                     quantity: cartItem.quantity + 1,
                 });
 
@@ -89,6 +90,7 @@ const CartScreen = () => {
             if (cartItem && cartItem.quantity > 1) {
                 updateCartItemMutation({
                     id: cartItem.id,
+                    product_id: cartItem.product.id,
                     quantity: Math.max(1, cartItem.quantity - 1),
                 });
 
